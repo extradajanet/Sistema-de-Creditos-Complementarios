@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +17,6 @@ using SistemaCreditosComplementarios.Infraestructure.Repositories;
 using System;
 using System.Text;
 
->>>>>>> Stashed changes
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -29,21 +26,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-<<<<<<< Updated upstream
-=======
 // configurar base de datos
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Inyección de dependencias para el repositorio
-builder.Services.AddScoped<IActividadRepository, ActividadRepository>(); //se añadió el repositorio para las actividades
+// Inyecciï¿½n de dependencias para el repositorio
+builder.Services.AddScoped<IActividadRepository, ActividadRepository>(); //se aï¿½adiï¿½ el repositorio para las actividades
 builder.Services.AddScoped<IAlumnoRepository, AlumnoRepository>(); 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>(); 
 
-//Inyección de dependencias para el servicio 
-builder.Services.AddScoped<IActividadService, ActividadService>(); //se añade el servicio de actividades
+//Inyecciï¿½n de dependencias para el servicio 
+builder.Services.AddScoped<IActividadService, ActividadService>(); //se aï¿½ade el servicio de actividades
 builder.Services.AddScoped<IAlumnoService, AlumnoService>();
-builder.Services.AddScoped<IAuthService, AuthService>(); //se añade el servicio de autenticación
+builder.Services.AddScoped<IAuthService, AuthService>(); //se aï¿½ade el servicio de autenticaciï¿½n
 
 // JWT Authentication 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
@@ -75,7 +70,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Configuración de CORS (Cross-Origin Resource Sharing)
+// Configuraciï¿½n de CORS (Cross-Origin Resource Sharing)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -84,7 +79,6 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 
->>>>>>> Stashed changes
 var app = builder.Build();
 
 // Inicializar los roles de identidad
