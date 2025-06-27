@@ -26,11 +26,11 @@ export default function Sidebar() {
             </Link>
             <Link to="/cursos" className="flex items-center gap-4 p-2 hover:bg-blue-700 rounded">
             <GraduationCap strokeWidth={0.5} className="w-8 h-8" />
-            <span className="hidden group-hover:inline">Cursos</span>
+            <span className="hidden group-hover:inline">Mi historial</span>
             </Link>
             <Link to="/perfil" className="flex items-center gap-4 p-2 hover:bg-blue-700 rounded">
             <User strokeWidth={0.5} className="w-8 h-8" />
-            <span className="hidden group-hover:inline">Perfil</span>
+            <span className="hidden group-hover:inline">Editar Perfil</span>
             </Link>
         </div>
 
