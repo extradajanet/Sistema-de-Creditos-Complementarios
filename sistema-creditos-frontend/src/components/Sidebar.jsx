@@ -21,15 +21,15 @@ export default function Sidebar() {
           {/* Íconos arriba */}
         <div className="flex flex-col gap-4 items-center">
             <Link to="/" className="flex items-center gap-4 p-2 hover:bg-blue-700 rounded">
-            <Home className="w-8 h-8" />
+            <Home strokeWidth={0.5} className="w-8 h-8" />
             <span className="hidden group-hover:inline">Inicio</span>
             </Link>
             <Link to="/cursos" className="flex items-center gap-4 p-2 hover:bg-blue-700 rounded">
-            <GraduationCap className="w-8 h-8" />
+            <GraduationCap strokeWidth={0.5} className="w-8 h-8" />
             <span className="hidden group-hover:inline">Cursos</span>
             </Link>
             <Link to="/perfil" className="flex items-center gap-4 p-2 hover:bg-blue-700 rounded">
-            <User className="w-8 h-8" />
+            <User strokeWidth={0.5} className="w-8 h-8" />
             <span className="hidden group-hover:inline">Perfil</span>
             </Link>
         </div>
@@ -37,7 +37,7 @@ export default function Sidebar() {
         {/* Ícono abajo */}
         <div className="flex flex-col items-center mt-auto w-full ">
             <Link to="/logout" className="flex items-center gap-4 p-2 hover:bg-red-700 rounded w-full justify-center">
-            <LogOut className="w-8 h-8" />
+            <LogOut strokeWidth={0.5} className="w-8 h-8" />
             <span className="hidden group-hover:inline">Cerrar</span>
             </Link>
         </div>
