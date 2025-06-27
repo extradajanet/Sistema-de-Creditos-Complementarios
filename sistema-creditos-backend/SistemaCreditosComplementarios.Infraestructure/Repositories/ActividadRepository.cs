@@ -12,7 +12,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
 {
     // usa la interfaz IActividadRepository para implementar los métodos de acceso a datos relacionados con las actividades con el modelo de actividad
     //es la capa de datos
-    public class ActividadRepository : IActividadRepository
+    public class ActividadRepository: IActividadRepository
     {
         private readonly ApplicationDbContext _context; // Asumiendo que tienes un DbContext configurado para tu base de datos
 
