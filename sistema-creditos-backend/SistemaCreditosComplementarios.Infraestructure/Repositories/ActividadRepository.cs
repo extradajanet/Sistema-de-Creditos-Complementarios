@@ -22,55 +22,64 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
             _context = context;
         }
 
-        // Método para obtener todas las actividades
+        // obtiene todas las actividades
         public async Task<IEnumerable<ActividadModels>> GetAllAsync()
         {
-            return await _context.Actividades.ToListAsync(); // se usa ToListAsync() para obtener todas las actividades de la base de datos
+            //incluye la relación para obtener el nombre los datos de la carrera
+            return await _context.Actividades
+                .Include(a => a.Carrera)
+                .ToListAsync();
+
         }
 
-        // Método para obtener una actividad por su ID
+        // obtiene por id
         public async Task<ActividadModels> GetByIdAsync(int id)
         {
-            return await _context.Actividades.FindAsync(id); // se usa FindAsync() para buscar la actividad por su ID
+            return await _context.Actividades
+                .Include(a => a.Carrera)
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        // Método para agregar una nueva actividad
+        // añade actividad
         public async Task AddAsync(ActividadModels actividad)
         {
-            _context.Actividades.Add(actividad); // se agrega la actividad al contexto
-            await _context.SaveChangesAsync(); // se guardan los cambios en la base de datos
+            _context.Actividades.Add(actividad);
+            await _context.SaveChangesAsync();
         }
 
-        // Método para actualizar una actividad existente
+        // actualiza una actividad
         public async Task<ActividadModels> UpdateAsync(int id, ActividadModels actividadUpdate)
         {
-            var actividad = await GetByIdAsync(id); // se obtiene la actividad por su ID
+            var actividad = await GetByIdAsync(id);
             if (actividad == null)
             {
-                throw new Exception("Actividad no encontrada."); // si no se encuentra la actividad, se lanza una excepción
+                throw new Exception("Actividad no encontrada.");
             }
-            // Actualizar los campos de la actividad
+            // se actualiza
             actividad.Nombre = actividadUpdate.Nombre;
             actividad.Descripcion = actividadUpdate.Descripcion;
             actividad.FechaInicio = actividadUpdate.FechaInicio;
             actividad.FechaFin = actividadUpdate.FechaFin;
             actividad.Creditos = actividadUpdate.Creditos;
             actividad.TipoActividad = actividadUpdate.TipoActividad;
-            _context.Actividades.Update(actividad); // se actualiza la actividad en el contexto
-            await _context.SaveChangesAsync(); // se guardan los cambios en la base de datos
-            return actividad; // se devuelve la actividad actualizada
+            actividad.CarreraId = actividadUpdate.CarreraId;
+            actividad.EstadoActividad = actividadUpdate.EstadoActividad;
+            actividad.ImagenNombre = actividadUpdate.ImagenNombre;
+            _context.Actividades.Update(actividad);
+            await _context.SaveChangesAsync();
+            return actividad;
         }
 
-        // Método para eliminar una actividad por su ID
+        // elimina una actividad
         public async Task DeleteAsync(int id)
         {
-            var actividad = await GetByIdAsync(id); // se obtiene la actividad por su ID
+            var actividad = await GetByIdAsync(id);
             if (actividad == null)
             {
-                throw new Exception("Actividad no encontrada."); // si no se encuentra la actividad, se lanza una excepción
+                throw new Exception("Actividad no encontrada.");
             }
-            _context.Actividades.Remove(actividad); // se elimina la actividad del contexto
-            await _context.SaveChangesAsync(); // se guardan los cambios en la base de datos
+            _context.Actividades.Remove(actividad);
+            await _context.SaveChangesAsync();
         }
 
     }

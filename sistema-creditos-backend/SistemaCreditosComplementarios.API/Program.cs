@@ -1,7 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
 using SistemaCreditosComplementarios.Core.Services.ActividadService;
+using SistemaCreditosComplementarios.Core.Services.AlumnoServices;
+using SistemaCreditosComplementarios.Core.Services.AuthServices;
+using SistemaCreditosComplementarios.Core.Services.CarreraServices;
+using SistemaCreditosComplementarios.Core.Settings;
 using SistemaCreditosComplementarios.Infraestructure.Data;
 using SistemaCreditosComplementarios.Infraestructure.Repositories;
 using System;
@@ -19,11 +25,57 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Inyección de dependencias para el repositorio
-builder.Services.AddScoped<IActividadRepository, ActividadRepository>(); //se añadió el repositorio para las actividades
+// Inyecciï¿½n de dependencias para el repositorio
+builder.Services.AddScoped<IActividadRepository, ActividadRepository>(); //se aÃ±adiÃ³ el repositorio para las actividades
+builder.Services.AddScoped<ICarreraRepository, CarreraRepository>(); //se aÃ±ade el repositorio para las carreras
+builder.Services.AddScoped<IAlumnoRepository, AlumnoRepository>(); 
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
-//Inyección de dependencias para el servicio 
-builder.Services.AddScoped<IActividadService, ActividadService>(); //se añade el servicio de actividades
+
+//Inyecciï¿½n de dependencias para el servicio 
+builder.Services.AddScoped<IActividadService, ActividadService>(); //se aÃ±ade el servicio de actividades
+builder.Services.AddScoped<ICarreraService, CarreraService>(); //se aÃ±ade el servicio de carreras
+builder.Services.AddScoped<IAlumnoService, AlumnoService>();
+builder.Services.AddScoped<IAuthService, AuthService>(); //se aÃ±ade el servicio de autenticaciï¿½n
+
+// JWT Authentication 
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
+
+var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
+var key = Encoding.UTF8.GetBytes(jwtOptions.SecretKey);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+})
+    .AddJwtBearer(options => 
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtOptions.Issuer,
+            ValidAudience = jwtOptions.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+        };
+    });
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+// Configuraciï¿½n de CORS (Cross-Origin Resource Sharing)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
 
 var app = builder.Build();
 
