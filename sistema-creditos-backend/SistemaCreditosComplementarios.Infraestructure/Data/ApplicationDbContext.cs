@@ -1,10 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
-<<<<<<< Updated upstream
-=======
 using SistemaCreditosComplementarios.Core.Models.Alumno;
 using SistemaCreditosComplementarios.Core.Models.CarreraModel;
->>>>>>> Stashed changes
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,20 +12,16 @@ using System.Threading.Tasks;
 
 namespace SistemaCreditosComplementarios.Infraestructure.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser, IdentityRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
         
         public DbSet<ActividadModels> Actividades { get; set; }
-<<<<<<< Updated upstream
-        
-=======
         public DbSet<CarreraModels> Carreras { get; set; }
 
         public DbSet<Alumno> Alumnos { get; set; }
->>>>>>> Stashed changes
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

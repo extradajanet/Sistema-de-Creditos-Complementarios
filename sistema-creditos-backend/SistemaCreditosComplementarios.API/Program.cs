@@ -1,7 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
 using SistemaCreditosComplementarios.Core.Services.ActividadService;
 using SistemaCreditosComplementarios.Core.Services.AlumnoServices;
@@ -11,6 +18,7 @@ using SistemaCreditosComplementarios.Core.Settings;
 using SistemaCreditosComplementarios.Infraestructure.Data;
 using SistemaCreditosComplementarios.Infraestructure.Repositories;
 using System;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +87,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Inicializar los roles de identidad
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await IdentityDataInitializer.CreateRolesAsync(roleManager);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -87,6 +102,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
