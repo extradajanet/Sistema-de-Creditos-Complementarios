@@ -19,6 +19,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
         }
         
         public DbSet<ActividadModels> Actividades { get; set; }
+        
         public DbSet<CarreraModels> Carreras { get; set; }
 
         public DbSet<Alumno> Alumnos { get; set; }
