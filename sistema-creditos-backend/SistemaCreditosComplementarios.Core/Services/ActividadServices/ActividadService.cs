@@ -14,17 +14,15 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
     public class ActividadService: IActividadService
     {
         private readonly IActividadRepository _actividadRepository;
-
-        // Constructor que recibe el repositorio de actividades
         public ActividadService(IActividadRepository actividadRepository)
         {
             _actividadRepository = actividadRepository;
         }
 
-        // Método para obtener todas las actividades
+        // obtiene todas las actividades
         public async Task<IEnumerable<ActividadDto>> GetAllAsync()
         {
-            var actividades = await _actividadRepository.GetAllAsync(); // Llamada al repositorio para obtener todas las actividades
+            var actividades = await _actividadRepository.GetAllAsync();
             return actividades.Select(a => new ActividadDto
             {
                 Id = a.Id,
@@ -33,14 +31,18 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 FechaInicio = a.FechaInicio,
                 FechaFin = a.FechaFin,
                 Creditos = a.Creditos,
-                TipoActividad = a.TipoActividad
+                TipoActividad = a.TipoActividad,
+                EstadoActividad = a.EstadoActividad,
+                CarreraId = a.CarreraId,
+                CarreraNombre = a.Carrera?.Nombre,
+                ImagenNombre = a.ImagenNombre
             });
         }
 
-        // Método para obtener una actividad por su ID
+        // obtiene por id
         public async Task<ActividadDto> GetByIdAsync(int id)
         {
-            var actividad = await _actividadRepository.GetByIdAsync(id); // Llamada al repositorio para obtener la actividad por ID
+            var actividad = await _actividadRepository.GetByIdAsync(id);
             if (actividad == null)
             {
                 throw new Exception("Actividad no encontrada.");
@@ -53,11 +55,15 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 FechaInicio = actividad.FechaInicio,
                 FechaFin = actividad.FechaFin,
                 Creditos = actividad.Creditos,
-                TipoActividad = actividad.TipoActividad
+                TipoActividad = actividad.TipoActividad,
+                EstadoActividad = actividad.EstadoActividad,
+                CarreraId = actividad.CarreraId,
+                CarreraNombre = actividad.Carrera?.Nombre,
+                ImagenNombre = actividad.ImagenNombre
             };
         }
 
-        // Método para agregar una nueva actividad
+        // agrega actividad
         public async Task<ActividadDto> AddAsync(ActividadCreateDto actividadCreateDto)
         {
             var actividad = new ActividadModels
@@ -68,30 +74,35 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 FechaFin = actividadCreateDto.FechaFin,
                 Nombre = actividadCreateDto.Nombre,
                 TipoActividad = actividadCreateDto.TipoActividad,
-                EstadoActividad = actividadCreateDto.EstadoActividad, 
+                CarreraId = actividadCreateDto.CarreraId,
+                EstadoActividad = actividadCreateDto.EstadoActividad,
                 ImagenNombre = actividadCreateDto.ImagenNombre
 
             };
-            await _actividadRepository.AddAsync(actividad); // Llamada al repositorio para agregar la actividad
-            
+            await _actividadRepository.AddAsync(actividad);
+
+            var actividadConCarrera = await _actividadRepository.GetByIdAsync(actividad.Id);
+
             return new ActividadDto
             {
-                Id = actividad.Id, // Asignar el ID generado por la base de datos
-                Nombre = actividad.Nombre,
-                Descripcion = actividad.Descripcion,
-                FechaInicio = actividad.FechaInicio,
-                FechaFin = actividad.FechaFin,
-                Creditos = actividad.Creditos,
-                TipoActividad = actividad.TipoActividad,
-                EstadoActividad = actividad.EstadoActividad, 
-                ImagenNombre = actividad.ImagenNombre
+                Id = actividadConCarrera.Id,
+                Nombre = actividadConCarrera.Nombre,
+                Descripcion = actividadConCarrera.Descripcion,
+                FechaInicio = actividadConCarrera.FechaInicio,
+                FechaFin = actividadConCarrera.FechaFin,
+                Creditos = actividadConCarrera.Creditos,
+                TipoActividad = actividadConCarrera.TipoActividad,
+                EstadoActividad = actividadConCarrera.EstadoActividad,
+                CarreraId = actividadConCarrera.CarreraId,
+                CarreraNombre = actividadConCarrera.Carrera?.Nombre,
+                ImagenNombre = actividadConCarrera.ImagenNombre
             };
         }
 
-        // Método para actualizar una actividad existente
+        // actualiza actividad
         public async Task<ActividadDto> UpdateAsync(int id, ActividadCreateDto actividadUpdateDto)
         {
-            var actividad = await _actividadRepository.GetByIdAsync(id); // Llamada al repositorio para obtener la actividad por ID
+            var actividad = await _actividadRepository.GetByIdAsync(id);
             if (actividad == null)
             {
                 throw new Exception("Actividad no encontrada.");
@@ -103,9 +114,12 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
             actividad.FechaFin = actividadUpdateDto.FechaFin;
             actividad.Creditos = actividadUpdateDto.Creditos;
             actividad.TipoActividad = actividadUpdateDto.TipoActividad;
-            actividad.EstadoActividad = actividadUpdateDto.EstadoActividad; 
+            actividad.EstadoActividad = actividadUpdateDto.EstadoActividad;
+            actividad.CarreraId = actividadUpdateDto.CarreraId;
             actividad.ImagenNombre = actividadUpdateDto.ImagenNombre;
-            var updatedActividad = await _actividadRepository.UpdateAsync(id, actividad); // Llamada al repositorio para actualizar la actividad
+
+            var updatedActividad = await _actividadRepository.UpdateAsync(id, actividad);
+
             return new ActividadDto
             {
                 Id = updatedActividad.Id,
@@ -115,21 +129,23 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 FechaFin = updatedActividad.FechaFin,
                 Creditos = updatedActividad.Creditos,
                 TipoActividad = updatedActividad.TipoActividad,
-                EstadoActividad = updatedActividad.EstadoActividad, 
+                EstadoActividad = updatedActividad.EstadoActividad,
+                CarreraId = updatedActividad.CarreraId,
+                CarreraNombre = updatedActividad.Carrera?.Nombre,
                 ImagenNombre = updatedActividad.ImagenNombre
             };
         }
 
-        // Método para eliminar una actividad por su ID
+        // elimina actividad
         public async Task DeleteAsync(int id)
         {
-            var actividad = await _actividadRepository.GetByIdAsync(id); // Llamada al repositorio para obtener la actividad por ID
+            var actividad = await _actividadRepository.GetByIdAsync(id);
             if (actividad == null)
             {
                 throw new Exception("Actividad no encontrada.");
             }
-            await _actividadRepository.DeleteAsync(id); // Llamada al repositorio para eliminar la actividad
-        }   
+            await _actividadRepository.DeleteAsync(id);
+        }
 
     }
 }
