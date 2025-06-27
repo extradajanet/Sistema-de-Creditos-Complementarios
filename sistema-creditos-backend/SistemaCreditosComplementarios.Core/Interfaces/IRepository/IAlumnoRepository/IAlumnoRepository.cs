@@ -1,4 +1,5 @@
-﻿using SistemaCreditosComplementarios.Core.Models.Alumno;
+﻿using SistemaCreditosComplementarios.Core.Models;
+using SistemaCreditosComplementarios.Core.Models.Alumno;
 using System;
 using System.Collections.Generic;
 using System.Linq;
