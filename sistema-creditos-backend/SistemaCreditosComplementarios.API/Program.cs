@@ -86,16 +86,17 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 
+// ...
+
 var app = builder.Build();
 
-// Inicializar los roles de identidad
+// Inicializar roles (igual)
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await IdentityDataInitializer.CreateRolesAsync(roleManager);
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -104,10 +105,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+// ¡Agrega esta línea para que la política de CORS se aplique!
+app.UseCors("AllowAllOrigins");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
