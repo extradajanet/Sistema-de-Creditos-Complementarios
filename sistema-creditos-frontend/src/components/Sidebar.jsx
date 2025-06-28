@@ -5,7 +5,7 @@ import logo from '../images/logo-mapache.jpeg';
 
 export default function Sidebar() {
   return (
-    <aside className="bg-blue-900 text-white w-35 hover:w-56 transition-all duration-300 h-screen flex flex-col items-center py-15 group m-4 rounded-2xl">
+    <aside className="bg-blue-950 text-white w-35 hover:w-56 transition-all duration-300 h-screen flex flex-col items-center py-15 group m-4 rounded-2xl">
       {/* Logo redondo y que se expande */}
       
         <div className="bg-white p-3 rounded-full transition-all duration-300 group-hover:p-2 gap-4 mb-10">

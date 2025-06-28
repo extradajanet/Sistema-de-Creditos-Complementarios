@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {LibraryBig, Trophy, BellRing } from "lucide-react";
 
 export default function Home() {
@@ -14,17 +15,19 @@ export default function Home() {
 
       {/* Tarjetas de navegación */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-40">
-        <div className="bg-blue-900 text-white rounded-xl flex flex-col items-center justify-center p-15 hover:scale-105 transition  w-80">
+        <div className="bg-blue-950 text-white rounded-xl flex flex-col items-center justify-center p-15 hover:scale-105 transition  w-80">
+          <Link to="/cursosdisponibles" className="flex flex-col items-center justify-center">
           <LibraryBig  strokeWidth={0.5} className="h-40 w-40 mb-2" />
           <span className="text-center font-bold text-lg">Cursos Disponibles</span>
+          </Link>
         </div>
 
-        <div className="bg-blue-900 text-white rounded-xl flex flex-col items-center justify-center p-6 hover:scale-105 transition w-80">
+        <div className="bg-blue-950 text-white rounded-xl flex flex-col items-center justify-center p-6 hover:scale-105 transition w-80">
           <Trophy strokeWidth={0.5} className="h-40 w-40 mb-2"/>
           <span className="text-center font-bold text-lg">Actividades Extraescolares</span>
         </div>
 
-        <div className="bg-blue-900 text-white rounded-xl flex flex-col items-center justify-center p-6 hover:scale-105 transition w-80">
+        <div className="bg-blue-950 text-white rounded-xl flex flex-col items-center justify-center p-6 hover:scale-105 transition w-80">
           <BellRing strokeWidth={0.5} className="h-40 w-40 mb-2"/>
           <span className="text-center font-bold text-lg">Avisos</span>
         </div>

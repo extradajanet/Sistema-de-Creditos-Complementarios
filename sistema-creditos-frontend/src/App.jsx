@@ -3,7 +3,9 @@ import Sidebar from "./components/Sidebar";
 
 import Home from "./pages/Home";
 import Cursos from "./pages/Cursos";
-import Perfil from "./pages/Perfil";
+import Perfil from "./pages/Perfil";7
+import CursosDisponibles from "./pages/CursosDisponibles";
+
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/cursos" element={<Cursos />} />
             <Route path="/perfil" element={<Perfil />} />
+            <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
+
             {/* Puedes agregar más rutas aquí */}
           </Routes>
         </main>
