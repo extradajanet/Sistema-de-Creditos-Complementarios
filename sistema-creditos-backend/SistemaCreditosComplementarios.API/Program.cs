@@ -47,6 +47,10 @@ builder.Services.AddScoped<ICarreraService, CarreraService>(); //se añade el se
 builder.Services.AddScoped<IAlumnoService, AlumnoService>();
 builder.Services.AddScoped<IAuthService, AuthService>(); //se añade el servicio de autenticaci�n
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 // JWT Authentication 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
@@ -69,13 +73,11 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtOptions.Issuer,
             ValidAudience = jwtOptions.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
         };
     });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddAuthorization();
 
 // Configuraci�n de CORS (Cross-Origin Resource Sharing)
 builder.Services.AddCors(options =>
@@ -111,6 +113,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("AllowAllOrigins");
 
 app.UseAuthentication();
 
