@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
 using SistemaCreditosComplementarios.Core.Models.Alumno;
+
+using SistemaCreditosComplementarios.Core.Models.Coordinador;
+using SistemaCreditosComplementarios.Core.Models.Departamento;
 using SistemaCreditosComplementarios.Core.Models.CarreraModel;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +27,10 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
         public DbSet<CarreraModels> Carreras { get; set; }
 
         public DbSet<Alumno> Alumnos { get; set; }
+
+        public DbSet<Departamento> Departamentos { get; set; }
+
+        public DbSet<Coordinador> Coordinadores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

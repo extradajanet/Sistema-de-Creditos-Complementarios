@@ -21,12 +21,16 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
 
         public async Task<IEnumerable<Alumno>> GetAllAsync()
         {
-            return await _context.Alumnos.ToListAsync(); // Obtiene todos los alumnos de la base de datos
+            return await _context.Alumnos
+                .Include(a => a.Usuario)
+                .ToListAsync(); // Obtiene todos los alumnos de la base de datos
         }
 
         public async Task<Alumno> GetByIdAsync(int id)
         {
-            return await _context.Alumnos.FindAsync(id); // Busca un alumno por su ID
+            return await _context.Alumnos
+                .Include(a => a.Usuario) // Incluye la entidad Usuario relacionada
+                .FirstOrDefaultAsync(a => a.Id == id); // Busca el alumno por su ID
         }
 
         public async Task AddAsync(Alumno alumno)
