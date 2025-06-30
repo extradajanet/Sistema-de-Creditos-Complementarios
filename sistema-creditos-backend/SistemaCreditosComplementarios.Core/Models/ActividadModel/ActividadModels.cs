@@ -1,9 +1,10 @@
-﻿using System;
+﻿using SistemaCreditosComplementarios.Core.Models.CarreraModel;
+using SistemaCreditosComplementarios.Core.Models.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SistemaCreditosComplementarios.Core.Models.Enum;
 
 namespace SistemaCreditosComplementarios.Core.Models.ActividadModel
 {
@@ -18,14 +19,12 @@ namespace SistemaCreditosComplementarios.Core.Models.ActividadModel
         public decimal Creditos { get; set; }
         public string TipoActividad { get; set; } //"Curso", "Taller", "Seminario", "Tutorías" **se puede hacer un enum para definir los tipos de actividad
 
-        //se podría agregar más adelante...
-        //public int CarreraId { get; set; }
-        //public Carrera Carrera { get; set; }
+        public int CarreraId { get; set; }
+        public CarreraModels Carrera { get; set; }
 
         public EstadoActividad EstadoActividad { get; set; } // estado de la actividad (Activo = 1, En Progreso = 2, Finalizado = 3)
 
-        // Agregado para imagen
-        public string ImagenNombre { get; set; } 
+        public string ImagenNombre { get; set; }
 
     }
 }

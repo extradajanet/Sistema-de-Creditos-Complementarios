@@ -16,7 +16,9 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Actividad
         public DateTime FechaFin { get; set; }
         public decimal Creditos { get; set; }
         public string TipoActividad { get; set; } // "Curso", "Taller", "Seminario", "Tutorías"
-        public  EstadoActividad EstadoActividad { get; set; } // "Activo", "En Progreso", "Finalizado"
+        public EstadoActividad EstadoActividad { get; set; } // "Activo = 1", "En Progreso = 2", "Finalizado = 3"
+        public int CarreraId { get; set; }
+        public string CarreraNombre { get; set; }
         public string ImagenNombre { get; set; }
     }
 
@@ -27,8 +29,9 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Actividad
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
         public decimal Creditos { get; set; }
-        public string TipoActividad { get; set; } // "Curso", "Taller", "Seminario", "Tutorías"
-        public EstadoActividad EstadoActividad { get; set; } // "Activo", "En Progreso", "Finalizado"
+        public string TipoActividad { get; set; }
+        public int CarreraId { get; set; }
+        public EstadoActividad EstadoActividad { get; set; }
         public string ImagenNombre { get; set; }
     }
 }
