@@ -81,11 +81,19 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Inicializar los roles de identidad
-using (var scope = app.Services.CreateScope())
+// Inicializar roles y usuarios de identidad
+try
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await IdentityDataInitializer.CreateRolesAsync(roleManager);
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        await IdentityDataInitializer.InitializeAsync(services);
+    }
+}
+catch (Exception ex)
+{
+    // Manejo de excepciones al inicializar los datos de identidad
+    Console.WriteLine($"Error al inicializar los datos de identidad: {ex.Message}");
 }
 
 // Configure the HTTP request pipeline.
