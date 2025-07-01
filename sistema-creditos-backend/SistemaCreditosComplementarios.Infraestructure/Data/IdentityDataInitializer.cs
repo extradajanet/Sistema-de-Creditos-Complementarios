@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using SistemaCreditosComplementarios.Core.Models.Coordinador;
-using SistemaCreditosComplementarios.Core.Models.Departamento;
+using SistemaCreditosComplementarios.Core.Models.Coordinadores;
+using SistemaCreditosComplementarios.Core.Models.Departamentos;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;

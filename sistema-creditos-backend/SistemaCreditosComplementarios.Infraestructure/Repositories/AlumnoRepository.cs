@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
-using SistemaCreditosComplementarios.Core.Models.Alumno;
+using SistemaCreditosComplementarios.Core.Models.Alumnos;
 using SistemaCreditosComplementarios.Infraestructure.Data;
 using System;
 using System.Collections.Generic;
