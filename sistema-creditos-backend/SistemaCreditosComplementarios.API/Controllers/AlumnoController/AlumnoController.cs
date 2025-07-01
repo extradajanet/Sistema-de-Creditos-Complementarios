@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SistemaCreditosComplementarios.Core.Dtos.Alumno;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 

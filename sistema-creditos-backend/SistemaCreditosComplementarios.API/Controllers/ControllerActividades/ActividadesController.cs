@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SistemaCreditosComplementarios.Core.Dtos.Actividad;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
 
@@ -19,6 +20,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerActividades
 
         // GET: api/actividades
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ActividadDto>>> GetAll()
         {
             try
@@ -34,6 +36,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerActividades
 
         // GET: api/actividades/{id}
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ActividadDto>> GetById(int id)
         {
             try
@@ -52,6 +55,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerActividades
 
         // POST: api/actividades
         [HttpPost]
+        [Authorize(Roles = "Coordinador, Departamento")]
         public async Task<ActionResult<ActividadDto>> Create([FromBody] ActividadCreateDto actividadCreateDto)
         {
             try
@@ -68,6 +72,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerActividades
 
         // PUT: api/actividades/{id}
         [HttpPut("{id}")]
+        [Authorize(Roles = "Coordinador, Departamento")]
         public async Task<ActionResult<ActividadDto>> Update(int id, [FromBody] ActividadCreateDto actividadUpdateDto)
         {
             try
@@ -84,6 +89,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerActividades
 
         // DELETE: api/actividades/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Coordinador, Departamento")]
         public async Task<IActionResult> Delete(int id)
         {
             try

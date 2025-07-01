@@ -1,1 +1,17 @@
 @import "tailwindcss";
+.custom-heading {
+  font-size: 40px;
+  font-family: 'Murecho', sans-serif;
+}
+.custom-subheading {
+  font-size: 22px;
+  font-family: 'Murecho', sans-serif;
+}
+.custom-text {
+  font-size: 15px;
+  font-family: 'Murecho', sans-serif;
+}
+.custom-smtext {
+  font-size: 10px;
+  font-family: 'Murecho', sans-serif;
+}
