@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SistemaCreditosComplementarios.Core.Dtos.Auth;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthRepository;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +13,20 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
 {
     public class AuthRepository : IAuthRepository
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AuthRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
-        public async Task<IdentityUser> RegisterAsync(RegisterDto registerDto)
+        public async Task<ApplicationUser> RegisterAsync(RegisterDto registerDto)
         {
-            var user = new IdentityUser
+            var user = new ApplicationUser
             {
+                NumeroControl = registerDto.NumeroControl,
                 UserName = registerDto.Email,
                 Email = registerDto.Email
             };
@@ -46,9 +49,12 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
 
         }
 
-        public async Task<IdentityUser> LoginAsync(LoginDto loginDto)
+        public async Task<ApplicationUser> LoginAsync(LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Usuario);
+            // Busca al usuario por email o número de control
+            ApplicationUser user = await _userManager.FindByEmailAsync(loginDto.Usuario)
+                          ?? await _userManager.Users
+                                .FirstOrDefaultAsync(u => u.NumeroControl == loginDto.Usuario);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {

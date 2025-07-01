@@ -5,6 +5,7 @@ using SistemaCreditosComplementarios.Core.Dtos.Auth;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using SistemaCreditosComplementarios.Core.Settings;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,13 +18,13 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
         private readonly JwtOptions _jwtOptions;
         private readonly IAlumnoService _alumnoService;
         private readonly IAuthRepository _authRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         public AuthService
             (
             IOptions<JwtOptions> jwtOptions, 
             IAlumnoService alumnoService,
             IAuthRepository authRepository,
-            UserManager<IdentityUser> userManager
+            UserManager<ApplicationUser> userManager
             )
         {
             _jwtOptions = jwtOptions.Value;
@@ -53,7 +54,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
 
         // Genera un token JWT para el usuario autenticado
 
-        private string GenerateToken(IdentityUser user)
+        private string GenerateToken(ApplicationUser user)
         {
             var claims = new List<Claim>
             {

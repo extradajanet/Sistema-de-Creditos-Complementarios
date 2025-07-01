@@ -10,6 +10,7 @@ using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using SistemaCreditosComplementarios.Core.Services.ActividadService;
 using SistemaCreditosComplementarios.Core.Services.AlumnoServices;
 using SistemaCreditosComplementarios.Core.Services.AuthServices;
@@ -47,7 +48,7 @@ builder.Services.AddScoped<ICarreraService, CarreraService>(); //se añade el se
 builder.Services.AddScoped<IAlumnoService, AlumnoService>();
 builder.Services.AddScoped<IAuthService, AuthService>(); //se añade el servicio de autenticaci�n
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
