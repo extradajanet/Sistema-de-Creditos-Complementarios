@@ -11,10 +11,9 @@ namespace SistemaCreditosComplementarios.Core.Models.Alumno
     public class Alumno
     {
         public int Id { get; set; }
-
         public string Nombre { get; set; }
         public string Apellido { get; set; }
-        public DateTime FechaNacimiento { get; set; }
+        public string NumeroControl { get; set; }
         public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
         public int CarreraId { get; set; }
         public CarreraModels Carrera { get; set; }
