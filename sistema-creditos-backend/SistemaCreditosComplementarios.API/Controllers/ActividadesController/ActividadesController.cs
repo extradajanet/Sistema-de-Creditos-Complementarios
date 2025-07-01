@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SistemaCreditosComplementarios.Core.Dtos.Actividad;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
 
-namespace SistemaCreditosComplementarios.API.Controllers.ControllerActividades
+namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
 {
     [ApiController]
     [Route("api/[controller]")]

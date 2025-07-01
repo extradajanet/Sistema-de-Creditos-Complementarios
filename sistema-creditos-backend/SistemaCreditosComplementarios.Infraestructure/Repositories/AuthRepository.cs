@@ -48,7 +48,8 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
 
         public async Task<IdentityUser> LoginAsync(LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            var user = await _userManager.FindByEmailAsync(loginDto.Usuario);
+
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
                 throw new UnauthorizedAccessException("Invalid login attempt.");

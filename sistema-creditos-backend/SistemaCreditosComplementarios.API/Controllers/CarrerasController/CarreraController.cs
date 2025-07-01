@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SistemaCreditosComplementarios.Core.Dtos.Carrera;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
 
@@ -17,6 +18,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerCarreras
 
         // GET: api/carreras
         [HttpGet("api/carreras")]
+        [Authorize]
         public async Task<IEnumerable<CarreraDto>> GetAllCarreras()
         {
             try
