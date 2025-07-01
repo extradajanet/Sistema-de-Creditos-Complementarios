@@ -47,6 +47,10 @@ builder.Services.AddScoped<ICarreraService, CarreraService>(); //se añade el se
 builder.Services.AddScoped<IAlumnoService, AlumnoService>();
 builder.Services.AddScoped<IAuthService, AuthService>(); //se añade el servicio de autenticaci�n
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 // JWT Authentication 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
@@ -69,13 +73,11 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtOptions.Issuer,
             ValidAudience = jwtOptions.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
         };
     });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddAuthorization();
 
 // Configuraci�n de CORS (Cross-Origin Resource Sharing)
 builder.Services.AddCors(options =>
@@ -90,11 +92,19 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Inicializar roles (igual)
-using (var scope = app.Services.CreateScope())
+// Inicializar roles y usuarios de identidad
+try
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await IdentityDataInitializer.CreateRolesAsync(roleManager);
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        await IdentityDataInitializer.InitializeAsync(services);
+    }
+}
+catch (Exception ex)
+{
+    // Manejo de excepciones al inicializar los datos de identidad
+    Console.WriteLine($"Error al inicializar los datos de identidad: {ex.Message}");
 }
 
 if (app.Environment.IsDevelopment())
@@ -104,9 +114,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// ¡Agrega esta línea para que la política de CORS se aplique!
-app.UseCors("AllowAllOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
