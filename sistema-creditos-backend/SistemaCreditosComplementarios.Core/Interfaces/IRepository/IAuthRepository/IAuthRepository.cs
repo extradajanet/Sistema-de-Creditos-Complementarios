@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SistemaCreditosComplementarios.Core.Dtos.Auth;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthReposi
 {
     public interface IAuthRepository
     {
-        Task<IdentityUser> RegisterAsync(RegisterDto registerDto);
-        Task<IdentityUser> LoginAsync(LoginDto loginDto);
+        Task<ApplicationUser> RegisterAsync(RegisterDto registerDto);
+        Task<ApplicationUser> LoginAsync(LoginDto loginDto);
     }
 }

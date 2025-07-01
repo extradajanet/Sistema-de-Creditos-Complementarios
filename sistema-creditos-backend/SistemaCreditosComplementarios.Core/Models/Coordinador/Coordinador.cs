@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,6 @@ namespace SistemaCreditosComplementarios.Core.Models.Coordinador
         public string Apellido { get; set; }
         public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
         public string UsuarioId { get; set; }
-        public IdentityUser Usuario{ get; set; }
+        public ApplicationUser Usuario{ get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SistemaCreditosComplementarios.Core.Models.CarreraModel;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,6 @@ namespace SistemaCreditosComplementarios.Core.Models.Alumno
         public int CarreraId { get; set; }
         public CarreraModels Carrera { get; set; }
         public string UsuarioId { get; set; }
-        public IdentityUser Usuario { get; set; }
+        public ApplicationUser Usuario { get; set; }
     }
 }
