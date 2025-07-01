@@ -19,6 +19,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerCarreras
         // GET: api/carreras
         [HttpGet("carreras")]
      
+
         public async Task<IEnumerable<CarreraDto>> GetAllCarreras()
         {
             try

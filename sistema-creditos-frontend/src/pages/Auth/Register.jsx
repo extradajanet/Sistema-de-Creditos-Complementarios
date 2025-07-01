@@ -19,7 +19,9 @@ function Register() {
   useEffect(() => {
     const fetchCareers = async () => {
       try {
+
         const res = await fetch("https://localhost:7238/api/Carrera/carreras");
+
         const data = await res.json();
         setCareers(data);
       } catch (err) {
