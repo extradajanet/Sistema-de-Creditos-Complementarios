@@ -17,7 +17,7 @@ function Register() {
   useEffect(() => {
     const fetchCareers = async () => {
       try {
-        const res = await fetch("http://localhost:5159/api/Careers"); 
+        const res = await fetch("https://localhost:7238/api/Auth/register"); 
         const data = await res.json();
         setCareers(data);
       } catch (err) {
