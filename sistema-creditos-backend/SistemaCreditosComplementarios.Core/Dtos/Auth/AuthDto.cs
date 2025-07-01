@@ -15,6 +15,8 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Auth
 
         public string Nombre { get; set; }
         public string Apellido { get; set; }
+        public int Semestre { get; set; }
+        public decimal TotalCreditos { get; set; } = 0;
         public int CarreraId { get; set; }
 
     }
