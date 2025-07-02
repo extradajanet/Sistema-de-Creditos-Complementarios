@@ -9,7 +9,7 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRep
 {
     public interface ICarreraRepository
     {
-        Task<IEnumerable<CarreraModels>> GetAll();
+        Task<IEnumerable<Carrera>> GetAll();
 
     }
 }

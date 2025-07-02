@@ -2,12 +2,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
-using SistemaCreditosComplementarios.Core.Models.Alumno;
-
-using SistemaCreditosComplementarios.Core.Models.Coordinador;
-using SistemaCreditosComplementarios.Core.Models.Departamento;
+using SistemaCreditosComplementarios.Core.Models.Alumnos;
+using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
 using SistemaCreditosComplementarios.Core.Models.CarreraModel;
-
+using SistemaCreditosComplementarios.Core.Models.Coordinadores;
+using SistemaCreditosComplementarios.Core.Models.Departamentos;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +22,9 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
         {
         }
         
-        public DbSet<ActividadModels> Actividades { get; set; }
+        public DbSet<Actividad> Actividades { get; set; }
         
-        public DbSet<CarreraModels> Carreras { get; set; }
+        public DbSet<Carrera> Carreras { get; set; }
 
         public DbSet<Alumno> Alumnos { get; set; }
 
@@ -32,28 +32,42 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
 
         public DbSet<Coordinador> Coordinadores { get; set; }
 
+        public DbSet<AlumnoActividad> AlumnosActividades { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             //configurar las carreras por defecto 
-            modelBuilder.Entity<CarreraModels>().HasData(
-                   new CarreraModels { Id = 1, Nombre = "Ingeniería en Sistemas Computacionales" },
-                new CarreraModels { Id = 2, Nombre = "Ingeniería en Tecnologías de la Información y Comunicaciones" },
-                new CarreraModels { Id = 3, Nombre = "Ingeniería en Administración" },
-                new CarreraModels { Id = 4, Nombre = "Licenciatura en Administración" },
-                new CarreraModels { Id = 5, Nombre = "Arquitectura" },
-                new CarreraModels { Id = 6, Nombre = "Licenciatura en Biología" },
-                new CarreraModels { Id = 7, Nombre = "Licenciatura en Turismo" },
-                new CarreraModels { Id = 8, Nombre = "Ingeniería Civil" },
-                new CarreraModels { Id = 9, Nombre = "Contador Público" },
-                new CarreraModels { Id = 10, Nombre = "Ingeniería Eléctrica" },
-                new CarreraModels { Id = 11, Nombre = "Ingeniería Electromecánica " },
-                new CarreraModels { Id = 12, Nombre = "Ingeniería en Gestión Empresarial " },
-                new CarreraModels { Id = 13, Nombre = "Ingeniería en  Desarrollo de Aplicaciones " },
-                new CarreraModels { Id = 14, Nombre = "Todas las carreras " }
+            modelBuilder.Entity<Carrera>().HasData(
+                   new Carrera { Id = 1, Nombre = "Ingeniería en Sistemas Computacionales" },
+                new Carrera { Id = 2, Nombre = "Ingeniería en Tecnologías de la Información y Comunicaciones" },
+                new Carrera { Id = 3, Nombre = "Ingeniería en Administración" },
+                new Carrera { Id = 4, Nombre = "Licenciatura en Administración" },
+                new Carrera { Id = 5, Nombre = "Arquitectura" },
+                new Carrera { Id = 6, Nombre = "Licenciatura en Biología" },
+                new Carrera { Id = 7, Nombre = "Licenciatura en Turismo" },
+                new Carrera { Id = 8, Nombre = "Ingeniería Civil" },
+                new Carrera { Id = 9, Nombre = "Contador Público" },
+                new Carrera { Id = 10, Nombre = "Ingeniería Eléctrica" },
+                new Carrera { Id = 11, Nombre = "Ingeniería Electromecánica " },
+                new Carrera { Id = 12, Nombre = "Ingeniería en Gestión Empresarial " },
+                new Carrera { Id = 13, Nombre = "Ingeniería en  Desarrollo de Aplicaciones " },
+                new Carrera { Id = 14, Nombre = "Todas las carreras " }
             );
 
+            modelBuilder.Entity<AlumnoActividad>()
+                .HasKey(aa => new { aa.IdAlumno, aa.IdActividad }); // Clave compuesta
+
+            modelBuilder.Entity<AlumnoActividad>()
+                .HasOne(aa => aa.Alumno)
+                .WithMany(a => a.AlumnosActividades)
+                .HasForeignKey(aa => aa.IdAlumno);
+
+            modelBuilder.Entity<AlumnoActividad>()
+                .HasOne(aa => aa.Actividad)
+                .WithMany(a => a.AlumnosActividades)
+                .HasForeignKey(aa => aa.IdActividad);
         }
     }
 }

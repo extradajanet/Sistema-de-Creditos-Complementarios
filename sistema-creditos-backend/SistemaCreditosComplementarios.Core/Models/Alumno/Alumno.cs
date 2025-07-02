@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
 using SistemaCreditosComplementarios.Core.Models.CarreraModel;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,11 @@ namespace SistemaCreditosComplementarios.Core.Models.Alumno
         public DateTime FechaNacimiento { get; set; }
         public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
         public int CarreraId { get; set; }
-        public CarreraModels Carrera { get; set; }
+        public Carrera Carrera { get; set; }
         public string UsuarioId { get; set; }
-        public IdentityUser Usuario { get; set; }
+        public ApplicationUser Usuario { get; set; }
+
+        public ICollection<AlumnoActividad> AlumnosActividades { get; set; }
+
     }
 }
