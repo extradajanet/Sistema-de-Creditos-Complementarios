@@ -20,7 +20,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
             _context = context;
         }
         // Método para obtener todas las carreras
-        public async Task<IEnumerable<CarreraModels>> GetAll()
+        public async Task<IEnumerable<Carrera>> GetAll()
         {
             return await _context.Carreras.ToListAsync();
         }
