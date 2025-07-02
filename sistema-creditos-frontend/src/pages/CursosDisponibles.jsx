@@ -16,6 +16,7 @@ export default function ActividadesList() {
   const [tipoSeleccionado, setTipoSeleccionado] = useState("");
 
   useEffect(() => {
+
     let isMounted = true;
     fetch("/api/Actividades", { headers: { Accept: "application/json" } })
       .then((res) => {
@@ -38,6 +39,7 @@ export default function ActividadesList() {
     return () => {
       isMounted = false;
     };
+    
   }, []);
 
   const actividadesFiltradas = actividades.filter(
@@ -46,16 +48,12 @@ export default function ActividadesList() {
       (tipoSeleccionado === "" || actividad.tipoActividad === tipoSeleccionado)
   );
 
-  if (loading) return <p className="text-center mt-10">Cargando actividades...</p>;
-
-  if (actividadesFiltradas.length === 0)
-    return <p className="text-center mt-10">No hay actividades disponibles</p>;
 
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Título */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
-        <h1 className="text-3xl font-bold text-gray-900">Cursos Disponibles</h1>
+        <h1 className="text-3xl font-bold  text-gray-900 custom-heading">Cursos Disponibles</h1>
       </div>
 
       {/* Buscador y filtro */}
@@ -102,36 +100,43 @@ export default function ActividadesList() {
       </div>
 
       {/* Lista de actividades */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-9">
-        {actividadesFiltradas.map((actividad) => (
-          <div
-            key={actividad.id}
-            className="bg-white rounded-lg shadow-md p-6 flex flex-col border-3 border-blue-950"
-          >
-            {actividad.imagenNombre && (
-              <img
-                src={predeterminado}
-                alt={actividad.nombre}
-                className="rounded-md mb-4 object-cover h-24 w-24 mx-auto"
-              />
-            )}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-9">
+        {loading ? (
+          <p className="text-center col-span-full mt-10 text-black-600">Cargando actividades...</p>
+        ) : actividadesFiltradas.length === 0 ? (
+          <p className="text-center col-span-full mt-10 text-black-600">No hay cursos disponibles</p>
+        ) : (
+          actividadesFiltradas.map((actividad) => (
+            <div
+              key={actividad.id}
+              className="bg-white rounded-lg shadow-md p-6 flex flex-col border-3 border-blue-950"
+            >
+              {actividad.imagenNombre ? (
+                <img
+                  src={predeterminado}
+                  alt={actividad.nombre}
+                  className="rounded-md mb-4 object-cover h-24 w-24 mx-auto"
+                />
+              ) : null}
 
-            <h3 className="text-xl text-blue-950 font-semibold mb-2 text-center">
-              {actividad.nombre}
-            </h3>
+              <h3 className="text-xl text-blue-950 font-semibold mb-2 text-center">
+                {actividad.nombre}
+              </h3>
 
-            <p className="text-xs text-blue-950 mb-1 text-center">
-              <strong>
-                {actividad.tipoActividad} · {actividad.creditos} Crédito
-              </strong>
-            </p>
+              <p className="text-xs text-gray-700 mb-1 text-center">
+                <strong>
+                  {actividad.tipoActividad} · {actividad.creditos} Crédito
+                  {actividad.creditos > 1 ? "s" : ""}
+                </strong>
+              </p>
 
-            <div className="flex items-center gap-1 text-blue-950 text-xs mt-2 cursor-pointer font-semibold justify-center">
-              <CircleAlert strokeWidth={0.8} className="h-4 w-4" />
-              <p>Más información</p>
+              <div className="flex items-center gap-1 text-gray-700 text-xs mt-2 cursor-pointer font-semibold justify-center">
+                <CircleAlert strokeWidth={0.8} className="h-4 w-4" />
+                <p>Más información</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

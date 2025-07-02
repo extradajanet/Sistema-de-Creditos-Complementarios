@@ -197,7 +197,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     b.HasIndex("CarreraId");
 
-                    b.ToTable("Actividades");
+                    b.ToTable("Actividades", (string)null);
                 });
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Alumnos.Alumno", b =>
@@ -238,7 +238,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Alumnos");
+                    b.ToTable("Alumnos", (string)null);
                 });
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.AlumnosActividades.AlumnoActividad", b =>
@@ -259,7 +259,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     b.HasIndex("IdActividad");
 
-                    b.ToTable("AlumnosActividades");
+                    b.ToTable("AlumnosActividades", (string)null);
                 });
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", b =>
@@ -286,7 +286,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     b.HasIndex("DepartamentoId");
 
-                    b.ToTable("Carreras");
+                    b.ToTable("Carreras", (string)null);
 
                     b.HasData(
                         new
@@ -388,7 +388,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Coordinadores");
+                    b.ToTable("Coordinadores", (string)null);
                 });
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Departamentos.Departamento", b =>
@@ -414,7 +414,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Departamentos");
+                    b.ToTable("Departamentos", (string)null);
                 });
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", b =>
