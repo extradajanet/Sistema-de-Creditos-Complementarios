@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SistemaCreditosComplementarios.Core.Models.CarreraModel
 {
-    public class Carrera
+    public class CarreraModels
     {
         public int Id { get; set; }
         public string Nombre { get; set; }

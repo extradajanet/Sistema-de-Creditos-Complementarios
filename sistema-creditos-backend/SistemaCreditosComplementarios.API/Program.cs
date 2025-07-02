@@ -2,18 +2,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IActividadRepository;
-using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoActividadRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
-using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActividadService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
 using SistemaCreditosComplementarios.Core.Services.ActividadService;
-using SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices;
 using SistemaCreditosComplementarios.Core.Services.AlumnoServices;
 using SistemaCreditosComplementarios.Core.Services.AuthServices;
 using SistemaCreditosComplementarios.Core.Services.CarreraServices;
@@ -42,15 +39,13 @@ builder.Services.AddScoped<IActividadRepository, ActividadRepository>(); //se a�
 builder.Services.AddScoped<ICarreraRepository, CarreraRepository>(); //se añade el repositorio para las carreras
 builder.Services.AddScoped<IAlumnoRepository, AlumnoRepository>(); 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IAlumnoActividadRepository, AlumnoActividadRepository>(); //se añade el repositorio para las actividades de los alumnos
 
 
 //Inyecci�n de dependencias para el servicio 
 builder.Services.AddScoped<IActividadService, ActividadService>(); //se añade el servicio de actividades
 builder.Services.AddScoped<ICarreraService, CarreraService>(); //se añade el servicio de carreras
 builder.Services.AddScoped<IAlumnoService, AlumnoService>();
-builder.Services.AddScoped<IAuthService, AuthService>(); //se añade el servicio de autenticación
-builder.Services.AddScoped<IAlumnoActividadService, AlumnoActividadService>(); //se añade el servicio de actividades de los alumnos
+builder.Services.AddScoped<IAuthService, AuthService>(); //se añade el servicio de autenticaci�n
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
