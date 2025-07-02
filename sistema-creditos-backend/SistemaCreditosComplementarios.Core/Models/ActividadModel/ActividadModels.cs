@@ -1,5 +1,4 @@
-﻿using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
-using SistemaCreditosComplementarios.Core.Models.CarreraModel;
+﻿using SistemaCreditosComplementarios.Core.Models.CarreraModel;
 using SistemaCreditosComplementarios.Core.Models.Enum;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 namespace SistemaCreditosComplementarios.Core.Models.ActividadModel
 {
     //modelo de curso/actividad para el sistema de créditos complementarios
-    public class Actividad
+    public class ActividadModels
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
@@ -26,9 +25,6 @@ namespace SistemaCreditosComplementarios.Core.Models.ActividadModel
         public EstadoActividad EstadoActividad { get; set; } // estado de la actividad (Activo = 1, En Progreso = 2, Finalizado = 3)
 
         public string ImagenNombre { get; set; }
-        public int CarreraId { get; set; }
-        public Carrera Carrera { get; set; }
 
-        public ICollection<AlumnoActividad> AlumnosActividades { get; set; }
     }
 }

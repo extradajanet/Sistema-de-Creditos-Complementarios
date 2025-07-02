@@ -1,5 +1,5 @@
 ﻿using SistemaCreditosComplementarios.Core.Dtos.Actividad;
-using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IActividadRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
 using System;
@@ -66,7 +66,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
         // agrega actividad
         public async Task<ActividadDto> AddAsync(ActividadCreateDto actividadCreateDto)
         {
-            var actividad = new Actividad
+            var actividad = new ActividadModels
             {
                 Creditos = actividadCreateDto.Creditos,
                 Descripcion = actividadCreateDto.Descripcion,
