@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using SistemaCreditosComplementarios.Core.Models.Coordinador;
-using SistemaCreditosComplementarios.Core.Models.Departamento;
+using SistemaCreditosComplementarios.Core.Models.Coordinadores;
+using SistemaCreditosComplementarios.Core.Models.Departamentos;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var context = serviceProvider.GetRequiredService<ApplicationDbContext>(); 
 
             string[] roleNames = { "Alumno", "Departamento", "Coordinador", "Administrador" };
@@ -32,7 +33,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
             var adminEmail = "admin@ejemplo.com";
             if(await userManager.FindByEmailAsync(adminEmail) == null)
             {
-                var user = new IdentityUser
+                var user = new ApplicationUser
                 {
                     UserName = "admin",
                     Email = adminEmail,
@@ -48,7 +49,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
             var coordinatorEmail = "coordinador@ejemplo.com";
             if (await userManager.FindByEmailAsync(coordinatorEmail) == null)
             {
-                var user = new IdentityUser
+                var user = new ApplicationUser
                 {
                     UserName = "coordinador",
                     Email = coordinatorEmail,
@@ -73,7 +74,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
             var departmentEmail = "deptosistemas@ejemplo.com";
             if (await userManager.FindByEmailAsync(departmentEmail) == null)
             {
-                var user = new IdentityUser
+                var user = new ApplicationUser
                 {
                     UserName = "deptosistemas",
                     Email = departmentEmail,

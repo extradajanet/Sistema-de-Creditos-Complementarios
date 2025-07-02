@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
-using SistemaCreditosComplementarios.Core.Models.Alumno;
+using SistemaCreditosComplementarios.Core.Models.Alumnos;
 
-using SistemaCreditosComplementarios.Core.Models.Coordinador;
-using SistemaCreditosComplementarios.Core.Models.Departamento;
+using SistemaCreditosComplementarios.Core.Models.Coordinadores;
+using SistemaCreditosComplementarios.Core.Models.Departamentos;
 using SistemaCreditosComplementarios.Core.Models.CarreraModel;
 
 using System;
@@ -18,7 +18,7 @@ using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
 
 namespace SistemaCreditosComplementarios.Infraestructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser, IdentityRole, string>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

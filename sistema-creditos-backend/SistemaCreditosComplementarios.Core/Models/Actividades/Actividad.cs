@@ -20,7 +20,6 @@ namespace SistemaCreditosComplementarios.Core.Models.ActividadModel
         public decimal Creditos { get; set; }
         public string TipoActividad { get; set; } //"Curso", "Taller", "Seminario", "Tutorías" **se puede hacer un enum para definir los tipos de actividad
         public EstadoActividad EstadoActividad { get; set; } // estado de la actividad (Activo = 1, En Progreso = 2, Finalizado = 3)
-
         public string ImagenNombre { get; set; }
         public int CarreraId { get; set; }
         public Carrera Carrera { get; set; }

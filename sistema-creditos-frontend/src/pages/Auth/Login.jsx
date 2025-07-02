@@ -9,9 +9,23 @@ function Login() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
-   
+    e.preventDefault();
+    setError("");
     try {
-      
+      const response = await fetch("https://localhost:7238/api/Auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ Usuario: username, Password: password }),
+
+      });
+
+      if (!response.ok) {
+        throw new Error("Error de autenticación");
+      }
+
+      const data = await response.json();
+      // Guarda el token en localStorage
+      localStorage.setItem("token", data.token);
       // Redirige, por ejemplo, a la página principal u otra protegida
       navigate("/");
     } catch (err) {
@@ -33,9 +47,12 @@ function Login() {
             ¡Bienvenido!
           </h3>
           <div className="p-6 pt-2 ">
-            <form className="flex flex-col items-center space-y-3 " onSubmit={handleSubmit}>
+            <form
+              className="flex flex-col items-center space-y-3 "
+              onSubmit={handleSubmit}
+            >
               <input
-                type="username"
+                type="text"
                 value={username}
                 placeholder="Número de control"
                 onChange={(e) => setUsername(e.target.value)}
@@ -54,10 +71,7 @@ function Login() {
               </p>
               <div className="pt-2">
                 <Link to={"/register"}>
-                  <button
-                    className="custom-text font-bold w-[120px] bg-[#001F54] border border-2 border-[#001F54] text-white py-2 rounded-xl hover:bg-[#1282A2] transition mr-5"
-                   
-                  >
+                  <button className="custom-text font-bold w-[120px] bg-[#001F54] border border-2 border-[#001F54] text-white py-2 rounded-xl hover:bg-[#1282A2] transition mr-5">
                     Registrarse
                   </button>
                 </Link>

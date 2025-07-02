@@ -9,11 +9,13 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Alumno
     public class AlumnoDto
     {
         public int Id { get; set; }
+        public string NumeroControl { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public string CorreoElectronico { get; set; }
-        public DateTime FechaNacimiento { get; set; }
         public DateTime FechaRegistro { get; set; } 
+        public int Semestre { get; set; }
+        public decimal TotalCreditos { get; set; } = 0;
         public int CarreraId { get; set; } 
     }
 
@@ -21,7 +23,8 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Alumno
     {
         public string Nombre { get; set; }
         public string Apellido { get; set; }
-        public DateTime FechaNacimiento { get; set; }
+        public int Semestre { get; set; }
+        public decimal TotalCreditos { get; set; } = 0;
         public int CarreraId { get; set; }
     }
 
@@ -30,7 +33,8 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Alumno
         public int Id { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
-        public DateTime FechaNacimiento { get; set; }
+        public int Semestre { get; set; }
+        public decimal TotalCreditos { get; set; } = 0;
         public int CarreraId { get; set; }
     }
 }

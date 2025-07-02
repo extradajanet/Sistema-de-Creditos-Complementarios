@@ -2,7 +2,7 @@
 using SistemaCreditosComplementarios.Core.Dtos.Auth;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
-using SistemaCreditosComplementarios.Core.Models.Alumno;
+using SistemaCreditosComplementarios.Core.Models.Alumnos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,11 +28,13 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             return alumnos.Select(a => new AlumnoDto
             {
                 Id = a.Id,
+                NumeroControl = a.Usuario.NumeroControl,
                 Nombre = a.Nombre,
                 Apellido = a.Apellido,
                 CorreoElectronico = a.Usuario.Email,
-                FechaNacimiento = a.FechaNacimiento,
                 FechaRegistro = a.FechaRegistro,
+                Semestre = a.Semestre,
+                TotalCreditos = a.TotalCreditos,
                 CarreraId = a.CarreraId,
             });
         }
@@ -48,11 +50,13 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             return new AlumnoDto
             {
                 Id = alumno.Id,
+                NumeroControl = alumno.Usuario.NumeroControl,
                 Nombre = alumno.Nombre,
                 Apellido = alumno.Apellido,
                 CorreoElectronico = alumno.Usuario.Email,
-                FechaNacimiento = alumno.FechaNacimiento,
                 FechaRegistro = alumno.FechaRegistro,
+                Semestre = alumno.Semestre,
+                TotalCreditos = alumno.TotalCreditos,
                 CarreraId = alumno.CarreraId,
             };
         }
@@ -64,7 +68,8 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             {
                 Nombre = alumnoCreateDto.Nombre,
                 Apellido = alumnoCreateDto.Apellido,
-                FechaNacimiento = alumnoCreateDto.FechaNacimiento,
+                Semestre = alumnoCreateDto.Semestre,
+                TotalCreditos = alumnoCreateDto.TotalCreditos,
                 CarreraId = alumnoCreateDto.CarreraId, 
                 FechaRegistro = DateTime.UtcNow
             };
@@ -72,10 +77,12 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             return new AlumnoDto
             {
                 Id = nuevoAlumno.Id,
+                NumeroControl = nuevoAlumno.Usuario.NumeroControl, 
                 Nombre = nuevoAlumno.Nombre,
                 Apellido = nuevoAlumno.Apellido,
-                FechaNacimiento = nuevoAlumno.FechaNacimiento,
                 FechaRegistro = nuevoAlumno.FechaRegistro,
+                Semestre = nuevoAlumno.Semestre,
+                TotalCreditos = nuevoAlumno.TotalCreditos,
                 CarreraId = nuevoAlumno.CarreraId,
             };
         }
@@ -87,7 +94,8 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             {
                 Nombre = registerDto.Nombre,
                 Apellido = registerDto.Apellido,
-                FechaNacimiento = registerDto.FechaNacimiento,
+                Semestre = registerDto.Semestre,
+                TotalCreditos = 0, 
                 CarreraId = registerDto.CarreraId, 
                 FechaRegistro = DateTime.UtcNow,
                 UsuarioId = usuarioId // Asignar el ID del usuario que se registra
@@ -96,9 +104,12 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             return new AlumnoDto
             {
                 Id = nuevoAlumno.Id,
+                NumeroControl = nuevoAlumno.Usuario.NumeroControl,
                 Nombre = nuevoAlumno.Nombre,
                 Apellido = nuevoAlumno.Apellido,
-                FechaNacimiento = nuevoAlumno.FechaNacimiento,
+                CorreoElectronico = nuevoAlumno.Usuario.Email,
+                Semestre = registerDto.Semestre,
+                TotalCreditos = nuevoAlumno.TotalCreditos,
                 FechaRegistro = nuevoAlumno.FechaRegistro,
                 CarreraId = nuevoAlumno.CarreraId,
             };
@@ -114,18 +125,23 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             // Actualiza los datos del alumno existente
             alumnoExistente.Nombre = alumnoUpdateDto.Nombre;
             alumnoExistente.Apellido = alumnoUpdateDto.Apellido;
-            alumnoExistente.FechaNacimiento = alumnoUpdateDto.FechaNacimiento;
+            alumnoExistente.Semestre = alumnoUpdateDto.Semestre;
+            alumnoExistente.TotalCreditos = alumnoUpdateDto.TotalCreditos;
             alumnoExistente.CarreraId = alumnoUpdateDto.CarreraId;
-            
+
+
             var alumnoActualizado = await _alumnoRepository.UpdateAsync(alumnoExistente); // Llamada al repositorio para actualizar el alumno
             
             return new AlumnoDto
             {
                 Id = alumnoActualizado.Id,
+                NumeroControl = alumnoActualizado.Usuario.NumeroControl,
                 Nombre = alumnoActualizado.Nombre,
                 Apellido = alumnoActualizado.Apellido,
-                FechaNacimiento = alumnoActualizado.FechaNacimiento,
+                CorreoElectronico = alumnoActualizado.Usuario.Email,
                 FechaRegistro = alumnoActualizado.FechaRegistro,
+                Semestre = alumnoActualizado.Semestre,
+                TotalCreditos = alumnoActualizado.TotalCreditos,
                 CarreraId = alumnoActualizado.CarreraId,
             };
         }
@@ -141,9 +157,9 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             return new AlumnoDto
             {
                 Id = alumno.Id,
+                NumeroControl = alumno.Usuario.NumeroControl,
                 Nombre = alumno.Nombre,
                 Apellido = alumno.Apellido,
-                FechaNacimiento = alumno.FechaNacimiento,
                 FechaRegistro = alumno.FechaRegistro,
                 CarreraId = alumno.CarreraId,
             };
