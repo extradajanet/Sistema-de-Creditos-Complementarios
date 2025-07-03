@@ -17,7 +17,7 @@ namespace SistemaCreditosComplementarios.Core.Models.AlumnosActividades
         public int IdActividad { get; set; }
         public Actividad Actividad { get; set; }
 
-        public EstadoActividad EstadoActividad { get; set; }
+        public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
         public DateTime FechaInscripcion { get; set; }
     }
 }

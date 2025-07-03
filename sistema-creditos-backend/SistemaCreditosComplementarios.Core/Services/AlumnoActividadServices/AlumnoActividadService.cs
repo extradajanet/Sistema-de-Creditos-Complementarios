@@ -29,7 +29,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 AlumnoNombre = aa.Alumno.Nombre + " " + aa.Alumno.Apellido,
                 ActividadId = aa.IdActividad,
                 ActividadNombre = aa.Actividad.Nombre,
-                EstadoActividad = aa.EstadoActividad,
+                EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
                 FechaRegistro = aa.FechaInscripcion,
                 CreditosObtenidos = aa.Actividad.Creditos
             });
@@ -49,7 +49,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 AlumnoNombre = alumnoActividad.Alumno.Nombre + " " + alumnoActividad.Alumno.Apellido,
                 ActividadId = alumnoActividad.IdActividad,
                 ActividadNombre = alumnoActividad.Actividad.Nombre,
-                EstadoActividad = alumnoActividad.EstadoActividad,
+                EstadoAlumnoActividad = alumnoActividad.EstadoAlumnoActividad,
                 FechaRegistro = alumnoActividad.FechaInscripcion,
                 CreditosObtenidos = alumnoActividad.Actividad.Creditos
             };
@@ -69,7 +69,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
             return cursos;
         }
 
-        // añade una relación con cuso y alumno
+        // añade una relación con curso y alumno
         public async Task<AlumnoActividadDto> AddAsync(AlumnoActividadCreateDto alumnoActividadCreateDto)
         {
             // Validar si el alumno existe
@@ -86,7 +86,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
             {
                 IdAlumno = alumnoActividadCreateDto.AlumnoId,
                 IdActividad = alumnoActividadCreateDto.ActividadId,
-                EstadoActividad = alumnoActividadCreateDto.EstadoActividad,
+                EstadoAlumnoActividad = alumnoActividadCreateDto.EstadoAlumnoActividad,
                 FechaInscripcion = DateTime.UtcNow
             };
 
@@ -103,7 +103,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 AlumnoNombre = actividad.Alumno.Nombre + " " + actividad.Alumno.Apellido,
                 ActividadId = actividad.IdActividad,
                 ActividadNombre = actividad.Actividad.Nombre,
-                EstadoActividad = actividad.EstadoActividad,
+                EstadoAlumnoActividad = actividad.EstadoAlumnoActividad,
                 FechaRegistro = actividad.FechaInscripcion,
                 CreditosObtenidos = actividad.Actividad.Creditos
             };
@@ -118,7 +118,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 throw new Exception("Actividad del alumno no encontrada para actualizar.");
             }
             // Actualiza los campos necesarios
-            alumnoActividad.EstadoActividad = alumnoActividadDto.EstadoActividad;
+            alumnoActividad.EstadoAlumnoActividad = alumnoActividadDto.EstadoAlumnoActividad;
             // Puedes agregar más campos si es necesario
             await _alumnoActividadRepository.UpdateAsync(alumnoId, actividadId, alumnoActividad);
         }

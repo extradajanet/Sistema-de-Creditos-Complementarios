@@ -52,7 +52,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 AlumnoId = aa.IdAlumno,
                 NombreCompleto = aa.Alumno.Nombre + " " + aa.Alumno.Apellido,
                 CarreraNombre = aa.Alumno.Carrera.Nombre,
-                EstadoActividad = aa.EstadoActividad,
+                EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
                 CreditosObtenidos = aa.Actividad.Creditos,
                 FechaInscripcion = aa.FechaInscripcion
             });
@@ -72,7 +72,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 Creditos = aa.Actividad.Creditos,
                 FechaInicio = aa.Actividad.FechaInicio,
                 FechaFin = aa.Actividad.FechaFin,
-                EstadoActividad = aa.EstadoActividad,
+                EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
                 ImagenNombre = aa.Actividad.ImagenNombre
             });
         }
@@ -99,7 +99,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
             var existing = await GetByIdAsync(alumnoId, actividadId);
             if (existing == null) throw new KeyNotFoundException("Inscripción no encontrada.");
 
-            existing.EstadoActividad = alumnoActividad.EstadoActividad;
+            existing.EstadoAlumnoActividad = alumnoActividad.EstadoAlumnoActividad;
             existing.FechaInscripcion = alumnoActividad.FechaInscripcion;
 
             _context.AlumnosActividades.Update(existing);

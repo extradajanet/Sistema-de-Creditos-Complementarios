@@ -13,7 +13,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public string AlumnoNombre { get; set; }
         public int ActividadId { get; set; }
         public string ActividadNombre { get; set; }
-        public EstadoActividad EstadoActividad { get; set; }
+        public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
         public DateTime FechaRegistro { get; set; }
         public decimal CreditosObtenidos { get; set; }
     }
@@ -22,7 +22,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
     {
         public int AlumnoId { get; set; }
         public int ActividadId { get; set; }
-        public EstadoActividad EstadoActividad { get; set; }
+        public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
         public DateTime FechaInscripcion { get; set; } = DateTime.UtcNow;
     }
 
@@ -30,7 +30,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
     {
         public int AlumnoId { get; set; }
         public int ActividadId { get; set; }
-        public EstadoActividad EstadoActividad { get; set; }
+        public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
         public DateTime FechaInscripcion { get; set; } = DateTime.UtcNow;
     }
 
@@ -42,7 +42,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public string CarreraNombre { get; set; }
         public decimal CreditosObtenidos { get; set; }
         public DateTime FechaInscripcion { get; set; }
-        public EstadoActividad EstadoActividad { get; set; }
+        public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
     }
 
     public class CursoAlumnoDto
@@ -54,7 +54,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public decimal Creditos { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
-        public EstadoActividad EstadoActividad { get; set; }
+        public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
     }
 
 }
