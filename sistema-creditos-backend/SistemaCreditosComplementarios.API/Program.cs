@@ -3,15 +3,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoActividadRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActividadService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
 using SistemaCreditosComplementarios.Core.Services.ActividadService;
+using SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices;
 using SistemaCreditosComplementarios.Core.Services.AlumnoServices;
 using SistemaCreditosComplementarios.Core.Services.AuthServices;
 using SistemaCreditosComplementarios.Core.Services.CarreraServices;
@@ -36,6 +39,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Inyecci�n de dependencias para el repositorio
+builder.Services.AddScoped<IAlumnoActividadRepository, AlumnoActividadRepository>(); //se añade el repositorio de actividades de los alumnos
 builder.Services.AddScoped<IActividadRepository, ActividadRepository>(); //se añadió el repositorio para las actividades
 builder.Services.AddScoped<ICarreraRepository, CarreraRepository>(); //se añade el repositorio para las carreras
 builder.Services.AddScoped<IAlumnoRepository, AlumnoRepository>(); 
@@ -43,6 +47,7 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 
 //Inyecci�n de dependencias para el servicio 
+builder.Services.AddScoped<IAlumnoActividadService, AlumnoActividadService>(); //se añade el servicio de actividades de los alumnos
 builder.Services.AddScoped<IActividadService, ActividadService>(); //se añade el servicio de actividades
 builder.Services.AddScoped<ICarreraService, CarreraService>(); //se añade el servicio de carreras
 builder.Services.AddScoped<IAlumnoService, AlumnoService>();
@@ -89,6 +94,8 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 
+// ...
+
 var app = builder.Build();
 
 // Inicializar roles y usuarios de identidad
@@ -106,7 +113,6 @@ catch (Exception ex)
     Console.WriteLine($"Error al inicializar los datos de identidad: {ex.Message}");
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -115,14 +121,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
-
 app.UseCors("AllowAllOrigins");
 
-app.UseAuthentication();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+

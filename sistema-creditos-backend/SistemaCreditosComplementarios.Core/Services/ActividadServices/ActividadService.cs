@@ -66,7 +66,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
         // agrega actividad
         public async Task<ActividadDto> AddAsync(ActividadCreateDto actividadCreateDto)
         {
-            var actividad = new ActividadModels
+            var actividad = new Actividad
             {
                 Creditos = actividadCreateDto.Creditos,
                 Descripcion = actividadCreateDto.Descripcion,

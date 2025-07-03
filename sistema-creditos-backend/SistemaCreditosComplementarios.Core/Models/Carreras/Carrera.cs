@@ -9,7 +9,7 @@ using SistemaCreditosComplementarios.Core.Models.Alumnos;
 
 namespace SistemaCreditosComplementarios.Core.Models.CarreraModel
 {
-    public class CarreraModels
+    public class Carrera
     {
         public int Id { get; set; }
         public string Nombre { get; set; }

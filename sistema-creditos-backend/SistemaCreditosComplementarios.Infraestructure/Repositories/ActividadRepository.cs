@@ -23,7 +23,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         }
 
         // obtiene todas las actividades
-        public async Task<IEnumerable<ActividadModels>> GetAllAsync()
+        public async Task<IEnumerable<Actividad>> GetAllAsync()
         {
             //incluye la relación para obtener el nombre los datos de la carrera
             return await _context.Actividades
@@ -33,7 +33,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         }
 
         // obtiene por id
-        public async Task<ActividadModels> GetByIdAsync(int id)
+        public async Task<Actividad> GetByIdAsync(int id)
         {
             return await _context.Actividades
                 .Include(a => a.Carrera)
@@ -41,14 +41,14 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         }
 
         // añade actividad
-        public async Task AddAsync(ActividadModels actividad)
+        public async Task AddAsync(Actividad actividad)
         {
             _context.Actividades.Add(actividad);
             await _context.SaveChangesAsync();
         }
 
         // actualiza una actividad
-        public async Task<ActividadModels> UpdateAsync(int id, ActividadModels actividadUpdate)
+        public async Task<Actividad> UpdateAsync(int id, Actividad actividadUpdate)
         {
             var actividad = await GetByIdAsync(id);
             if (actividad == null)
