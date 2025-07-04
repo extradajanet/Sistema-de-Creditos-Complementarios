@@ -45,6 +45,20 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerAlumno
             }
         }
 
+        [HttpGet("total-creditos/{alumnoId}")]
+        public async Task<ActionResult<double>> GetTotalCreditos(int alumnoId)
+        {
+            try
+            {
+                var totalCreditos = await _alumnoService.GetTotalCreditosAsync(alumnoId);
+                return Ok(totalCreditos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         private async Task<ActionResult<AlumnoDto>> Create([FromBody] AlumnoCreateDto alumnoCreateDto)
         {
