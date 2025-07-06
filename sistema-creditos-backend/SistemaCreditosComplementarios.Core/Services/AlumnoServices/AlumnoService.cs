@@ -164,5 +164,11 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 CarreraId = alumno.CarreraId,
             };
         }
+
+        public async Task<double> GetTotalCreditosAsync(int alumnoId)
+        {
+            var alumno = await _alumnoRepository.GetByIdAsync(alumnoId) ?? throw new Exception("Alumno no encontrado."); // Llamada al repositorio para obtener el alumno por ID
+            return (int)alumno.TotalCreditos; // Retorna los créditos totales del alumno
+        }
     }
 }
