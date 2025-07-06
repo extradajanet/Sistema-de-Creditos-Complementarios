@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActividadService;
+using SistemaCreditosComplementarios.Core.Models.Enum;
 
 namespace SistemaCreditosComplementarios.API.Controllers.AlumnoActividadController
 {
@@ -42,9 +43,9 @@ namespace SistemaCreditosComplementarios.API.Controllers.AlumnoActividadControll
 
         // GET: api/AlumnoActividad/cursos-alumno/{alumnoId}
         [HttpGet("cursos-alumno/{alumnoId:int}")]
-        public async Task<IActionResult> GetCursosPorAlumno(int alumnoId)
+        public async Task<IActionResult> GetCursosPorAlumno(int alumnoId, EstadoAlumnoActividad? estado = null)
         {
-            var result = await _alumnoActividadService.GetCursosPorAlumnoAsync(alumnoId);
+            var result = await _alumnoActividadService.GetCursosPorAlumnoAsync(alumnoId, estado);
             return Ok(result);
         }
 
