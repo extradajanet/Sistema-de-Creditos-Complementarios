@@ -72,9 +72,9 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
         }
 
         // obtener los cursos por alumno
-        public async Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId)
+        public async Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado = null)
         {
-            var cursos = await _alumnoActividadRepository.GetCursosPorAlumnoAsync(alumnoId);
+            var cursos = await _alumnoActividadRepository.GetCursosPorAlumnoAsync(alumnoId, estado);
             return cursos;
         }
 

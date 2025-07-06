@@ -10,6 +10,7 @@ using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
 using System.Threading.Tasks;
 using SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad;
 using Microsoft.EntityFrameworkCore;
+using SistemaCreditosComplementarios.Core.Models.Enum;
 
 namespace SistemaCreditosComplementarios.Infraestructure.Repositories
 {
@@ -58,12 +59,19 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
             });
         }
 
-        public async Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId)
+        public async Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado = null)
         {
-            var cursos = await _context.AlumnosActividades
+            var query = _context.AlumnosActividades
                 .Include(aa => aa.Actividad)
-                .Where(aa => aa.IdAlumno == alumnoId)
-                .ToListAsync();
+                .Where(aa => aa.IdAlumno == alumnoId);
+
+            if (estado.HasValue)
+            {
+                query = query.Where(aa => aa.EstadoAlumnoActividad == estado.Value);
+            }
+
+            var cursos = await query.ToListAsync();
+
             return cursos.Select(aa => new CursoAlumnoDto
             {
                 ActividadId = aa.IdActividad,

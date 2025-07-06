@@ -1,4 +1,5 @@
 ﻿using SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad;
+using SistemaCreditosComplementarios.Core.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActivi
         Task<AlumnoActividadDto> GetByIdAsync(int alumnoId, int actividadId);
 
         Task<IEnumerable<AlumnoInscritoDto>> GetAlumnosInscritosPorActividadAsync(int actividadId);
-        Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId);
+        Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado = null);
         
         Task<AlumnoActividadDto> AddAsync(AlumnoActividadCreateDto alumnoActividadCreateDto);
 
