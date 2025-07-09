@@ -95,6 +95,16 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 throw new Exception($"El alumno con ID {alumnoActividadCreateDto.AlumnoId} ya está inscrito en la actividad con ID {alumnoActividadCreateDto.ActividadId}.");
             }
 
+            //obtener la cantidad de alumnos inscritos en la actividad
+            var inscritos = await _alumnoActividadRepository.GetAlumnosInscritosPorActividadAsync(alumnoActividadCreateDto.ActividadId);
+            int cantidadInscritos = inscritos.Count();
+
+            // Verifica si la actividad tiene un límite de inscritos y si se ha alcanzado
+            if (cantidadInscritos >= actividad.CapacidadMaxima)
+            {
+                throw new Exception($"La actividad con ID {alumnoActividadCreateDto.ActividadId} ha alcanzado su capacidad máxima de inscritos.");
+            }
+
             var alumnoActividad = new AlumnoActividad
             {
                 IdAlumno = alumnoActividadCreateDto.AlumnoId,
