@@ -1,5 +1,6 @@
 ﻿using SistemaCreditosComplementarios.Core.Dtos.Actividad;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoActividadRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
 using System;
@@ -14,9 +15,12 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
     public class ActividadService: IActividadService
     {
         private readonly IActividadRepository _actividadRepository;
-        public ActividadService(IActividadRepository actividadRepository)
+        
+        private readonly IAlumnoActividadRepository _alumnoActividadRepository;
+        public ActividadService(IActividadRepository actividadRepository, IAlumnoActividadRepository alumnoActividadRepository)
         {
             _actividadRepository = actividadRepository;
+            _alumnoActividadRepository = alumnoActividadRepository;
         }
 
         // obtiene todas las actividades
@@ -35,6 +39,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 EstadoActividad = a.EstadoActividad,
                 CarreraId = a.CarreraId,
                 CarreraNombre = a.Carrera?.Nombre,
+                CapacidadMaxima = a.CapacidadMaxima,
                 ImagenNombre = a.ImagenNombre
             });
         }
@@ -59,6 +64,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 EstadoActividad = actividad.EstadoActividad,
                 CarreraId = actividad.CarreraId,
                 CarreraNombre = actividad.Carrera?.Nombre,
+                CapacidadMaxima = actividad.CapacidadMaxima,
                 ImagenNombre = actividad.ImagenNombre
             };
         }
@@ -66,6 +72,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
         // agrega actividad
         public async Task<ActividadDto> AddAsync(ActividadCreateDto actividadCreateDto)
         {
+
             var actividad = new Actividad
             {
                 Creditos = actividadCreateDto.Creditos,
@@ -76,6 +83,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 TipoActividad = actividadCreateDto.TipoActividad,
                 CarreraId = actividadCreateDto.CarreraId,
                 EstadoActividad = actividadCreateDto.EstadoActividad,
+                CapacidadMaxima = actividadCreateDto.CapacidadMaxima,
                 ImagenNombre = actividadCreateDto.ImagenNombre
 
             };
@@ -95,6 +103,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 EstadoActividad = actividadConCarrera.EstadoActividad,
                 CarreraId = actividadConCarrera.CarreraId,
                 CarreraNombre = actividadConCarrera.Carrera?.Nombre,
+                CapacidadMaxima = actividadConCarrera.CapacidadMaxima,
                 ImagenNombre = actividadConCarrera.ImagenNombre
             };
         }
@@ -116,6 +125,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
             actividad.TipoActividad = actividadUpdateDto.TipoActividad;
             actividad.EstadoActividad = actividadUpdateDto.EstadoActividad;
             actividad.CarreraId = actividadUpdateDto.CarreraId;
+            actividad.CapacidadMaxima = actividadUpdateDto.CapacidadMaxima;
             actividad.ImagenNombre = actividadUpdateDto.ImagenNombre;
 
             var updatedActividad = await _actividadRepository.UpdateAsync(id, actividad);
@@ -132,6 +142,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 EstadoActividad = updatedActividad.EstadoActividad,
                 CarreraId = updatedActividad.CarreraId,
                 CarreraNombre = updatedActividad.Carrera?.Nombre,
+                CapacidadMaxima = updatedActividad.CapacidadMaxima,
                 ImagenNombre = updatedActividad.ImagenNombre
             };
         }

@@ -23,6 +23,7 @@ namespace SistemaCreditosComplementarios.Core.Models.ActividadModel
         public string ImagenNombre { get; set; }
         public int CarreraId { get; set; }
         public Carrera Carrera { get; set; }
+        public int CapacidadMaxima { get; set; } // capacidad máxima de alumnos que pueden inscribirse a la actividad 
         public ICollection<AlumnoActividad> AlumnosActividades { get; set; }
 
     }
