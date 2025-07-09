@@ -2,21 +2,37 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "/src/App.css";
 
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
+  }
+}
+
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
       const response = await fetch("https://localhost:7238/api/Auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ Usuario: username, Password: password }),
-
+        body: JSON.stringify({ Usuario: username, Password: password })
       });
 
       if (!response.ok) {
@@ -24,9 +40,19 @@ function Login() {
       }
 
       const data = await response.json();
-      // Guarda el token en localStorage
+
+      // Guarda el token
       localStorage.setItem("token", data.token);
-      // Redirige, por ejemplo, a la página principal u otra protegida
+
+      // Decodifica el token manualmente
+      const decoded = parseJwt(data.token);
+      const roleClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+      const userRole = decoded ? decoded[roleClaim] : null;
+
+      if (userRole) {
+        localStorage.setItem("rol", userRole);
+      }
+
       navigate("/");
     } catch (err) {
       console.error(err);
@@ -47,10 +73,7 @@ function Login() {
             ¡Bienvenido!
           </h3>
           <div className="p-6 pt-2 ">
-            <form
-              className="flex flex-col items-center space-y-3 "
-              onSubmit={handleSubmit}
-            >
+            <form className="flex flex-col items-center space-y-3" onSubmit={handleSubmit}>
               <input
                 type="text"
                 value={username}
@@ -82,6 +105,7 @@ function Login() {
                   Login
                 </button>
               </div>
+              {error && <p className="text-red-600 mt-2">{error}</p>}
             </form>
           </div>
         </div>
@@ -89,4 +113,5 @@ function Login() {
     </div>
   );
 }
+
 export default Login;
