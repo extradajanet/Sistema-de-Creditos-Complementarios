@@ -27,7 +27,9 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         {
             //incluye la relación para obtener el nombre los datos de la carrera
             return await _context.Actividades
-                .Include(a => a.Carrera)
+                .Include(a => a.Departamento)
+                .Include(a => a.ActividadesCarreras) // Incluye la relación con ActividadCarreras
+                .ThenInclude(c => c.Carrera) // Incluye la relación con Carrera dentro de ActividadCarreras
                 .ToListAsync();
 
         }
@@ -36,7 +38,9 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         public async Task<Actividad> GetByIdAsync(int id)
         {
             return await _context.Actividades
-                .Include(a => a.Carrera)
+                .Include(a => a.Departamento)
+                .Include(ac => ac.ActividadesCarreras) // Incluye la relación con ActividadCarreras
+                .ThenInclude(c => c.Carrera) // Incluye la relación con Carrera dentro de ActividadCarreras
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
@@ -55,19 +59,25 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
             {
                 throw new Exception("Actividad no encontrada.");
             }
-            // se actualiza
+            // Actualiza los campos de la actividad
             actividad.Nombre = actividadUpdate.Nombre;
             actividad.Descripcion = actividadUpdate.Descripcion;
             actividad.FechaInicio = actividadUpdate.FechaInicio;
             actividad.FechaFin = actividadUpdate.FechaFin;
             actividad.Creditos = actividadUpdate.Creditos;
+            actividad.Capacidad = actividadUpdate.Capacidad;
+            actividad.Dias = actividadUpdate.Dias;
+            actividad.HoraInicio = actividadUpdate.HoraInicio;
+            actividad.HoraFin = actividadUpdate.HoraFin;
             actividad.TipoActividad = actividadUpdate.TipoActividad;
-            actividad.CarreraId = actividadUpdate.CarreraId;
             actividad.EstadoActividad = actividadUpdate.EstadoActividad;
             actividad.ImagenNombre = actividadUpdate.ImagenNombre;
+            actividad.DepartamentoId = actividadUpdate.DepartamentoId;
+
             _context.Actividades.Update(actividad);
             await _context.SaveChangesAsync();
-            return actividad;
+            return actividad; // Devuelve la entidad actualizada
+
         }
 
         // elimina una actividad

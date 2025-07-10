@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SistemaCreditosComplementarios.Core.Models.Coordinadores;
 using SistemaCreditosComplementarios.Core.Models.Departamentos;
 using SistemaCreditosComplementarios.Core.Models.Alumnos;
+using SistemaCreditosComplementarios.Core.Models.ActividadesCarreras;
 
 namespace SistemaCreditosComplementarios.Core.Models.CarreraModel
 {
@@ -18,5 +19,7 @@ namespace SistemaCreditosComplementarios.Core.Models.CarreraModel
         public Departamento? Departamento { get; set; }
         public int? CoordinadorId { get; set; }
         public Coordinador? Coordinador { get; set; }
+
+        public ICollection<ActividadCarrera>? ActividadesCarreras { get; set; }
     }
 }

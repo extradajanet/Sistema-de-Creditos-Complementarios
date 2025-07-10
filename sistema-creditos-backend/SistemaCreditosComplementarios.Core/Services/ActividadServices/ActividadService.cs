@@ -1,7 +1,10 @@
 ﻿using SistemaCreditosComplementarios.Core.Dtos.Actividad;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
+using SistemaCreditosComplementarios.Core.Models.ActividadesCarreras;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
+using SistemaCreditosComplementarios.Core.Models.CarreraModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +17,11 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
     public class ActividadService: IActividadService
     {
         private readonly IActividadRepository _actividadRepository;
-        public ActividadService(IActividadRepository actividadRepository)
+        private readonly ICarreraRepository _carreraRepository;
+        public ActividadService(IActividadRepository actividadRepository, ICarreraRepository carreraRepository)
         {
             _actividadRepository = actividadRepository;
+            _carreraRepository = carreraRepository;
         }
 
         // obtiene todas las actividades
@@ -31,11 +36,16 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 FechaInicio = a.FechaInicio,
                 FechaFin = a.FechaFin,
                 Creditos = a.Creditos,
+                Capacidad = a.Capacidad,
+                Dias = a.Dias,
+                HoraInicio = a.HoraInicio,
+                HoraFin = a.HoraFin,
                 TipoActividad = a.TipoActividad,
                 EstadoActividad = a.EstadoActividad,
-                CarreraId = a.CarreraId,
-                CarreraNombre = a.Carrera?.Nombre,
-                ImagenNombre = a.ImagenNombre
+                ImagenNombre = a.ImagenNombre,
+                DepartamentoId = a.DepartamentoId,
+                DepartamentoNombre = a.Departamento?.Nombre,
+                CarreraNombres = a.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
             });
         }
 
@@ -55,68 +65,107 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 FechaInicio = actividad.FechaInicio,
                 FechaFin = actividad.FechaFin,
                 Creditos = actividad.Creditos,
+                Capacidad = actividad.Capacidad,
+                Dias = actividad.Dias,
+                HoraInicio = actividad.HoraInicio,
+                HoraFin = actividad.HoraFin,
                 TipoActividad = actividad.TipoActividad,
                 EstadoActividad = actividad.EstadoActividad,
-                CarreraId = actividad.CarreraId,
-                CarreraNombre = actividad.Carrera?.Nombre,
-                ImagenNombre = actividad.ImagenNombre
+                ImagenNombre = actividad.ImagenNombre,
+                DepartamentoId = actividad.DepartamentoId,
+                DepartamentoNombre = actividad.Departamento?.Nombre,
+                CarreraNombres = actividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
+
             };
         }
 
         // agrega actividad
         public async Task<ActividadDto> AddAsync(ActividadCreateDto actividadCreateDto)
         {
+
             var actividad = new Actividad
             {
-                Creditos = actividadCreateDto.Creditos,
+                Nombre = actividadCreateDto.Nombre,
                 Descripcion = actividadCreateDto.Descripcion,
                 FechaInicio = actividadCreateDto.FechaInicio,
                 FechaFin = actividadCreateDto.FechaFin,
-                Nombre = actividadCreateDto.Nombre,
+                Creditos = actividadCreateDto.Creditos,
+                Capacidad = actividadCreateDto.Capacidad,
+                Dias = actividadCreateDto.Dias,
+                HoraInicio = actividadCreateDto.HoraInicio,
+                HoraFin = actividadCreateDto.HoraFin,
                 TipoActividad = actividadCreateDto.TipoActividad,
-                CarreraId = actividadCreateDto.CarreraId,
                 EstadoActividad = actividadCreateDto.EstadoActividad,
-                ImagenNombre = actividadCreateDto.ImagenNombre
-
+                ImagenNombre = actividadCreateDto.ImagenNombre,
+                DepartamentoId = actividadCreateDto.DepartamentoId,
+                ActividadesCarreras = []
             };
-            await _actividadRepository.AddAsync(actividad);
 
-            var actividadConCarrera = await _actividadRepository.GetByIdAsync(actividad.Id);
+            // Asignar las carreras asociadas a la actividad
+            foreach (var carreraId in actividadCreateDto.CarreraIds)
+            {
+                var carrera = await _carreraRepository.GetByIdAsync(carreraId) ?? throw new Exception($"Carrera con ID {carreraId} no encontrada.");
+
+                actividad.ActividadesCarreras.Add(new ActividadCarrera
+                {
+                    IdCarrera = carrera.Id,
+                    Carrera = carrera
+                });
+            }
+
+            await _actividadRepository.AddAsync(actividad);
+            var actividadCreada = await _actividadRepository.GetByIdAsync(actividad.Id);
 
             return new ActividadDto
             {
-                Id = actividadConCarrera.Id,
-                Nombre = actividadConCarrera.Nombre,
-                Descripcion = actividadConCarrera.Descripcion,
-                FechaInicio = actividadConCarrera.FechaInicio,
-                FechaFin = actividadConCarrera.FechaFin,
-                Creditos = actividadConCarrera.Creditos,
-                TipoActividad = actividadConCarrera.TipoActividad,
-                EstadoActividad = actividadConCarrera.EstadoActividad,
-                CarreraId = actividadConCarrera.CarreraId,
-                CarreraNombre = actividadConCarrera.Carrera?.Nombre,
-                ImagenNombre = actividadConCarrera.ImagenNombre
+                Id = actividadCreada.Id,
+                Nombre = actividadCreada.Nombre,
+                Descripcion = actividadCreada.Descripcion,
+                FechaInicio = actividadCreada.FechaInicio,
+                FechaFin = actividadCreada.FechaFin,
+                Creditos = actividadCreada.Creditos,
+                Capacidad = actividadCreada.Capacidad,
+                Dias = actividadCreada.Dias,
+                HoraInicio = actividadCreada.HoraInicio,
+                HoraFin = actividadCreada.HoraFin,
+                TipoActividad = actividadCreada.TipoActividad,
+                EstadoActividad = actividadCreada.EstadoActividad,
+                ImagenNombre = actividadCreada.ImagenNombre,
+                DepartamentoId = actividadCreada.DepartamentoId,
+                DepartamentoNombre = actividadCreada.Departamento?.Nombre,
+                CarreraNombres = actividadCreada.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
             };
         }
 
         // actualiza actividad
         public async Task<ActividadDto> UpdateAsync(int id, ActividadCreateDto actividadUpdateDto)
         {
-            var actividad = await _actividadRepository.GetByIdAsync(id);
-            if (actividad == null)
-            {
-                throw new Exception("Actividad no encontrada.");
-            }
+            var actividad = await _actividadRepository.GetByIdAsync(id) ?? throw new Exception("Actividad no encontrada.");
             // Actualizar los campos de la actividad
             actividad.Nombre = actividadUpdateDto.Nombre;
             actividad.Descripcion = actividadUpdateDto.Descripcion;
             actividad.FechaInicio = actividadUpdateDto.FechaInicio;
             actividad.FechaFin = actividadUpdateDto.FechaFin;
             actividad.Creditos = actividadUpdateDto.Creditos;
+            actividad.Capacidad = actividadUpdateDto.Capacidad;
+            actividad.Dias = actividadUpdateDto.Dias;
+            actividad.HoraInicio = actividadUpdateDto.HoraInicio;
+            actividad.HoraFin = actividadUpdateDto.HoraFin;
             actividad.TipoActividad = actividadUpdateDto.TipoActividad;
             actividad.EstadoActividad = actividadUpdateDto.EstadoActividad;
-            actividad.CarreraId = actividadUpdateDto.CarreraId;
             actividad.ImagenNombre = actividadUpdateDto.ImagenNombre;
+            actividad.DepartamentoId = actividadUpdateDto.DepartamentoId;
+            actividad.ActividadesCarreras.Clear(); // Limpiar las carreras asociadas antes de agregar nuevas
+
+            foreach (var carreraId in actividadUpdateDto.CarreraIds)
+            {
+                var carrera = await _carreraRepository.GetByIdAsync(carreraId) ?? throw new Exception($"Carrera con ID {carreraId} no encontrada.");
+                actividad.ActividadesCarreras.Add(new ActividadCarrera
+                {
+                    IdCarrera = carrera.Id,
+                    Carrera = carrera 
+                });
+            }
 
             var updatedActividad = await _actividadRepository.UpdateAsync(id, actividad);
 
@@ -128,11 +177,17 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 FechaInicio = updatedActividad.FechaInicio,
                 FechaFin = updatedActividad.FechaFin,
                 Creditos = updatedActividad.Creditos,
+                Capacidad = updatedActividad.Capacidad,
+                Dias = updatedActividad.Dias,
+                HoraInicio = updatedActividad.HoraInicio,
+                HoraFin = updatedActividad.HoraFin,
                 TipoActividad = updatedActividad.TipoActividad,
                 EstadoActividad = updatedActividad.EstadoActividad,
-                CarreraId = updatedActividad.CarreraId,
-                CarreraNombre = updatedActividad.Carrera?.Nombre,
-                ImagenNombre = updatedActividad.ImagenNombre
+                ImagenNombre = updatedActividad.ImagenNombre,
+                DepartamentoId = updatedActividad.DepartamentoId,
+                DepartamentoNombre = updatedActividad.Departamento?.Nombre,
+                CarreraNombres = updatedActividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
+
             };
         }
 
@@ -146,6 +201,5 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
             }
             await _actividadRepository.DeleteAsync(id);
         }
-
     }
 }
