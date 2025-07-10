@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CircleAlert, Search, SlidersHorizontal } from "lucide-react";
-import predeterminado from "../images/PredeterminadoCursos.png";
+import predeterminado from "../../images/PredeterminadoCursos.png";
 
 const estados = {
   1: "Activo",

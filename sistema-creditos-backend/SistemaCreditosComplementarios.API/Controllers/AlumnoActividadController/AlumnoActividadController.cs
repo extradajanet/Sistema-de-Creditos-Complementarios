@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActividadService;
 using SistemaCreditosComplementarios.Core.Models.Enum;
@@ -49,6 +50,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.AlumnoActividadControll
             return Ok(result);
         }
 
+
         // POST: api/AlumnoActividad
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] AlumnoActividadCreateDto dto)
@@ -59,6 +61,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.AlumnoActividadControll
             return CreatedAtAction(nameof(GetById), new { alumnoId = result.AlumnoId, actividadId = result.ActividadId }, result);
         }
 
+        [Authorize(Roles = "Coordinador, Departamento")]
         // PUT: api/AlumnoActividad/{alumnoId}/{actividadId}
         [HttpPut("{alumnoId:int}/{actividadId:int}")]
         public async Task<IActionResult> Update(int alumnoId, int actividadId, [FromBody] AlumnoActividadUpdate dto)

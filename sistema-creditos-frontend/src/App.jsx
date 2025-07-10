@@ -3,7 +3,9 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import MiHistorial from "./pages/MiHistorial"
 import Perfil from "./pages/Perfil";
-import CursosDisponibles from "./pages/CursosDisponibles";
+import CursosDisponibles from "./pages/alumno/CursosDisponibles";
+import MisCursos from "./pages/departamento/MisCursos";
+import CrearActividad from "./pages/departamento/CrearActividad";
 
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -18,7 +20,10 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/historial" element={<MiHistorial />} />
           <Route path="/perfil" element={<Perfil />} />
-            <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
+          <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
+          <Route path="/miscursos" element={<MisCursos/>} />
+          <Route path="/crearactividad" element={<CrearActividad/>} />
+
 
         </Route>
       </Routes>

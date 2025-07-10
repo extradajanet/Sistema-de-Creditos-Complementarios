@@ -1,6 +1,10 @@
 ﻿using SistemaCreditosComplementarios.Core.Dtos.Actividad;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
+<<<<<<< HEAD
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
+=======
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoActividadRepository;
+>>>>>>> 5d9d5bdc0a9dc4dcca375b423a6abce31b598e07
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
 using SistemaCreditosComplementarios.Core.Models.ActividadesCarreras;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
