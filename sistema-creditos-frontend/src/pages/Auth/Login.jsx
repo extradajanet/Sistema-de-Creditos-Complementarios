@@ -24,6 +24,7 @@ function Login() {
       }
 
       const data = await response.json();
+      console.log("Login response:", data);
       // Guarda el token en localStorage
       localStorage.setItem("token", data.token);
       // Redirige, por ejemplo, a la página principal u otra protegida
