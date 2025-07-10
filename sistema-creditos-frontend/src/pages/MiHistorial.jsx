@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CircleAlert, Search, SlidersHorizontal } from "lucide-react";
-import predeterminado from "../../images/PredeterminadoCursos.png";
+import predeterminado from "../images/PredeterminadoCursos.png";
 
 const estados = {
   1: "Activo",
@@ -16,7 +16,6 @@ export default function ActividadesList() {
   const [tipoSeleccionado, setTipoSeleccionado] = useState("");
 
   useEffect(() => {
-
     let isMounted = true;
     fetch("/api/Actividades", { headers: { Accept: "application/json" } })
       .then((res) => {
@@ -39,7 +38,6 @@ export default function ActividadesList() {
     return () => {
       isMounted = false;
     };
-    
   }, []);
 
   const actividadesFiltradas = actividades.filter(
@@ -48,12 +46,13 @@ export default function ActividadesList() {
       (tipoSeleccionado === "" || actividad.tipoActividad === tipoSeleccionado)
   );
 
-
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Título */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
-        <h1 className="text-3xl font-bold  text-gray-900 custom-heading">Cursos Disponibles</h1>
+        <h1 className="text-3xl font-bold  text-[#0A1128] custom-heading">
+          Mi Historial
+        </h1>
       </div>
 
       {/* Buscador y filtro */}
@@ -100,45 +99,65 @@ export default function ActividadesList() {
       </div>
 
       {/* Lista de actividades */}
-      <div className="max-h-[500px] overflow-y-auto pr-2">
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-9 ">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-9">
         {loading ? (
-          <p className="text-center col-span-full mt-10 text-black-600">Cargando actividades...</p>
+          <p className="text-center col-span-full mt-10 text-black-600">
+            Cargando actividades...
+          </p>
         ) : actividadesFiltradas.length === 0 ? (
-          <p className="text-center col-span-full mt-10 text-black-600">No hay cursos disponibles</p>
+          <p className="text-center col-span-full mt-10 text-black-600">
+            No te haz inscrito a alguna actividad
+          </p>
         ) : (
           actividadesFiltradas.map((actividad) => (
             <div
               key={actividad.id}
-              className="bg-white rounded-lg shadow-md p-6 flex flex-col border-3 border-blue-950"
+              className="grid grid-cols-[150px_auto] bg-[#001F54] w-[550px] h-[100px] rounded-2xl shadow-md border-3 border-black overflow-hidden"
             >
-              {actividad.imagenNombre ? (
-                <img
-                  src={predeterminado}
-                  alt={actividad.nombre}
-                  className="rounded-md mb-4 object-cover h-24 w-24 mx-auto"
-                />
-              ) : null}
+              {/* Image column */}
+              <div className="flex items-center justify-center">
+                {actividad.imagenNombre ? (
+                  <img
+                    src={predeterminado}
+                    alt={actividad.nombre}
+                    className="rounded-md object-cover h-20 w-20"
+                  />
+                ) : null}
+              </div>
 
-              <h3 className="text-xl text-blue-950 font-semibold mb-2 text-center">
-                {actividad.nombre}
-              </h3>
-
-              <p className="text-xs text-gray-700 mb-1 text-center">
-                <strong>
-                  {actividad.tipoActividad} · {actividad.creditos} Crédito
-                  {actividad.creditos > 1 ? "s" : ""}
-                </strong>
-              </p>
-
-              <div className="flex items-center gap-1 text-gray-700 text-xs mt-2 cursor-pointer font-semibold justify-center">
-                <CircleAlert strokeWidth={0.8} className="h-4 w-4" />
-                <p>Más información</p>
+              {/* Text column */}
+              <div className="flex flex-col justify-center p-2">
+                <h3 className="custom-subheading text-white text-base pb-2">
+                  {actividad.nombre}
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex flex-col">
+                    <p className="text-xs text-[#9A9A9A]">
+                      <strong>Fecha de Inicio:</strong>
+                      {new Date(actividad.fechaInicio).toLocaleDateString()}
+                    </p>
+                    <p className="text-xs text-[#9A9A9A]">
+                      <strong>Fecha de Fin:</strong>
+                      {new Date(actividad.fechaFin).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#9A9A9A] col-span-2">
+                      <strong>Estado:</strong>{" "}
+                      {estados[actividad.estadoActividad]}
+                    </p>
+                    {actividad.estadoActividad === 3 && (
+                      <p className="text-xs text-[#9A9A9A] col-span-2">
+                        <strong>Créditos Obtenidos:</strong>{" "}
+                        {actividad.creditos} 
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ))
         )}
-      </div>
       </div>
     </div>
   );

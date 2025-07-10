@@ -40,8 +40,8 @@ function Login() {
       }
 
       const data = await response.json();
-
-      // Guarda el token
+      console.log("Login response:", data);
+      // Guarda el token en localStorage
       localStorage.setItem("token", data.token);
 
       // Decodifica el token manualmente

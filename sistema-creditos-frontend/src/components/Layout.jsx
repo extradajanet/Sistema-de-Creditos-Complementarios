@@ -5,17 +5,17 @@ import logo from "../images/logo2.png";
 
 export default function Layout() {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen h-full overflow-hidden">
       {/* Sidebar */}
       <aside
-        className="bg-blue-900 text-white w-20 md:w-56 transition-all duration-300 h-[700px] flex flex-col items-center py-5 m-4 rounded-2xl"
+        className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300 h-[700px] flex flex-col items-center py-5 m-4 rounded-2xl"
       >
         {/* Logo */}
-        <div className="bg-white p-2 rounded-full mb-20">
+        <div className="bg-white p-4 rounded-full mb-20">
           <img
             src={logo}
             alt="Logo"
-            className="w-25 h-25 rounded-full transition-all duration-300"
+            className="w-25 h-25 rounded-full transition-all duration-400"
           />
         </div>
 
@@ -28,7 +28,7 @@ export default function Layout() {
               label="Inicio"
             />
             <SidebarLink
-              to="/cursos"
+              to="/historial"
               icon={<GraduationCap strokeWidth={0.5} className="w-6 h-6" />}
               label="Mi historial"
             />
@@ -50,7 +50,7 @@ export default function Layout() {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-6  h-full overflow-auto">
+      <main className="flex-1 p-4 h-full ">
         <Outlet />
       </main>
     </div>
@@ -61,7 +61,7 @@ function SidebarLink({ to, icon, label, danger = false }) {
   return (
     <Link
       to={to}
-      className={`w-full flex items-center gap-4 p-2 rounded transition-colors duration-200 hover:bg-[#001F54] `}
+      className={`w-full flex items-center gap-4 p-2 rounded transition-colors duration-200 hover:bg-[#1282A2] `}
     >
       <div className="w-8 h-8 flex items-center justify-center">{icon}</div>
       <span className="hidden md:inline whitespace-nowrap">{label}</span>
