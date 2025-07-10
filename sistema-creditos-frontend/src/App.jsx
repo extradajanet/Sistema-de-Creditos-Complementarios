@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import Cursos from "./pages/Cursos";
+import MiHistorial from "./pages/MiHistorial"
 import Perfil from "./pages/Perfil";
 import CursosDisponibles from "./pages/alumno/CursosDisponibles";
 import MisCursos from "./pages/departamento/MisCursos";
@@ -18,7 +18,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="/cursos" element={<Cursos />} />
+          <Route path="/historial" element={<MiHistorial />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
           <Route path="/miscursos" element={<MisCursos/>} />

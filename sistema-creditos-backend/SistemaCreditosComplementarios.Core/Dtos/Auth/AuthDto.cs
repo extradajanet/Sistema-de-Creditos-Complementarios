@@ -26,4 +26,11 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Auth
         public string Usuario { get; set; }
         public string Password { get; set; }
     }
+
+    public class LoginResponseDto
+    {
+        public string Token { get; set; }
+        public DateTime Expiration { get; set; }
+        public int AlumnoId { get; set; }
+    }
 }

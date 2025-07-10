@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
 using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
+using SistemaCreditosComplementarios.Core.Models.ActividadesCarreras;
 
 namespace SistemaCreditosComplementarios.Infraestructure.Data
 {
@@ -25,6 +26,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
         }
         
         public DbSet<AlumnoActividad> AlumnosActividades { get; set; }
+        public DbSet<ActividadCarrera> ActividadesCarreras { get; set; }
         public DbSet<Actividad> Actividades { get; set; }
         
         public DbSet<Carrera> Carreras { get; set; }
@@ -70,6 +72,19 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
                 .WithMany(a => a.AlumnosActividades)
                 .HasForeignKey(aa => aa.IdActividad);
 
+            modelBuilder.Entity<ActividadCarrera>()
+                .HasKey(ac => new { ac.IdActividad, ac.IdCarrera }); // Clave compuesta
+
+            modelBuilder.Entity<ActividadCarrera>()
+                .HasOne(ac => ac.Carrera)
+                .WithMany(ac => ac.ActividadesCarreras)
+                .HasForeignKey(ac => ac.IdCarrera);
+
+            modelBuilder.Entity<ActividadCarrera>()
+                .HasOne(ac => ac.Actividad)
+                .WithMany(a => a.ActividadesCarreras)
+                .HasForeignKey(ac => ac.IdActividad)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
