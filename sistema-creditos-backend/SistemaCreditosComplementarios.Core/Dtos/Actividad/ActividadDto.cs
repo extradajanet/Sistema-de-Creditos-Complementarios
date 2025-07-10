@@ -24,7 +24,6 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Actividad
         public TipoActividad TipoActividad { get; set; } 
         public EstadoActividad EstadoActividad { get; set; } // "Activo = 1", "En Progreso = 2", "Finalizado = 3"
         
-        public int CapacidadMaxima { get; set; }
         public string ImagenNombre { get; set; }
 
         public int DepartamentoId { get; set; }
@@ -46,7 +45,6 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Actividad
         public TimeSpan HoraFin { get; set; }
         public TipoActividad TipoActividad { get; set; }
         public EstadoActividad EstadoActividad { get; set; }
-        public int CapacidadMaxima { get; set; }
         public string ImagenNombre { get; set; }
         public int DepartamentoId { get; set; } 
         public List<int> CarreraIds { get; set; } // Lista de IDs de carreras asociadas a la actividad

@@ -100,7 +100,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
             int cantidadInscritos = inscritos.Count();
 
             // Verifica si la actividad tiene un límite de inscritos y si se ha alcanzado
-            if (cantidadInscritos >= actividad.CapacidadMaxima)
+            if (cantidadInscritos >= actividad.Capacidad)
             {
                 throw new Exception($"La actividad con ID {alumnoActividadCreateDto.ActividadId} ha alcanzado su capacidad máxima de inscritos.");
             }
