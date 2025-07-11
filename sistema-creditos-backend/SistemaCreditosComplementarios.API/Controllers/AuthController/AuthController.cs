@@ -45,8 +45,8 @@ namespace SistemaCreditosComplementarios.API.Controllers.AuthController
 
             try
             {
-                var response = await _authService.LoginAsync(loginDto);
-                return Ok(response);
+                var token = await _authService.LoginAsync(loginDto);
+                return Ok(new { token });
             }
             catch (Exception ex)
             {

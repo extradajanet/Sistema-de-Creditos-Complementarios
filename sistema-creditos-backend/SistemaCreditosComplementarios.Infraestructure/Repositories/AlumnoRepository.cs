@@ -33,13 +33,6 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 .FirstOrDefaultAsync(a => a.Id == id); // Busca el alumno por su ID
         }
 
-        public async Task<Alumno> GetByUserIdAsync(string userId)
-        {
-            return await _context.Alumnos
-                .Include(a => a.Usuario) // Incluye la entidad Usuario relacionada
-                .FirstOrDefaultAsync(a => a.Usuario.Id == userId); // Busca el alumno por su UserId
-        }
-
         public async Task AddAsync(Alumno alumno)
         {
             _context.Alumnos.Add(alumno); 
