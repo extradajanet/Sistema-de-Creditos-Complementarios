@@ -61,6 +61,27 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             };
         }
 
+        public async Task<AlumnoDto> GetByUserIdAsync(string userId)
+        {
+            var alumno = await _alumnoRepository.GetByUserIdAsync(userId); 
+            if (alumno == null)
+            {
+                throw new Exception("Alumno no encontrado.");
+            }
+            return new AlumnoDto
+            {
+                Id = alumno.Id,
+                NumeroControl = alumno.Usuario.NumeroControl,
+                Nombre = alumno.Nombre,
+                Apellido = alumno.Apellido,
+                CorreoElectronico = alumno.Usuario.Email,
+                FechaRegistro = alumno.FechaRegistro,
+                Semestre = alumno.Semestre,
+                TotalCreditos = alumno.TotalCreditos,
+                CarreraId = alumno.CarreraId,
+            };
+        }
+
         // Método para agregar un nuevo alumno
         public async Task<AlumnoDto> AddAsync(AlumnoCreateDto alumnoCreateDto)
         {

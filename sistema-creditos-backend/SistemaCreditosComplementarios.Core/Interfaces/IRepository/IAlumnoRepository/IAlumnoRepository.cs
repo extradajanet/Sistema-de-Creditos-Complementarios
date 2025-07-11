@@ -12,6 +12,7 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepo
     {
         Task<IEnumerable<Alumno>> GetAllAsync();
         Task<Alumno> GetByIdAsync(int id);
+        Task<Alumno> GetByUserIdAsync(string userId);
         Task AddAsync(Alumno alumno);
         Task<Alumno> UpdateAsync(Alumno alumno);
         Task DeleteAsync(int id);

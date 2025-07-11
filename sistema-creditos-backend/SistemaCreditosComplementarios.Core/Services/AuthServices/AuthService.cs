@@ -43,13 +43,20 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
             return "User registered successfully.";
         }
 
-        public async Task<string> LoginAsync(LoginDto loginDto)
+        public async Task<LoginResponseDto> LoginAsync(LoginDto loginDto)
         {
             var user = await _authRepository.LoginAsync(loginDto);
 
             var token = GenerateToken(user);
 
-            return token;
+            var alumno = await _alumnoService.GetByUserIdAsync(user.Id);
+
+            return new LoginResponseDto
+            {
+                Token = token,
+                Expiration = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryInMinutes),
+                AlumnoId = alumno.Id
+            };
         }
 
         // Genera un token JWT para el usuario autenticado
