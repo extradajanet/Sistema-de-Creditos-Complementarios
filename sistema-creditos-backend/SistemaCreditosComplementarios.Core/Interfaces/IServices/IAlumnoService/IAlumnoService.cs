@@ -13,6 +13,7 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoServic
         Task<IEnumerable<AlumnoDto>> GetAllAsync();
         Task<AlumnoDto> GetByIdAsync(int id);
         Task<AlumnoDto> AddAsync(AlumnoCreateDto alumnoCreateDto);
+        Task<AlumnoDto> GetByUserIdAsync(string userId); // Método para obtener un alumno por su UserId
         Task<AlumnoDto> AddFromRegisterAsync(RegisterDto registerDto, string usuarioId);
         Task<AlumnoDto> UpdateAsync(AlumnoUpdateDto alumnoUpdateDto); 
         Task<AlumnoDto> DeleteAsync(int id); // devuelve el dto del alumno eliminado
