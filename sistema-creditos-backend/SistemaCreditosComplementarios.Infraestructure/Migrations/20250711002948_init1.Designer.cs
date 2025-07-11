@@ -12,8 +12,8 @@ using SistemaCreditosComplementarios.Infraestructure.Data;
 namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250627170630_init1AuthAlumnoCarrerasActividad")]
-    partial class init1AuthAlumnoCarrerasActividad
+    [Migration("20250711002948_init1")]
+    partial class init1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,70 +74,6 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -221,7 +157,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadModel.ActividadModels", b =>
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadModel.Actividad", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -229,15 +165,21 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CarreraId")
+                    b.Property<int>("Capacidad")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Creditos")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("DepartamentoId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Dias")
+                        .HasColumnType("integer");
 
                     b.Property<int>("EstadoActividad")
                         .HasColumnType("integer");
@@ -248,6 +190,12 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<TimeSpan>("HoraFin")
+                        .HasColumnType("interval");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("interval");
+
                     b.Property<string>("ImagenNombre")
                         .IsRequired()
                         .HasColumnType("text");
@@ -256,18 +204,32 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("TipoActividad")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("TipoActividad")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CarreraId");
+                    b.HasIndex("DepartamentoId");
 
                     b.ToTable("Actividades");
                 });
 
-            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Alumno.Alumno", b =>
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadesCarreras.ActividadCarrera", b =>
+                {
+                    b.Property<int>("IdActividad")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IdCarrera")
+                        .HasColumnType("integer");
+
+                    b.HasKey("IdActividad", "IdCarrera");
+
+                    b.HasIndex("IdCarrera");
+
+                    b.ToTable("ActividadesCarreras");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Alumnos.Alumno", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -282,15 +244,18 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                     b.Property<int>("CarreraId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("FechaNacimiento")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Semestre")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalCreditos")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("UsuarioId")
                         .IsRequired()
@@ -305,7 +270,28 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                     b.ToTable("Alumnos");
                 });
 
-            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.CarreraModel.CarreraModels", b =>
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.AlumnosActividades.AlumnoActividad", b =>
+                {
+                    b.Property<int>("IdAlumno")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IdActividad")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EstadoAlumnoActividad")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("FechaInscripcion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("IdAlumno", "IdActividad");
+
+                    b.HasIndex("IdActividad");
+
+                    b.ToTable("AlumnosActividades");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -313,11 +299,21 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CoordinadorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("DepartamentoId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CoordinadorId");
+
+                    b.HasIndex("DepartamentoId");
 
                     b.ToTable("Carreras");
 
@@ -394,6 +390,129 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Coordinadores.Coordinador", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Coordinadores");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Departamentos.Departamento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Departamentos");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NumeroControl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -405,7 +524,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -414,7 +533,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -429,7 +548,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -438,33 +557,52 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadModel.ActividadModels", b =>
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadModel.Actividad", b =>
                 {
-                    b.HasOne("SistemaCreditosComplementarios.Core.Models.CarreraModel.CarreraModels", "Carrera")
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Departamentos.Departamento", "Departamento")
                         .WithMany()
-                        .HasForeignKey("CarreraId")
+                        .HasForeignKey("DepartamentoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Departamento");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadesCarreras.ActividadCarrera", b =>
+                {
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.ActividadModel.Actividad", "Actividad")
+                        .WithMany("ActividadesCarreras")
+                        .HasForeignKey("IdActividad")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", "Carrera")
+                        .WithMany("ActividadesCarreras")
+                        .HasForeignKey("IdCarrera")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Actividad");
 
                     b.Navigation("Carrera");
                 });
 
-            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Alumno.Alumno", b =>
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Alumnos.Alumno", b =>
                 {
-                    b.HasOne("SistemaCreditosComplementarios.Core.Models.CarreraModel.CarreraModels", "Carrera")
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", "Carrera")
                         .WithMany()
                         .HasForeignKey("CarreraId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -473,6 +611,79 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                     b.Navigation("Carrera");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.AlumnosActividades.AlumnoActividad", b =>
+                {
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.ActividadModel.Actividad", "Actividad")
+                        .WithMany("AlumnosActividades")
+                        .HasForeignKey("IdActividad")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Alumnos.Alumno", "Alumno")
+                        .WithMany("AlumnosActividades")
+                        .HasForeignKey("IdAlumno")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Actividad");
+
+                    b.Navigation("Alumno");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", b =>
+                {
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Coordinadores.Coordinador", "Coordinador")
+                        .WithMany()
+                        .HasForeignKey("CoordinadorId");
+
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Departamentos.Departamento", "Departamento")
+                        .WithMany()
+                        .HasForeignKey("DepartamentoId");
+
+                    b.Navigation("Coordinador");
+
+                    b.Navigation("Departamento");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Coordinadores.Coordinador", b =>
+                {
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Departamentos.Departamento", b =>
+                {
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Usuario.ApplicationUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadModel.Actividad", b =>
+                {
+                    b.Navigation("ActividadesCarreras");
+
+                    b.Navigation("AlumnosActividades");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Alumnos.Alumno", b =>
+                {
+                    b.Navigation("AlumnosActividades");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", b =>
+                {
+                    b.Navigation("ActividadesCarreras");
                 });
 #pragma warning restore 612, 618
         }
