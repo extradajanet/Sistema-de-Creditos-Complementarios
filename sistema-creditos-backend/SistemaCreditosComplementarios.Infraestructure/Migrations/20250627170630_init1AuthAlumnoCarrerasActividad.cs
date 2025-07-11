@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init1 : Migration
+    public partial class init1AuthAlumnoCarrerasActividad : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,6 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    NumeroControl = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -52,6 +51,19 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Carreras",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carreras", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -161,49 +173,6 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Coordinadores",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Apellido = table.Column<string>(type: "text", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UsuarioId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Coordinadores", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Coordinadores_AspNetUsers_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Departamentos",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UsuarioId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Departamentos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Departamentos_AspNetUsers_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Actividades",
                 columns: table => new
                 {
@@ -214,70 +183,17 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                     FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     FechaFin = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Creditos = table.Column<decimal>(type: "numeric", nullable: false),
-                    Capacidad = table.Column<int>(type: "integer", nullable: false),
-                    Dias = table.Column<int>(type: "integer", nullable: false),
-                    HoraInicio = table.Column<TimeSpan>(type: "interval", nullable: false),
-                    HoraFin = table.Column<TimeSpan>(type: "interval", nullable: false),
-                    TipoActividad = table.Column<int>(type: "integer", nullable: false),
+                    TipoActividad = table.Column<string>(type: "text", nullable: false),
+                    CarreraId = table.Column<int>(type: "integer", nullable: false),
                     EstadoActividad = table.Column<int>(type: "integer", nullable: false),
-                    ImagenNombre = table.Column<string>(type: "text", nullable: false),
-                    DepartamentoId = table.Column<int>(type: "integer", nullable: false)
+                    ImagenNombre = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Actividades", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Actividades_Departamentos_DepartamentoId",
-                        column: x => x.DepartamentoId,
-                        principalTable: "Departamentos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Carreras",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    DepartamentoId = table.Column<int>(type: "integer", nullable: true),
-                    CoordinadorId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Carreras", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Carreras_Coordinadores_CoordinadorId",
-                        column: x => x.CoordinadorId,
-                        principalTable: "Coordinadores",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Carreras_Departamentos_DepartamentoId",
-                        column: x => x.DepartamentoId,
-                        principalTable: "Departamentos",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ActividadesCarreras",
-                columns: table => new
-                {
-                    IdActividad = table.Column<int>(type: "integer", nullable: false),
-                    IdCarrera = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ActividadesCarreras", x => new { x.IdActividad, x.IdCarrera });
-                    table.ForeignKey(
-                        name: "FK_ActividadesCarreras_Actividades_IdActividad",
-                        column: x => x.IdActividad,
-                        principalTable: "Actividades",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ActividadesCarreras_Carreras_IdCarrera",
-                        column: x => x.IdCarrera,
+                        name: "FK_Actividades_Carreras_CarreraId",
+                        column: x => x.CarreraId,
                         principalTable: "Carreras",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -291,9 +207,8 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nombre = table.Column<string>(type: "text", nullable: false),
                     Apellido = table.Column<string>(type: "text", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     FechaRegistro = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Semestre = table.Column<int>(type: "integer", nullable: false),
-                    TotalCreditos = table.Column<decimal>(type: "numeric", nullable: false),
                     CarreraId = table.Column<int>(type: "integer", nullable: false),
                     UsuarioId = table.Column<string>(type: "text", nullable: false)
                 },
@@ -314,62 +229,31 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "AlumnosActividades",
-                columns: table => new
-                {
-                    IdAlumno = table.Column<int>(type: "integer", nullable: false),
-                    IdActividad = table.Column<int>(type: "integer", nullable: false),
-                    EstadoAlumnoActividad = table.Column<int>(type: "integer", nullable: false),
-                    FechaInscripcion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AlumnosActividades", x => new { x.IdAlumno, x.IdActividad });
-                    table.ForeignKey(
-                        name: "FK_AlumnosActividades_Actividades_IdActividad",
-                        column: x => x.IdActividad,
-                        principalTable: "Actividades",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AlumnosActividades_Alumnos_IdAlumno",
-                        column: x => x.IdAlumno,
-                        principalTable: "Alumnos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Carreras",
-                columns: new[] { "Id", "CoordinadorId", "DepartamentoId", "Nombre" },
+                columns: new[] { "Id", "Nombre" },
                 values: new object[,]
                 {
-                    { 1, null, null, "Ingeniería en Sistemas Computacionales" },
-                    { 2, null, null, "Ingeniería en Tecnologías de la Información y Comunicaciones" },
-                    { 3, null, null, "Ingeniería en Administración" },
-                    { 4, null, null, "Licenciatura en Administración" },
-                    { 5, null, null, "Arquitectura" },
-                    { 6, null, null, "Licenciatura en Biología" },
-                    { 7, null, null, "Licenciatura en Turismo" },
-                    { 8, null, null, "Ingeniería Civil" },
-                    { 9, null, null, "Contador Público" },
-                    { 10, null, null, "Ingeniería Eléctrica" },
-                    { 11, null, null, "Ingeniería Electromecánica " },
-                    { 12, null, null, "Ingeniería en Gestión Empresarial " },
-                    { 13, null, null, "Ingeniería en  Desarrollo de Aplicaciones " },
-                    { 14, null, null, "Todas las carreras " }
+                    { 1, "Ingeniería en Sistemas Computacionales" },
+                    { 2, "Ingeniería en Tecnologías de la Información y Comunicaciones" },
+                    { 3, "Ingeniería en Administración" },
+                    { 4, "Licenciatura en Administración" },
+                    { 5, "Arquitectura" },
+                    { 6, "Licenciatura en Biología" },
+                    { 7, "Licenciatura en Turismo" },
+                    { 8, "Ingeniería Civil" },
+                    { 9, "Contador Público" },
+                    { 10, "Ingeniería Eléctrica" },
+                    { 11, "Ingeniería Electromecánica " },
+                    { 12, "Ingeniería en Gestión Empresarial " },
+                    { 13, "Ingeniería en  Desarrollo de Aplicaciones " },
+                    { 14, "Todas las carreras " }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Actividades_DepartamentoId",
+                name: "IX_Actividades_CarreraId",
                 table: "Actividades",
-                column: "DepartamentoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ActividadesCarreras_IdCarrera",
-                table: "ActividadesCarreras",
-                column: "IdCarrera");
+                column: "CarreraId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Alumnos_CarreraId",
@@ -380,11 +264,6 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                 name: "IX_Alumnos_UsuarioId",
                 table: "Alumnos",
                 column: "UsuarioId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AlumnosActividades_IdActividad",
-                table: "AlumnosActividades",
-                column: "IdActividad");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -422,36 +301,16 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Carreras_CoordinadorId",
-                table: "Carreras",
-                column: "CoordinadorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Carreras_DepartamentoId",
-                table: "Carreras",
-                column: "DepartamentoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Coordinadores_UsuarioId",
-                table: "Coordinadores",
-                column: "UsuarioId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Departamentos_UsuarioId",
-                table: "Departamentos",
-                column: "UsuarioId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ActividadesCarreras");
+                name: "Actividades");
 
             migrationBuilder.DropTable(
-                name: "AlumnosActividades");
+                name: "Alumnos");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -469,22 +328,10 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Actividades");
-
-            migrationBuilder.DropTable(
-                name: "Alumnos");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
                 name: "Carreras");
 
             migrationBuilder.DropTable(
-                name: "Coordinadores");
-
-            migrationBuilder.DropTable(
-                name: "Departamentos");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
