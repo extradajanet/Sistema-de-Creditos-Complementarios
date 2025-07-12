@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { CircleAlert, Search, SlidersHorizontal } from "lucide-react";
 import predeterminado from "../../images/PredeterminadoCursos.png";
-
-const estados = {
-  1: "Activo",
-  2: "En Progreso",
-  3: "Finalizado",
-};
+const tipoActividad={
+  1: "Deportivo",
+  2: "Cultural",
+  3: "Tutorias",
+  4: "Mooc"
+}
 
 export default function ActividadesList() {
   const [actividades, setActividades] = useState([]);
@@ -126,7 +126,7 @@ export default function ActividadesList() {
 
               <p className="text-xs text-gray-700 mb-1 text-center">
                 <strong>
-                  {actividad.tipoActividad} · {actividad.creditos} Crédito
+                  {tipoActividad[actividad.tipoActividad]} · {actividad.creditos} Crédito
                   {actividad.creditos > 1 ? "s" : ""}
                 </strong>
               </p>

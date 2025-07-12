@@ -3,10 +3,13 @@ import { CircleAlert, Search, SlidersHorizontal } from "lucide-react";
 import predeterminado from "../images/PredeterminadoCursos.png";
 
 const estados = {
-  1: "Activo",
-  2: "En Progreso",
-  3: "Finalizado",
+  1: "Inscrito",
+  2: "En Curso",
+  3: "Completado",
+  4: "Acreditado",
+  5: "No Acreditado"
 };
+
 
 export default function ActividadesList() {
   const [actividades, setActividades] = useState([]);
@@ -14,10 +17,11 @@ export default function ActividadesList() {
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFiltro, setMostrarFiltro] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState("");
+  const userId = localStorage.getItem("alumnoId");
 
   useEffect(() => {
     let isMounted = true;
-    fetch("/api/Actividades", { headers: { Accept: "application/json" } })
+    fetch(`api/AlumnoActividad/cursos-alumno/${userId}`, { headers: { Accept: "application/json" } })
       .then((res) => {
         if (!res.ok) throw new Error("Error: " + res.status);
         return res.json();
@@ -144,7 +148,7 @@ export default function ActividadesList() {
                   <div>
                     <p className="text-xs text-[#9A9A9A] col-span-2">
                       <strong>Estado:</strong>{" "}
-                      {estados[actividad.estadoActividad]}
+                      {estados[actividad.estadoAlumnoActividad]}
                     </p>
                     {actividad.estadoActividad === 3 && (
                       <p className="text-xs text-[#9A9A9A] col-span-2">
