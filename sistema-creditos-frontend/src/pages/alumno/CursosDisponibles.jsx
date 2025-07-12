@@ -31,8 +31,7 @@ export default function ActividadesList() {
   const userId = localStorage.getItem("alumnoId");
 
   // Inscribirme a un curso
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setError("");
 
     try {
@@ -53,8 +52,6 @@ export default function ActividadesList() {
       if (!response.ok) {
         throw new Error("Error al registrarse");
       }
-
-      setShowModal(false); // Close modal
     } catch (err) {
       console.error(err);
       setError(err.message);

@@ -110,7 +110,7 @@ export default function ActividadesList() {
           </p>
         ) : actividadesFiltradas.length === 0 ? (
           <p className="text-center col-span-full mt-10 text-black-600">
-            No te haz inscrito a alguna actividad
+            No te has inscrito a alguna actividad
           </p>
         ) : (
           actividadesFiltradas.map((actividad) => (
