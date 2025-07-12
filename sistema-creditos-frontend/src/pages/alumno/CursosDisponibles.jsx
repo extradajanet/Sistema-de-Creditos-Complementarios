@@ -22,10 +22,45 @@ export default function ActividadesList() {
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFiltro, setMostrarFiltro] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false); //Course Information
+  const [showConfirmModal, setShowConfirmModal] = useState(false); //Course Registration
+  const [isEnrolled, setIsEnrolled] = useState(false); //Tracks enrollment
   const [selectedActividad, setSelectedActividad] = useState(null);
   const [selectedTotal, settotalAlumnos] = useState(0);
+  const [error, setError] = useState("");
+  const userId = localStorage.getItem("alumnoId");
 
+  // Inscribirme a un curso
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const response = await fetch(
+        "https://localhost:7238/api/AlumnoActividad",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            alumnoId: userId,
+            actividadId: selectedActividad.id,
+            estadoAlumnoActividad: 1,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Error al registrarse");
+      }
+
+      setShowModal(false); // Close modal
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
+  //Obtains all the courses
   useEffect(() => {
     let isMounted = true;
     fetch("/api/Actividades", { headers: { Accept: "application/json" } })
@@ -50,34 +85,39 @@ export default function ActividadesList() {
       isMounted = false;
     };
   }, []);
+  //Obtain the total of students in the course
   useEffect(() => {
-  if (!selectedActividad) return; // Don't run if no actividad is selected
+    if (!selectedActividad) return; // Don't run if no actividad is selected
 
-  let isMounted = true;
+    let isMounted = true;
 
-  fetch(`/api/AlumnoActividad/alumnos-inscritos/${selectedActividad.id}`, {
-    headers: { Accept: "application/json" }
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Error: " + res.status);
-      return res.json();
+    fetch(`/api/AlumnoActividad/alumnos-inscritos/${selectedActividad.id}`, {
+      headers: { Accept: "application/json" },
     })
-    .then((data) => {
-      if (isMounted) {
-        settotalAlumnos(data.length); 
-      }
-    })
-    .catch((err) => {
-      if (isMounted) {
-        console.error("Fetch error:", err);
-      }
-    });
+      .then((res) => {
+        if (!res.ok) throw new Error("Error: " + res.status);
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) {
+          settotalAlumnos(data.length);
+          // Check if user is in the list
+          const alreadyEnrolled = data.some(
+            (alumno) => alumno.alumnoId.toString() === userId
+          );
+          setIsEnrolled(alreadyEnrolled);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          console.error("Fetch error:", err);
+        }
+      });
 
-  return () => {
-    isMounted = false;
-  };
-}, [selectedActividad]); // rerun every time user selects a new actividad
-
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedActividad]); // rerun every time user selects a new actividad
 
   const actividadesFiltradas = actividades.filter(
     (actividad) =>
@@ -156,7 +196,7 @@ export default function ActividadesList() {
                   setSelectedActividad(actividad);
                   setShowModal(true);
                 }}
-                className="bg-white rounded-lg shadow-md p-6 flex flex-col border-3 border-blue-950"
+                className="bg-white rounded-lg shadow-md  cursor-pointer p-6 flex flex-col border-3 border-blue-950 hover:bg-[#D9D9D9]"
               >
                 {actividad.imagenNombre ? (
                   <img
@@ -178,7 +218,7 @@ export default function ActividadesList() {
                   </strong>
                 </p>
 
-                <div className="flex items-center gap-1 text-gray-700 text-xs mt-2 cursor-pointer font-semibold justify-center">
+                <div className="flex items-center gap-1 text-gray-700 text-xs mt-2 font-semibold justify-center">
                   <CircleAlert strokeWidth={0.8} className="h-4 w-4" />
                   <p>Más información</p>
                 </div>
@@ -190,7 +230,8 @@ export default function ActividadesList() {
               show={showModal}
               onClose={() => setShowModal(false)}
               title={selectedActividad.nombre}
-              className="w-[700px] h-[350px] max-w-full border-4 "
+              className="w-[700px] h-[350px] max-w-full border-4 bg-[#001F54] text-white"
+              closeButtonClassName="text-white"
             >
               <div className="text-center mb-4 text-[#BFBFBF] font-semibold">
                 {selectedActividad.descripcion}
@@ -218,11 +259,21 @@ export default function ActividadesList() {
                     </p>
                     <p>
                       Carrera(s):
-                      <br /> {selectedActividad.carreraNombres}
+                      <br />
+                      {selectedActividad.carreraNombres
+
+                        .map((carrera, index) => (
+                          <span key={index}>
+                            {carrera.trim()}
+                            <br />
+                          </span>
+                        ))}
                     </p>
                   </div>
                   <div>
-                    <p>Capacidad: {selectedTotal} / {selectedActividad.capacidad}</p>
+                    <p>
+                      Capacidad: {selectedTotal} / {selectedActividad.capacidad}
+                    </p>
                     <p>Creditos: {selectedActividad.creditos}</p>
                     <p className="mt-10">
                       Fecha de Inicio:{" "}
@@ -237,11 +288,64 @@ export default function ActividadesList() {
                       ).toLocaleDateString()}
                     </p>
                   </div>
-                       <div 
-                    className="absolute bottom-4 right-4 p-2 bg-[#D9D9D9] w-[155px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]">
-                        Inscribirme
-                    </div>
+                  <div
+                    onClick={() => setShowConfirmModal(true)}
+                    className="absolute bottom-4 cursor-pointer right-4 p-2 bg-[#D9D9D9] w-[155px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]"
+                  >
+                    Inscribirme
+                  </div>
+                  {error && (
+                    <p className="text-red-500 text-sm mt-2 absolute bottom-2 left-4">
+                      {error}
+                    </p>
+                  )}
                 </div>
+              </div>
+            </Modal>
+          )}
+          {showConfirmModal && (
+            <Modal
+              show={showConfirmModal}
+              onClose={() => {
+                setShowConfirmModal(false);
+                setShowModal(false);
+              }}
+              title="Confirmación"
+              className="w-[500px] h-[220px] max-w-full border-4 bg-[#D9D9D9] text-[#001F54] custom-text font-semibold"
+              closeButtonClassName="text-[#001F54]"
+            >
+              <div className="text-center text-[#0A1128] font-medium mt-4">
+                ¿Estás seguro de querer inscribirte a la actividad de <br /> "
+                {selectedActividad.nombre}"?
+              </div>
+
+              <div className="flex justify-center gap-6 mt-8">
+                <button
+                  className={`px-4 py-2 rounded-md font-bold border-2 cursor-pointer 
+    ${
+      isEnrolled
+        ? "bg-[#001F54] text-white cursor-not-allowed"
+        : "border-[#001F54] text-[#001F54]"
+    }`}
+                  disabled={isEnrolled}
+                  onClick={async () => {
+                    await handleSubmit();
+                    setShowConfirmModal(false);
+                    setShowModal(false);
+                  }}
+                >
+                  {isEnrolled ? "Ya inscrito" : "Sí, inscribirme"}
+                </button>
+
+                <button
+                  className="border-2 border-[#001F54] text-[#001F54] cursor-pointer px-4 py-2 rounded-md font-bold"
+                  onClick={() => {
+                    setShowConfirmModal(false); // close confirm
+                    setShowModal(false); // close course info
+                  }}
+                >
+                  Cancelar
+                </button>
               </div>
             </Modal>
           )}

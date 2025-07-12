@@ -150,7 +150,7 @@ export default function ActividadesList() {
                       <strong>Estado:</strong>{" "}
                       {estados[actividad.estadoAlumnoActividad]}
                     </p>
-                    {actividad.estadoActividad === 3 && (
+                    {actividad.estadoAlumnoActividad === 4  && (
                       <p className="text-xs text-[#9A9A9A] col-span-2">
                         <strong>Créditos Obtenidos:</strong>{" "}
                         {actividad.creditos} 
