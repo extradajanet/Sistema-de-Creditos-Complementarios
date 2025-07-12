@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { CircleAlert, Search, SlidersHorizontal } from "lucide-react";
 import predeterminado from "../../images/PredeterminadoCursos.png";
-const tipoActividad={
+import Modal from "../../components/Modal";
+const tipoActividad = {
   1: "Deportivo",
   2: "Cultural",
   3: "Tutorias",
-  4: "Mooc"
-}
+  4: "Mooc",
+};
+const dias = {
+  1: "Lunes",
+  2: "Martes",
+  3: "Miércoles",
+  4: "Jueves",
+  5: "Viernes",
+};
 
 export default function ActividadesList() {
   const [actividades, setActividades] = useState([]);
@@ -14,9 +22,11 @@ export default function ActividadesList() {
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFiltro, setMostrarFiltro] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedActividad, setSelectedActividad] = useState(null);
+  const [selectedTotal, settotalAlumnos] = useState(0);
 
   useEffect(() => {
-
     let isMounted = true;
     fetch("/api/Actividades", { headers: { Accept: "application/json" } })
       .then((res) => {
@@ -39,8 +49,35 @@ export default function ActividadesList() {
     return () => {
       isMounted = false;
     };
-    
   }, []);
+  useEffect(() => {
+  if (!selectedActividad) return; // Don't run if no actividad is selected
+
+  let isMounted = true;
+
+  fetch(`/api/AlumnoActividad/alumnos-inscritos/${selectedActividad.id}`, {
+    headers: { Accept: "application/json" }
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Error: " + res.status);
+      return res.json();
+    })
+    .then((data) => {
+      if (isMounted) {
+        settotalAlumnos(data.length); 
+      }
+    })
+    .catch((err) => {
+      if (isMounted) {
+        console.error("Fetch error:", err);
+      }
+    });
+
+  return () => {
+    isMounted = false;
+  };
+}, [selectedActividad]); // rerun every time user selects a new actividad
+
 
   const actividadesFiltradas = actividades.filter(
     (actividad) =>
@@ -48,12 +85,13 @@ export default function ActividadesList() {
       (tipoSeleccionado === "" || actividad.tipoActividad === tipoSeleccionado)
   );
 
-
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Título */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
-        <h1 className="text-3xl font-bold  text-gray-900 custom-heading">Cursos Disponibles</h1>
+        <h1 className="text-3xl font-bold  text-gray-900 custom-heading">
+          Cursos Disponibles
+        </h1>
       </div>
 
       {/* Buscador y filtro */}
@@ -101,44 +139,113 @@ export default function ActividadesList() {
 
       {/* Lista de actividades */}
       <div className="max-h-[500px] overflow-y-auto pr-2">
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-9 ">
-        {loading ? (
-          <p className="text-center col-span-full mt-10 text-black-600">Cargando actividades...</p>
-        ) : actividadesFiltradas.length === 0 ? (
-          <p className="text-center col-span-full mt-10 text-black-600">No hay cursos disponibles</p>
-        ) : (
-          actividadesFiltradas.map((actividad) => (
-            <div
-              key={actividad.id}
-              className="bg-white rounded-lg shadow-md p-6 flex flex-col border-3 border-blue-950"
-            >
-              {actividad.imagenNombre ? (
-                <img
-                  src={predeterminado}
-                  alt={actividad.nombre}
-                  className="rounded-md mb-4 object-cover h-24 w-24 mx-auto"
-                />
-              ) : null}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-9 ">
+          {loading ? (
+            <p className="text-center col-span-full mt-10 text-black-600">
+              Cargando actividades...
+            </p>
+          ) : actividadesFiltradas.length === 0 ? (
+            <p className="text-center col-span-full mt-10 text-black-600">
+              No hay cursos disponibles
+            </p>
+          ) : (
+            actividadesFiltradas.map((actividad) => (
+              <div
+                key={actividad.id}
+                onClick={() => {
+                  setSelectedActividad(actividad);
+                  setShowModal(true);
+                }}
+                className="bg-white rounded-lg shadow-md p-6 flex flex-col border-3 border-blue-950"
+              >
+                {actividad.imagenNombre ? (
+                  <img
+                    src={predeterminado}
+                    alt={actividad.nombre}
+                    className="rounded-md mb-4 object-cover h-24 w-24 mx-auto"
+                  />
+                ) : null}
 
-              <h3 className="text-xl text-blue-950 font-semibold mb-2 text-center">
-                {actividad.nombre}
-              </h3>
+                <h3 className="text-xl text-blue-950 font-semibold mb-2 text-center">
+                  {actividad.nombre}
+                </h3>
 
-              <p className="text-xs text-gray-700 mb-1 text-center">
-                <strong>
-                  {tipoActividad[actividad.tipoActividad]} · {actividad.creditos} Crédito
-                  {actividad.creditos > 1 ? "s" : ""}
-                </strong>
-              </p>
+                <p className="text-xs text-gray-700 mb-1 text-center">
+                  <strong>
+                    {tipoActividad[actividad.tipoActividad]} ·{" "}
+                    {actividad.creditos} Crédito
+                    {actividad.creditos > 1 ? "s" : ""}
+                  </strong>
+                </p>
 
-              <div className="flex items-center gap-1 text-gray-700 text-xs mt-2 cursor-pointer font-semibold justify-center">
-                <CircleAlert strokeWidth={0.8} className="h-4 w-4" />
-                <p>Más información</p>
+                <div className="flex items-center gap-1 text-gray-700 text-xs mt-2 cursor-pointer font-semibold justify-center">
+                  <CircleAlert strokeWidth={0.8} className="h-4 w-4" />
+                  <p>Más información</p>
+                </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+          {selectedActividad && (
+            <Modal
+              show={showModal}
+              onClose={() => setShowModal(false)}
+              title={selectedActividad.nombre}
+              className="w-[700px] h-[350px] max-w-full border-4 "
+            >
+              <div className="text-center mb-4 text-[#BFBFBF] font-semibold">
+                {selectedActividad.descripcion}
+              </div>
+
+              {/*Image of course */}
+              <div className="flex h-full  ">
+                <div className="w-1/3 ">
+                  {selectedActividad.imagenNombre ? (
+                    <img
+                      src={predeterminado}
+                      alt={selectedActividad.nombre}
+                      className="rounded-md object-cover h-[200ox] w-[200px] mx-auto "
+                    />
+                  ) : null}
+                </div>
+                {/*Course information */}
+                <div className="grid grid-cols-2 w-2/3 h-full  customtext2 text-white ">
+                  <div className="w-full h-full mr-4">
+                    <p className="mb-4">
+                      Horario:
+                      <br /> {dias[selectedActividad.dias]} <br />
+                      {selectedActividad.horaInicio.slice(0, 5)} -{" "}
+                      {selectedActividad.horaFin.slice(0, 5)}
+                    </p>
+                    <p>
+                      Carrera(s):
+                      <br /> {selectedActividad.carreraNombres}
+                    </p>
+                  </div>
+                  <div>
+                    <p>Capacidad: {selectedTotal} / {selectedActividad.capacidad}</p>
+                    <p>Creditos: {selectedActividad.creditos}</p>
+                    <p className="mt-10">
+                      Fecha de Inicio:{" "}
+                      {new Date(
+                        selectedActividad.fechaInicio
+                      ).toLocaleDateString()}
+                    </p>
+                    <p>
+                      Fecha de Fin:{" "}
+                      {new Date(
+                        selectedActividad.fechaFin
+                      ).toLocaleDateString()}
+                    </p>
+                  </div>
+                       <div 
+                    className="absolute bottom-4 right-4 p-2 bg-[#D9D9D9] w-[155px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]">
+                        Inscribirme
+                    </div>
+                </div>
+              </div>
+            </Modal>
+          )}
+        </div>
       </div>
     </div>
   );
