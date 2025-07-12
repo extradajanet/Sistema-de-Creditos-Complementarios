@@ -31,6 +31,6 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Auth
     {
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
-        public int AlumnoId { get; set; }
+        public int? AlumnoId { get; set; }
     }
 }
