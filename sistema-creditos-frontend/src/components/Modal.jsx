@@ -1,25 +1,28 @@
+import { X } from "lucide-react";
 import React from "react";
 
 // Modal.jsx
-export default function Modal({ show, onClose, title, children, className = "" }) {
+export default function Modal({ show, onClose, title, children, className = "",closeButtonClassName = "" }) {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-50 ">
-      <div className={`bg-gray-200 border border-blue-950 rounded-xl relative shadow-lg ${className}`}>
-        {/* Encabezado */}
-        <div className="p-6 border-b border-gray-200 relative text-center">
-          <h2 className="text-xl font-bold text-black ">{title}</h2>
+    <div className="fixed inset-0 bg-opacity-80 flex justify-center items-center z-50 ">
+      <div className={` border border-blue-950 rounded-xl relative shadow-lg ${className}`}>
+        <div className="p-2">
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 text-gray-500 hover:text-red-600 text-xl font-bold"
+            className={`absolute top-2 cursor-pointer right-2 font-bold ${closeButtonClassName}`}
           >
-            ×
+            <X className="w-8 h-8 hover:text-red-600" onClick={onClose}/>
           </button>
+        </div>
+        {/* Encabezado */}
+        <div className="p-2 relative text-center">
+          <h2 className="custom-subheading2 font-semibold  ">{title}</h2>
         </div>
 
         {/* Contenido */}
-        <div className="p-6">
+        <div className=" h-full">
           {children}
         </div>
       </div>

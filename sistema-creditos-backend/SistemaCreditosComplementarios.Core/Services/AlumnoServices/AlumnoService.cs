@@ -66,7 +66,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             var alumno = await _alumnoRepository.GetByUserIdAsync(userId); 
             if (alumno == null)
             {
-                throw new Exception("Alumno no encontrado.");
+                return null; // Retorna null si no se encuentra el alumno
             }
             return new AlumnoDto
             {

@@ -55,7 +55,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
             {
                 Token = token,
                 Expiration = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryInMinutes),
-                AlumnoId = alumno.Id
+                AlumnoId = alumno?.Id
             };
         }
 
