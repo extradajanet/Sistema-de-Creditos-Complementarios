@@ -47,9 +47,41 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
         {
             var user = await _authRepository.LoginAsync(loginDto);
 
+            var alumno = await _alumnoService.GetByUserIdAsync(user.Id);
+
             var token = GenerateToken(user);
 
-            var alumno = await _alumnoService.GetByUserIdAsync(user.Id);
+            //var userRoles = await _userManager.GetRolesAsync(user);
+
+            //if (userRoles.Contains("Alumno"))
+            //{
+            //    return new LoginResponseDto
+            //    {
+            //        Token = token,
+            //        Expiration = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryInMinutes),
+            //        AlumnoId = alumno?.Id
+            //    };
+            //} 
+            //else if (userRoles.Contains("Departamento"))
+            //{
+            //    var departamento = await _alumnoService.GetDepartamentoByUserIdAsync(user.Id);
+            //    return new LoginResponseDto
+            //    {
+            //        Token = token,
+            //        Expiration = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryInMinutes),
+            //        DepartamentoId = departamento?.Id
+            //    };
+            //}
+            //else if (userRoles.Contains("Coordinador"))
+            //{
+            //    var coordinador = await _alumnoService.GetCoordinadorByUserIdAsync(user.Id);
+            //    return new LoginResponseDto
+            //    {
+            //        Token = token,
+            //        Expiration = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryInMinutes),
+            //        CoordinadorId = coordinador?.Id
+            //    };
+            //}
 
             return new LoginResponseDto
             {
