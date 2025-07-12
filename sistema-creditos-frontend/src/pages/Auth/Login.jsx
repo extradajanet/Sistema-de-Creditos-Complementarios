@@ -54,7 +54,7 @@ function Login() {
         localStorage.setItem("rol", userRole);
       }
 
-      navigate("/");
+      navigate("/app");
     } catch (err) {
       console.error(err);
       setError(err.message);

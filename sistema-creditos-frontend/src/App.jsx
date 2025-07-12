@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import MiHistorial from "./pages/MiHistorial"
@@ -14,21 +14,17 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirect root path to login */}
-        <Route path="/" element={<Navigate to="/login" />} />
-
-        {/* Auth routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Main layout with nested routes */}
-        <Route path="/app" element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="historial" element={<MiHistorial />} />
-          <Route path="perfil" element={<Perfil />} />
-          <Route path="cursosdisponibles" element={<CursosDisponibles />} />
-          <Route path="miscursos" element={<MisCursos />} />
-          <Route path="crearactividad" element={<CrearActividad />} />
+          <Route path="/historial" element={<MiHistorial />} />
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
+          <Route path="/miscursos" element={<MisCursos/>} />
+          <Route path="/crearactividad" element={<CrearActividad/>} />
+
+
         </Route>
       </Routes>
     </BrowserRouter>
