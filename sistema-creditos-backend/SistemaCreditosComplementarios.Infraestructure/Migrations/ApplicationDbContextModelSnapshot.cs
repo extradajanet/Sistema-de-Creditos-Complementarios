@@ -162,18 +162,21 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CapacidadMaxima")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CarreraId")
+                    b.Property<int>("Capacidad")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Creditos")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("DepartamentoId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Dias")
+                        .HasColumnType("integer");
 
                     b.Property<int>("EstadoActividad")
                         .HasColumnType("integer");
@@ -184,6 +187,12 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<TimeSpan>("HoraFin")
+                        .HasColumnType("interval");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("interval");
+
                     b.Property<string>("ImagenNombre")
                         .IsRequired()
                         .HasColumnType("text");
@@ -192,15 +201,29 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("TipoActividad")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("TipoActividad")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CarreraId");
+                    b.HasIndex("DepartamentoId");
 
                     b.ToTable("Actividades");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadesCarreras.ActividadCarrera", b =>
+                {
+                    b.Property<int>("IdActividad")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IdCarrera")
+                        .HasColumnType("integer");
+
+                    b.HasKey("IdActividad", "IdCarrera");
+
+                    b.HasIndex("IdCarrera");
+
+                    b.ToTable("ActividadesCarreras");
                 });
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Alumnos.Alumno", b =>
@@ -540,11 +563,30 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadModel.Actividad", b =>
                 {
-                    b.HasOne("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", "Carrera")
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.Departamentos.Departamento", "Departamento")
                         .WithMany()
-                        .HasForeignKey("CarreraId")
+                        .HasForeignKey("DepartamentoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Departamento");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadesCarreras.ActividadCarrera", b =>
+                {
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.ActividadModel.Actividad", "Actividad")
+                        .WithMany("ActividadesCarreras")
+                        .HasForeignKey("IdActividad")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", "Carrera")
+                        .WithMany("ActividadesCarreras")
+                        .HasForeignKey("IdCarrera")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Actividad");
 
                     b.Navigation("Carrera");
                 });
@@ -626,12 +668,19 @@ namespace SistemaCreditosComplementarios.Infraestructure.Migrations
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.ActividadModel.Actividad", b =>
                 {
+                    b.Navigation("ActividadesCarreras");
+
                     b.Navigation("AlumnosActividades");
                 });
 
             modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.Alumnos.Alumno", b =>
                 {
                     b.Navigation("AlumnosActividades");
+                });
+
+            modelBuilder.Entity("SistemaCreditosComplementarios.Core.Models.CarreraModel.Carrera", b =>
+                {
+                    b.Navigation("ActividadesCarreras");
                 });
 #pragma warning restore 612, 618
         }

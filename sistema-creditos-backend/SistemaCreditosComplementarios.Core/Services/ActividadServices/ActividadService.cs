@@ -46,7 +46,9 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = a.ImagenNombre,
                 DepartamentoId = a.DepartamentoId,
                 DepartamentoNombre = a.Departamento?.Nombre,
-                CarreraNombres = a.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
+                CarreraNombres = a.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>(),
+
+
             });
         }
 
