@@ -169,7 +169,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
         // elimina la actividad de un alumno
         public async Task DeleteAsync(int alumnoId, int actividadId)
         {
-            var alumnoActividad = await _alumnoActividadRepository.GetByIdAsync(alumnoId, actividadId);
+            var alumnoActividad = await _alumnoActividadRepository.GetByIdAsync(alumnoId, actividadId) ?? throw new Exception("Actividad del alumno no encontrada para eliminar."); 
 
             var alumno = await _alumnoRepository.GetByIdAsync(alumnoId) ?? throw new Exception($"El alumno con ID {alumnoId} no existe.");
 
@@ -177,11 +177,6 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
             {
                 alumno.TotalCreditos -= alumnoActividad.Actividad.Creditos;
                 await _alumnoRepository.UpdateAsync(alumno); // Actualiza el alumno con los nuevos créditos
-            }
-
-            if (alumnoActividad == null)
-            {
-                throw new Exception("Actividad del alumno no encontrada para eliminar.");
             }
             await _alumnoActividadRepository.DeleteAsync(alumnoId, actividadId);
         }
