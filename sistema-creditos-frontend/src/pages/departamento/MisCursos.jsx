@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { PencilLine, Users, Search, SlidersHorizontal, Pencil, Calendar, Trash2, Check, X } from "lucide-react";
+import { 
+  PencilLine, Users, Search, SlidersHorizontal, Pencil, Calendar, Trash2, Check, X, ChevronDown 
+} from "lucide-react";
 import predeterminado from "../../images/PredeterminadoCursos.png";
 import Modal from "../../components/Modal";
+
+import { Listbox } from "@headlessui/react";
 
 const estados = {
   1: "Activo",
@@ -28,97 +32,91 @@ export default function ActividadesList() {
   const [fechaFinEdit, setFechaFinEdit] = useState("");
 
   const todasLasCarreras = [
-  { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
-  { id: 2, nombre: "Ingeniería en Tecnologías de la Información y Comunicaciones" },
-  { id: 3, nombre: "Ingeniería en Administración" },
-  { id: 4, nombre: "Licenciatura en Administración" },
-  { id: 5, nombre: "Arquitectura" },
-  { id: 6, nombre: "Licenciatura en Biología" },
-  { id: 7, nombre: "Licenciatura en Turismo" },
-  { id: 8, nombre: "Ingeniería Civil" },
-  { id: 9, nombre: "Contador Público" },
-  { id: 10, nombre: "Ingeniería Eléctrica" },
-  { id: 11, nombre: "Ingeniería Electromecánica" },
-  { id: 12, nombre: "Ingeniería en Gestión Empresarial" },
-  { id: 13, nombre: "Ingeniería en Desarrollo de Aplicaciones" },
-  { id: 14, nombre: "Todas las carreras" },
-];
+    { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
+    { id: 2, nombre: "Ingeniería en Tecnologías de la Información y Comunicaciones" },
+    { id: 3, nombre: "Ingeniería en Administración" },
+    { id: 4, nombre: "Licenciatura en Administración" },
+    { id: 5, nombre: "Arquitectura" },
+    { id: 6, nombre: "Licenciatura en Biología" },
+    { id: 7, nombre: "Licenciatura en Turismo" },
+    { id: 8, nombre: "Ingeniería Civil" },
+    { id: 9, nombre: "Contador Público" },
+    { id: 10, nombre: "Ingeniería Eléctrica" },
+    { id: 11, nombre: "Ingeniería Electromecánica" },
+    { id: 12, nombre: "Ingeniería en Gestión Empresarial" },
+    { id: 13, nombre: "Ingeniería en Desarrollo de Aplicaciones" },
+    { id: 14, nombre: "Todas las carreras" },
+  ];
 
-const normalizar = (texto) => texto.trim().toLowerCase();
+  const normalizar = (texto) => texto.trim().toLowerCase();
 
-const obtenerCarreraIdsDesdeNombres = (nombres) => {
-  const nombresNormalizados = nombres.map(normalizar);
-  return todasLasCarreras
-    .filter((carrera) => nombresNormalizados.includes(normalizar(carrera.nombre)))
-    .map((carrera) => carrera.id);
-};
-
-
-
-  
-
-const handleUpdateActividad = () => {
-  if (!actividadSeleccionada) return;
-
-  let carrerasFinales = [...carreraIdsEdit];
-  if (carrerasFinales.includes(14)) {
-    carrerasFinales = todasLasCarreras.filter(c => c.id !== 14).map(c => c.id);
-  }
-
-  const actividadActualizada = {
-    nombre: actividadSeleccionada.nombre,
-    descripcion: descripcionEdit,
-    fechaInicio: `${fechaInicioEdit}T00:00:00Z`,
-    fechaFin: `${fechaFinEdit}T00:00:00Z`,
-    creditos: creditosEdit,
-    capacidad: capacidadEdit,
-    dias: actividadSeleccionada.dias || 1,
-    horaInicio: actividadSeleccionada.horaInicio || "00:00:00",
-    horaFin: actividadSeleccionada.horaFin || "00:00:00",
-    tipoActividad: actividadSeleccionada.tipoActividad || 1,
-    estadoActividad: actividadSeleccionada.estadoActividad || 1,
-    imagenNombre: actividadSeleccionada.imagenNombre || "PredeterminadoCursos.png",
-    departamentoId: actividadSeleccionada.departamentoId || 1,
-    carreraIds: carrerasFinales,
+  const obtenerCarreraIdsDesdeNombres = (nombres) => {
+    const nombresNormalizados = nombres.map(normalizar);
+    return todasLasCarreras
+      .filter((carrera) => nombresNormalizados.includes(normalizar(carrera.nombre)))
+      .map((carrera) => carrera.id);
   };
 
-  fetch(`https://localhost:7238/api/Actividades/${actividadSeleccionada.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(actividadActualizada),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Error al actualizar");
-      return res.json();
+  const handleUpdateActividad = () => {
+    if (!actividadSeleccionada) return;
+
+    let carrerasFinales = [...carreraIdsEdit];
+    if (carrerasFinales.includes(14)) {
+      carrerasFinales = todasLasCarreras.filter(c => c.id !== 14).map(c => c.id);
+    }
+
+    const actividadActualizada = {
+      nombre: actividadSeleccionada.nombre,
+      descripcion: descripcionEdit,
+      fechaInicio: fechaInicioEdit,
+      fechaFin: fechaFinEdit,
+      creditos: creditosEdit,
+      capacidad: capacidadEdit,
+      dias: actividadSeleccionada.dias || 1,
+      horaInicio: actividadSeleccionada.horaInicio || "00:00:00",
+      horaFin: actividadSeleccionada.horaFin || "00:00:00",
+      tipoActividad: actividadSeleccionada.tipoActividad || 1,
+      estadoActividad: actividadSeleccionada.estadoActividad || 1,
+      imagenNombre: actividadSeleccionada.imagenNombre || "PredeterminadoCursos.png",
+      departamentoId: actividadSeleccionada.departamentoId || 1,
+      carreraIds: carrerasFinales,
+    };
+
+    fetch(`https://localhost:7238/api/Actividades/${actividadSeleccionada.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(actividadActualizada),
     })
-.then(() => {
-  const nuevasCarreraNombres = todasLasCarreras
-    .filter(c => actividadActualizada.carreraIds.includes(c.id))
-    .map(c => c.nombre);
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al actualizar");
+        return res.json();
+      })
+      .then(() => {
+        const nuevasCarreraNombres = todasLasCarreras
+          .filter(c => actividadActualizada.carreraIds.includes(c.id))
+          .map(c => c.nombre);
 
-  setActividades((prev) =>
-    prev.map((a) =>
-      a.id === actividadSeleccionada.id
-        ? {
-            ...a,
-            ...actividadActualizada,
-            carreraNombres: nuevasCarreraNombres, // ✅ actualiza también los nombres
-          }
-        : a
-    )
-  );
+        setActividades((prev) =>
+          prev.map((a) =>
+            a.id === actividadSeleccionada.id
+              ? {
+                  ...a,
+                  ...actividadActualizada,
+                  carreraNombres: nuevasCarreraNombres,
+                }
+              : a
+          )
+        );
 
-  setShowEdit(false);
-})
-.catch((err) => {
-  console.error("Error actualizando:", err);
-  alert("Error al guardar los cambios");
-});
-
-};
-
+        setShowEdit(false);
+      })
+      .catch((err) => {
+        console.error("Error actualizando:", err);
+        alert("Error al guardar los cambios");
+      });
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -145,10 +143,24 @@ const handleUpdateActividad = () => {
     };
   }, []);
 
+  const tiposActividad = {
+    1: "Deportiva",
+    2: "Cultural",
+    3: "Tutorias",
+    4: "MOOC",
+  };
+
+  const obtenerTipoIdPorNombre = (nombre) => {
+    const entrada = Object.entries(tiposActividad).find(([, n]) => n === nombre);
+    return entrada ? Number(entrada[0]) : null;
+  };
+
+  const tipos = ["", ...Object.values(tiposActividad)];
+
   const actividadesFiltradas = actividades.filter(
     (actividad) =>
       actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-      (tipoSeleccionado === "" || actividad.tipoActividad === tipoSeleccionado)
+      (tipoSeleccionado === "" || actividad.tipoActividad === obtenerTipoIdPorNombre(tipoSeleccionado))
   );
 
   const AlumnosBusqueda = alumnos.filter((actividad) =>
@@ -184,17 +196,36 @@ const handleUpdateActividad = () => {
           </button>
 
           {mostrarFiltro && (
-            <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl px-3 py-2 shadow-lg z-10">
-              <select
-                className="text-sm border-none focus:outline-none"
-                value={tipoSeleccionado}
-                onChange={(e) => setTipoSeleccionado(e.target.value)}
-              >
-                <option value="">Todos los tipos</option>
-                <option value="Taller">Taller</option>
-                <option value="Conferencia">Conferencia</option>
-                <option value="Seminario">Seminario</option>
-              </select>
+            <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl shadow-lg z-10 p-2 w-48">
+              {/* Aquí reemplazamos el select por Listbox */}
+              <Listbox value={tipoSeleccionado} onChange={setTipoSeleccionado}>
+                <div className="relative">
+                    <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none">
+                    <span>{tipoSeleccionado || "Todos los tipos"}</span>
+                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                  </Listbox.Button>
+                  <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg z-10 max-h-48 overflow-auto">
+                    {tipos.map((tipo, index) => (
+                      <Listbox.Option
+                        key={index}
+                        value={tipo}
+                        className={({ active }) =>
+                          `cursor-pointer select-none px-4 py-2 text-sm ${
+                            active ? "bg-blue-100 text-blue-900" : "text-gray-700"
+                          }`
+                        }
+                      >
+                        {({ selected }) => (
+                          <div className="flex justify-between items-center">
+                            <span>{tipo || "Todos los tipos"}</span>
+                            {selected && <Check className="w-4 h-4 text-blue-950" />}
+                          </div>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </div>
+              </Listbox>
             </div>
           )}
         </div>
@@ -222,7 +253,8 @@ const handleUpdateActividad = () => {
                   <div className="flex-1 flex flex-col justify-center items-left text-white">
                     <h3 className="text-xl font-semibold mb-1">{actividad.nombre}</h3>
                     <p className="text-xs mb-1 text-[#9A9A9A]">
-                      <strong>Fecha de inicio: {actividad.fechaInicio}</strong>
+                      <strong>Fecha de inicio: </strong>
+                      {new Date(actividad.fechaInicio).toLocaleDateString()}
                     </p>
                     <p className="text-xs text-[#9A9A9A]">
                       <strong>
@@ -233,20 +265,19 @@ const handleUpdateActividad = () => {
                   <div className="flex gap-2 mt-15">
                     <button
                       className="bg-blue-950 text-white rounded h-8 w-8 flex items-center justify-center"
-onClick={() => {
-    console.log("Actividad seleccionada:", actividad); // <-- Asegúrate de que actividad.carreraIds exista y tenga valores
+                      onClick={() => {
+                        console.log("Actividad seleccionada:", actividad);
 
-  setActividadSeleccionada(actividad);
-  setDescripcionEdit(actividad.descripcion || "");
-  setCreditosEdit(actividad.creditos);
-  setCapacidadEdit(actividad.capacidad);
-  setFechaInicioEdit(actividad.fechaInicio?.slice(0, 10));
-  setFechaFinEdit(actividad.fechaFin?.slice(0, 10) || "");
-const nombres = Array.isArray(actividad.carreraNombres) ? actividad.carreraNombres : [];
-setCarreraIdsEdit(obtenerCarreraIdsDesdeNombres(nombres));
-  setShowEdit(true);
-}}
-
+                        setActividadSeleccionada(actividad);
+                        setDescripcionEdit(actividad.descripcion || "");
+                        setCreditosEdit(actividad.creditos);
+                        setCapacidadEdit(actividad.capacidad);
+                        setFechaInicioEdit(actividad.fechaInicio?.slice(0, 10));
+                        setFechaFinEdit(actividad.fechaFin?.slice(0, 10) || "");
+                        const nombres = Array.isArray(actividad.carreraNombres) ? actividad.carreraNombres : [];
+                        setCarreraIdsEdit(obtenerCarreraIdsDesdeNombres(nombres));
+                        setShowEdit(true);
+                      }}
                     >
                       <PencilLine strokeWidth={2} color="white" className="w-6 h-6" />
                     </button>
@@ -262,7 +293,7 @@ setCarreraIdsEdit(obtenerCarreraIdsDesdeNombres(nombres));
                       show={showEdit}
                       onClose={() => setShowEdit(false)}
                       title={actividadSeleccionada?.nombre || "Editar Actividad"}
-                      className="w-[900px]"
+                      className="w-[900px] bg-gray-200"
                     >
                       <div className="grid grid-cols-[270px_1fr] gap-4">
                         <div className="bg-white rounded-xl flex items-center justify-center p-2">
@@ -306,41 +337,42 @@ setCarreraIdsEdit(obtenerCarreraIdsDesdeNombres(nombres));
                               <Pencil size={14} className="text-gray-500 cursor-pointer" />
                             </div>
                           </div>
-<div className="col-span-2">
-  <label className="font-semibold">Carrera(s):</label>
-  <div className="relative mt-1 w-full">
-
-    <p className="text-sm font-medium mb-1">
-      Carreras seleccionadas: {
-        carreraIdsEdit.length > 0
-          ? carreraIdsEdit
-              .map(id => todasLasCarreras.find(c => c.id === id)?.nombre)
-              .filter(Boolean)
-              .join(", ")
-          : "Ninguna"
-      }
-    </p>
-
-<select
-  multiple
-  className="w-full border rounded px-3 py-2 bg-white text-sm text-gray-700"
-  value={carreraIdsEdit.map(String)} // <-- AQUÍ
-  onChange={(e) => {
-    const seleccionadas = Array.from(e.target.selectedOptions).map((opt) => Number(opt.value));
-    setCarreraIdsEdit(seleccionadas);
-  }}
->
-  {todasLasCarreras.map((carrera) => (
-    <option key={carrera.id} value={String(carrera.id)}>
-      {carrera.nombre}
-    </option>
-  ))}
-</select>
-
-
-  </div>
-</div>
-
+                          <div className="col-span-2">
+                            <label className="font-semibold">Carrera(s):</label>
+                            <div className="relative mt-1 w-full">
+                              <p className="text-sm font-medium mb-1">
+                                Carreras seleccionadas:{" "}
+                                {carreraIdsEdit.length > 0
+                                  ? carreraIdsEdit
+                                      .map((id) => todasLasCarreras.find((c) => c.id === id)?.nombre)
+                                      .filter(Boolean)
+                                      .join(", ")
+                                  : "Ninguna"}
+                              </p>
+                              <div className="w-full border border-blue-950 rounded-lg px-3 py-2 bg-white text-sm text-gray-800 h-40 overflow-y-auto space-y-1">
+                                {todasLasCarreras.map((carrera) => {
+                                  const seleccionada = carreraIdsEdit.includes(carrera.id);
+                                  return (
+                                    <div
+                                      key={carrera.id}
+                                      onClick={() => {
+                                        setCarreraIdsEdit((prev) =>
+                                          seleccionada
+                                            ? prev.filter((id) => id !== carrera.id)
+                                            : [...prev, carrera.id]
+                                        );
+                                      }}
+                                      className={`cursor-pointer px-2 py-1 rounded ${
+                                        seleccionada ? "bg-blue-950 text-white" : "hover:bg-blue-100"
+                                      }`}
+                                    >
+                                      {carrera.nombre}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
 
                           <div className="flex items-center gap-2">
                             <label className="font-semibold">Fecha de Inicio:</label>
@@ -381,8 +413,7 @@ setCarreraIdsEdit(obtenerCarreraIdsDesdeNombres(nombres));
                     <Modal
                       show={showList}
                       onClose={() => setShowList(false)}
-                      title="Alumnos Inscritos"
-                      className="w-[500px]"
+                      className="w-[500px] bg-gray-200"
                     >
                       <div className="text-center mb-4 flex items-center justify-center gap-2 text-blue-950">
                         <h2 className="text-2xl font-bold">Alumnos Inscritos</h2>

@@ -11,9 +11,9 @@ export default function Modal({ show, onClose, title, children, className = "",c
         <div className="p-2">
           <button
             onClick={onClose}
-            className={`absolute top-2 cursor-pointer right-2 font-bold ${closeButtonClassName}`}
+            className={`absolute top-2 cursor-pointer right-2 font-bold ${closeButtonClassName} z-10`}
           >
-            <X className="w-8 h-8 hover:text-red-600" onClick={onClose}/>
+            <X className="w-8 h-8 hover:text-red-600 " onClick={onClose}/>
           </button>
         </div>
         {/* Encabezado */}
@@ -22,7 +22,7 @@ export default function Modal({ show, onClose, title, children, className = "",c
         </div>
 
         {/* Contenido */}
-        <div className=" h-full">
+        <div className=" h-full p-3">
           {children}
         </div>
       </div>
