@@ -55,7 +55,7 @@ namespace SistemaCreditosComplementarios.Core.Services.DepartamentoServices
         public async Task<DepartamentoDto> UpdateAsync(DepartamentoUpdateDto departamentoUpdateDto)
         {
             var departamentoExistente = await _departamentoRepository.GetByIdAsync(departamentoUpdateDto.Id);
-            if (departamentoExistente == null) { throw new Exception("Alumno no encontrado. "); }
+            if (departamentoExistente == null) { throw new Exception("Departamento no encontrado. "); }
 
             departamentoExistente.Nombre = departamentoUpdateDto.Nombre;
 

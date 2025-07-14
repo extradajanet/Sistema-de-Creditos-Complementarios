@@ -5,6 +5,7 @@ using SistemaCreditosComplementarios.Core.Dtos.Auth;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICoordinadorService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IDepartmentService;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
 using SistemaCreditosComplementarios.Core.Settings;
@@ -19,6 +20,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
         private readonly JwtOptions _jwtOptions;
         private readonly IAlumnoService _alumnoService;
         private readonly IDepartamentoService _departamentoService;
+        private readonly ICoordinadorService _coordinadorService;
         private readonly IAuthRepository _authRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         public AuthService
@@ -26,12 +28,14 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
             IOptions<JwtOptions> jwtOptions, 
             IAlumnoService alumnoService,
             IDepartamentoService departamentoService,
+            ICoordinadorService coordinadorService,
             IAuthRepository authRepository,
             UserManager<ApplicationUser> userManager
             )
         {
             _jwtOptions = jwtOptions.Value;
             _alumnoService = alumnoService;
+            _coordinadorService = coordinadorService;
             _departamentoService = departamentoService;
             _authRepository = authRepository;
             _userManager = userManager;
@@ -77,16 +81,16 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
                     DepartamentoId = departamento?.Id
                 };
             }
-            //else if (userRoles.Contains("Coordinador"))
-            //{
-            //    var coordinador = await _alumnoService.GetCoordinadorByUserIdAsync(user.Id);
-            //    return new LoginResponseDto
-            //    {
-            //        Token = token,
-            //        Expiration = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryInMinutes),
-            //        CoordinadorId = coordinador?.Id
-            //    };
-            //}
+            else if (userRoles.Contains("Coordinador"))
+            {
+                var coordinador = await _coordinadorService.GetByUserIdAsync(user.Id);
+                return new LoginResponseDto
+                {
+                   Token = token,
+                    Expiration = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryInMinutes),
+                    CoordinadorId = coordinador?.Id
+                };
+            }
 
             return new LoginResponseDto
             {

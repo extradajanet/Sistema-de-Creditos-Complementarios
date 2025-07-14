@@ -26,7 +26,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.DepartamentoController
                 return Ok(departamento);
             }catch (Exception ex)
             {
-                return StatusCode(500, $"Error interno del servido: {ex.Message}");
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
 
