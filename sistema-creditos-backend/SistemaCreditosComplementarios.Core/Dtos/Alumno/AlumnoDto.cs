@@ -16,6 +16,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Alumno
         public DateTime FechaRegistro { get; set; } 
         public int Semestre { get; set; }
         public decimal TotalCreditos { get; set; } = 0;
+        public string CarreraNombre { get; set; }
         public int CarreraId { get; set; } 
     }
 

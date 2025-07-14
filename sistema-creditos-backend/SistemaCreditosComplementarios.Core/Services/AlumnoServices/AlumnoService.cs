@@ -58,6 +58,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 Semestre = alumno.Semestre,
                 TotalCreditos = alumno.TotalCreditos,
                 CarreraId = alumno.CarreraId,
+                CarreraNombre = alumno.Carrera?.Nombre,
             };
         }
 
@@ -79,6 +80,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 Semestre = alumno.Semestre,
                 TotalCreditos = alumno.TotalCreditos,
                 CarreraId = alumno.CarreraId,
+                CarreraNombre= alumno.Carrera?.Nombre,
             };
         }
 
@@ -91,7 +93,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 Apellido = alumnoCreateDto.Apellido,
                 Semestre = alumnoCreateDto.Semestre,
                 TotalCreditos = alumnoCreateDto.TotalCreditos,
-                CarreraId = alumnoCreateDto.CarreraId, 
+                CarreraId = alumnoCreateDto.CarreraId,
                 FechaRegistro = DateTime.UtcNow
             };
             await _alumnoRepository.AddAsync(nuevoAlumno); // Llamada al repositorio para agregar el nuevo alumno
