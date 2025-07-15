@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  CircleAlert,
-  Search,
-  SlidersHorizontal,
-  ChevronDown,
-  Check,
-} from "lucide-react";
+import { CircleAlert, Search, SlidersHorizontal, ChevronDown, Check } from "lucide-react";
+import predeterminado from "../images/PredeterminadoCursos.png";
 import { Listbox } from "@headlessui/react";
 
-import predeterminado from "../images/PredeterminadoCursos.png";
-
-// --- Constantes ---
 const estados = {
   1: "Inscrito",
   2: "En Curso",
@@ -28,21 +20,16 @@ const opcionesEstado = [
   { id: 5, nombre: "No Acreditado" },
 ];
 
-// --- Componente principal ---
 export default function ActividadesList() {
-  // --- Estados ---
   const [actividades, setActividades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFiltro, setMostrarFiltro] = useState(false);
   const [estadoSeleccionado, setEstadoSeleccionado] = useState(opcionesEstado[0]);
-
   const userId = localStorage.getItem("alumnoId");
 
-  // --- Efecto para obtener datos ---
   useEffect(() => {
     let isMounted = true;
-
     fetch(`api/AlumnoActividad/cursos-alumno/${userId}`, {
       headers: { Accept: "application/json" },
     })
@@ -66,29 +53,23 @@ export default function ActividadesList() {
     return () => {
       isMounted = false;
     };
-  }, [userId]);
+  }, []);
 
-  // --- Filtrado de actividades por búsqueda y estado ---
   const actividadesFiltradas = actividades.filter(
     (actividad) =>
       actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-      (estadoSeleccionado.id === "" ||
-        actividad.estadoAlumnoActividad === estadoSeleccionado.id)
+      (estadoSeleccionado.id === "" || actividad.estadoAlumnoActividad === estadoSeleccionado.id)
   );
 
-  // --- Renderizado ---
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Título */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
-        <h1 className="text-3xl font-bold text-[#0A1128] custom-heading">
-          Mi Historial
-        </h1>
+        <h1 className="text-3xl font-bold text-[#0A1128] custom-heading">Mi Historial</h1>
       </div>
 
       {/* Buscador y filtro */}
       <div className="flex justify-between items-center mb-2">
-        {/* Input búsqueda */}
         <div className="relative w-full max-w-md">
           <input
             type="text"
@@ -102,17 +83,16 @@ export default function ActividadesList() {
           </div>
         </div>
 
-        {/* Botón para mostrar/ocultar filtro */}
+        {/* Botón filtro */}
         <div className="relative">
           <button
             className="ml-4 bg-white border-2 border-blue-950 rounded-2xl px-2 py-2 text-base font-semibold hover:bg-blue-800 transition"
             onClick={() => setMostrarFiltro(!mostrarFiltro)}
-            aria-label="Mostrar filtro"
           >
             <SlidersHorizontal strokeWidth={1} />
           </button>
 
-          {/* Panel desplegable de filtro */}
+          {/* Filtro desplegable */}
           {mostrarFiltro && (
             <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl shadow-lg z-10 p-2 w-48">
               <Listbox value={estadoSeleccionado} onChange={setEstadoSeleccionado}>
@@ -121,7 +101,6 @@ export default function ActividadesList() {
                     <span>{estadoSeleccionado.nombre}</span>
                     <ChevronDown className="w-5 h-5 text-gray-500" />
                   </Listbox.Button>
-
                   <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg z-10 max-h-48 overflow-auto">
                     {opcionesEstado.map((estado) => (
                       <Listbox.Option
@@ -165,7 +144,6 @@ export default function ActividadesList() {
               key={actividad.id}
               className="grid grid-cols-[150px_auto] bg-[#001F54] w-[550px] h-[100px] rounded-2xl shadow-md border-3 border-black overflow-hidden"
             >
-              {/* Imagen */}
               <div className="flex items-center justify-center">
                 {actividad.imagenNombre ? (
                   <img
@@ -176,7 +154,6 @@ export default function ActividadesList() {
                 ) : null}
               </div>
 
-              {/* Detalles */}
               <div className="flex flex-col justify-center p-2">
                 <h3 className="custom-subheading text-white text-base pb-2">
                   {actividad.nombre}
@@ -194,11 +171,13 @@ export default function ActividadesList() {
                   </div>
                   <div>
                     <p className="text-xs text-[#9A9A9A] col-span-2">
-                      <strong>Estado:</strong> {estados[actividad.estadoAlumnoActividad]}
+                      <strong>Estado:</strong>{" "}
+                      {estados[actividad.estadoAlumnoActividad]}
                     </p>
                     {actividad.estadoAlumnoActividad === 4 && (
                       <p className="text-xs text-[#9A9A9A] col-span-2">
-                        <strong>Créditos Obtenidos:</strong> {actividad.creditos}
+                        <strong>Créditos Obtenidos:</strong>{" "}
+                        {actividad.creditos}
                       </p>
                     )}
                   </div>

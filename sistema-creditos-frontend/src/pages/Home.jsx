@@ -57,7 +57,7 @@ export default function Home() {
       {
         text: "Actividades Extraescolares",
         icon: <Trophy strokeWidth={0.5} className="h-40 w-40 mb-2" />,
-        link: "/actividades",
+        link: "/actividadesextraescolares",
       },
       {
         text: "Avisos",
