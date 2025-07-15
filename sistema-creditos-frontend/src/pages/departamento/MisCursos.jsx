@@ -57,6 +57,17 @@ export default function ActividadesList() {
     { id: 14, nombre: "Todas las carreras" },
   ];
 
+  const diasSemana = {
+  1: "Lunes",
+  2: "Martes",
+  3: "Miércoles",
+  4: "Jueves",
+  5: "Viernes",
+  6: "Sábado",
+  7: "Domingo",
+};
+
+
   const normalizar = (texto) => texto.trim().toLowerCase();
 
   const obtenerCarreraIdsDesdeNombres = (nombres) => {
@@ -438,9 +449,22 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
                             <Pencil size={16} className="mt-2 text-gray-500 cursor-pointer" />
                           </div>
                           <div className="col-span-1">
-                            <p className="font-semibold">Día(s) y Horario:</p>
-                            <p>Lunes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13:00 - 15:00</p>
-                            <p>Jueves &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13:00 - 15:00</p>
+                            <p className="font-semibold">Día y Horario:</p>
+                              {actividadSeleccionada?.dias ? (
+                                (Array.isArray(actividadSeleccionada.dias)
+                                  ? actividadSeleccionada.dias
+                                  : [actividadSeleccionada.dias])
+                                  .filter(Boolean)
+                                  .map((dia) => (
+                                    <p key={dia}>
+                                      {diasSemana[dia] || "Día inválido"}{" "}
+                                      &nbsp;&nbsp;&nbsp;&nbsp;
+                                      {actividadSeleccionada.horaInicio?.slice(0, 5)} - {actividadSeleccionada.horaFin?.slice(0, 5)}
+                                    </p>
+                                  ))
+                              ) : (
+                                <p>No hay días asignados</p>
+                              )}
                           </div>
                           <div className="col-span-1">
                             <div className="grid grid-cols-[90px_auto_auto_auto] items-center gap-2 m-2">
@@ -574,16 +598,22 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
       <button
         title="Acreditar"
         onClick={() => acreditarAlumno(alumno.alumnoId, actividadSeleccionada.id)}
-        disabled={alumno.estadoAlumnoActividad === 4} // deshabilitado si ya está acreditado
+        disabled={
+          alumno.estadoAlumnoActividad === 4 || 
+          new Date() < new Date(actividadSeleccionada.fechaFin) // ❌ aún no termina la actividad
+        }
       >
         <Check
           className={`rounded p-1 w-6 h-6 cursor-pointer ${
             alumno.estadoAlumnoActividad === 4
               ? "bg-green-600 text-white"
+              : new Date() < new Date(actividadSeleccionada.fechaFin)
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : "bg-gray-200 text-blue-950 hover:bg-green-100"
           }`}
         />
       </button>
+
 
       {/* Botón No Acreditar */}
       <button
@@ -616,18 +646,16 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
 ))}
 
 
-</div>
-
+                    </div>
                       </div>
-<div className="flex justify-center gap-4 mt-6">
-  <button
-    className="bg-white font-bold border border-black px-4 py-2 rounded hover:bg-gray-100"
-    onClick={acreditarTodos}
-  >
-    Acreditar todos
-  </button>
-</div>
-
+                        <div className="flex justify-center gap-4 mt-6">
+                          <button
+                            className="bg-white font-bold border border-black px-4 py-2 rounded hover:bg-gray-100"
+                            onClick={acreditarTodos}
+                          >
+                            Acreditar todos
+                          </button>
+                        </div>
                     </Modal>
                   </div>
                 </div>

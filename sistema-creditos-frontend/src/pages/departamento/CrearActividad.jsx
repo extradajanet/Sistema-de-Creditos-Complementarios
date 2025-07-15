@@ -26,6 +26,7 @@ export default function ActividadesList() {
   const [successMessage, setSuccessMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [imagenSeleccionada, setImagenSeleccionada] = useState("imagen1.png");
+  const [diaSeleccionado, setDiaSeleccionado] = useState("");
 
 
   const carreras = [
@@ -65,6 +66,20 @@ export default function ActividadesList() {
     }
   }
 
+  function obtenerNumeroDia(dia) {
+  switch (dia) {
+    case "Lunes": return 1;
+    case "Martes": return 2;
+    case "Miércoles": return 3;
+    case "Jueves": return 4;
+    case "Viernes": return 5;
+    case "Sábado": return 6;
+    case "Domingo": return 7;
+    default: return 0;
+  }
+}
+
+
   const limpiarFormulario = () => {
     setNombre("");
     setDescripcion("");
@@ -74,54 +89,71 @@ export default function ActividadesList() {
     setCapacidad(0);
     setHoraInicio("");
     setHoraFin("");
+    setDiaSeleccionado("");
     setTipoSeleccionado("");
     setCarreraIds([]);
     setSuccessMessage("");
   };
 
-  const handleSubmit = async () => {
-    let carrerasFinales = [...carreraIds];
-    if (carrerasFinales.includes(14)) {
-      carrerasFinales = carreras.filter((c) => c.id !== 14).map((c) => c.id);
-    }
+const handleSubmit = async () => {
+  // Validación de fechas
+  if (!fechaInicio || !fechaFin) {
+    alert("Por favor selecciona las fechas de inicio y fin.");
+    return;
+  }
 
-    const actividad = {
-      nombre,
-      descripcion,
-      fechaInicio: `${fechaInicio}T00:00:00Z`,
-      fechaFin: `${fechaFin}T00:00:00Z`,
-      creditos,
-      capacidad,
-      dias: 1,
-      horaInicio: `${horaInicio}:00`,
-      horaFin: `${horaFin}:00`,
-      tipoActividad: obtenerTipoActividad(tipoSeleccionado),
-      estadoActividad: 1,
-      imagenNombre: imagenSeleccionada,
-      departamentoId: 1,
-      carreraIds: carrerasFinales,
-    };
+  const inicio = new Date(fechaInicio);
+  const fin = new Date(fechaFin);
 
-    try {
-      const response = await fetch("https://localhost:7238/api/Actividades", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(actividad),
-      });
+  if (fin < inicio) {
+    alert("La fecha de fin no puede ser anterior a la fecha de inicio ");
+    return;
+  }
 
-      if (response.ok) {
-        setShowModal(true);
-        limpiarFormulario();
-      } else {
-        const error = await response.text();
-        console.error("Error al crear actividad:", error);
-        alert("Error al crear actividad ❌");
-      }
-    } catch (err) {
-      console.error("Excepción al hacer POST:", err);
-      alert("Error de red o servidor ❌");
-    }
+  // Resto de la función...
+  let carrerasFinales = [...carreraIds];
+  if (carrerasFinales.includes(14)) {
+    carrerasFinales = carreras.filter((c) => c.id !== 14).map((c) => c.id);
+  }
+
+  const actividad = {
+    nombre,
+    descripcion,
+    fechaInicio: `${fechaInicio}T00:00:00Z`,
+    fechaFin: `${fechaFin}T00:00:00Z`,
+    creditos,
+    capacidad,
+    dias: obtenerNumeroDia(diaSeleccionado),
+    horaInicio: `${horaInicio}:00`,
+    horaFin: `${horaFin}:00`,
+    tipoActividad: obtenerTipoActividad(tipoSeleccionado),
+    estadoActividad: 1,
+    imagenNombre: imagenSeleccionada,
+    departamentoId: 1,
+    carreraIds: carrerasFinales,
   };
+
+  try {
+    const response = await fetch("https://localhost:7238/api/Actividades", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(actividad)
+    });
+
+    if (response.ok) {
+      setShowModal(true);
+      limpiarFormulario();
+    } else {
+      const error = await response.text();
+      console.error("Error al crear actividad:", error);
+      alert("Error al crear actividad ");
+    }
+  } catch (err) {
+    console.error("Excepción al hacer POST:", err);
+    alert("Error de red o servidor ");
+  }
+};
+
 
   return (
     <>
@@ -232,14 +264,21 @@ export default function ActividadesList() {
 
                   <div className="grid grid-cols-3 mb-2">
                     <div className="row">
-                      <p>Día(s):</p>
+                      <p>Día:</p>
                       <div className="flex flex-col gap-1.5 text-sm text-gray-700 mt-1">
-                        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((dia) => (
-                          <label key={dia} className="flex items-center gap-1">
-                            <input type="checkbox" className="accent-blue-950" />
-                            {dia}
-                          </label>
-                        ))}
+                          {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((dia) => (
+                            <label key={dia} className="flex items-center gap-1">
+                              <input
+                                type="radio"
+                                name="dia"
+                                value={dia}
+                                checked={diaSeleccionado === dia}
+                                onChange={() => setDiaSeleccionado(dia)}
+                                className="accent-blue-950"
+                              />
+                              {dia}
+                            </label>
+                          ))}
                       </div>
                     </div>
 
@@ -366,9 +405,9 @@ export default function ActividadesList() {
         className="bg-blue-950 text-white w-150 p-4"
         closeButtonClassName="text-white hover:text-gray-900"
       >
-        <p className="mb-4 text-center whitespace-pre-line">
+        <div className="mb-4 text-center whitespace-pre-line">
           <h1 className="text-2xl">¿Deseas crear otra actividad?</h1>
-        </p>
+        </div>
         <div className="flex justify-center gap-6">
           <button
             onClick={() => {
