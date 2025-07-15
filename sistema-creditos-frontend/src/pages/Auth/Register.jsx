@@ -66,7 +66,7 @@ function Register() {
       if (!response.ok) {
         throw new Error("Error al registrarse");
       }
-      
+
       await response.json();
       navigate("/login");
     } catch (err) {
@@ -77,7 +77,7 @@ function Register() {
 
   return (
     <div className="h-screen flex items-center justify-center bg-gradient-to-b from-[#FFFFFF] to-[#999999]">
-      <div className="bg-white rounded-lg shadow-lg flex w-[900px] h-[650px]">
+      <div className="bg-white rounded-lg shadow-lg flex w-[1000px] h-[750px]">
         <div className="w-1/2 bg-gradient-to-b from-[#001F54] to-[#0045BA] flex items-center justify-center text-white">
           <img src="/src/images/logo2.png" alt="logo" />
         </div>
@@ -91,6 +91,9 @@ function Register() {
               className="flex flex-col items-center space-y-3"
               onSubmit={handleSubmit}
             >
+              <label htmlFor="name" className="mb-1 text-sm font-semibold text-[#001F54]">
+                Nombre
+              </label>
               <input
                 type="text"
                 value={name}
@@ -99,6 +102,9 @@ function Register() {
                 required
                 className="w-[250px] px-4 py-2 border border-[#001F54] rounded-md"
               />
+              <label htmlFor="surnname" className="mb-1 text-sm font-semibold text-[#001F54]">
+                Apellidos
+              </label>
               <input
                 type="text"
                 value={surnname}
@@ -107,6 +113,9 @@ function Register() {
                 required
                 className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
               />
+              <label htmlFor="numcontrol" className="mb-1 text-sm font-semibold text-[#001F54]">
+                Número de control
+              </label>
               <input
                 type="text"
                 value={numcontrol}
@@ -115,14 +124,20 @@ function Register() {
                 required
                 className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
               />
+              <label htmlFor="semestre" className="mb-1 text-sm font-semibold text-[#001F54]">
+                Semestre
+              </label>
               <input
-                type="text"
+                type="number"
                 value={semestre}
                 onChange={(e) => setSemestre(e.target.value)}
                 placeholder="Semestre"
                 required
                 className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
               />
+              <label htmlFor="email" className="mb-1 text-sm font-semibold text-[#001F54]">
+                Correo electrónico
+              </label>
               <input
                 type="email"
                 value={email}
@@ -136,6 +151,10 @@ function Register() {
                 careers={careers}
                 onChange={(val) => setCareer(val)}
               />
+
+              <label htmlFor="password" className="mb-1 text-sm font-semibold text-[#001F54]">
+                Contraseña
+              </label>
 
               <input
                 type="password"
