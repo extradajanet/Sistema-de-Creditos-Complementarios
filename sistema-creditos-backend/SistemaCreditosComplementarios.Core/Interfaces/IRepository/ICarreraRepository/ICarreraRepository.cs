@@ -11,6 +11,7 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRep
     {
         Task<IEnumerable<Carrera>> GetAll();
         Task<Carrera> GetByIdAsync(int id);
+        Task<IEnumerable<Carrera>> GetByCoordinadorId(int coordinadorId);
 
     }
 }

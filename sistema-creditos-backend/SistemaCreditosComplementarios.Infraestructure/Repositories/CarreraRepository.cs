@@ -29,5 +29,12 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         {
             return await _context.Carreras.FindAsync(id);
         }
+
+        public async Task<IEnumerable<Carrera>> GetByCoordinadorId(int coordinadorId)
+        {
+            return await _context.Carreras
+        .Where(c => c.CoordinadorId == coordinadorId)
+        .ToListAsync();
+        }
     }
 }
