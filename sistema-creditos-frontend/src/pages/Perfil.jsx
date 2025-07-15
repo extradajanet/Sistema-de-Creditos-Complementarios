@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import FrameImg from "../images/Frame.png";
 import { Pencil } from "lucide-react";
+import Toast from "../components/Toast";
 
 export default function EditProfile() {
   const storedAlumno = JSON.parse(localStorage.getItem("alumnoInfo"));
@@ -9,6 +10,31 @@ export default function EditProfile() {
   const [editedInfo, setEditedInfo] = useState({})
   const [editMode, setEditMode] = useState(false)
   const [careers, setCareers] = useState([]);
+  const [toast, setToast] = useState(null);
+
+  { /* Función para cargar los datos del alumno */}
+  const fetchAlumnoData = async () => {
+    try {
+      const userId = localStorage.getItem("alumnoId");
+      if (!userId) return;
+
+      const response = await fetch(`https://localhost:7238/api/Alumno/${userId}`, {
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) throw new Error("Error al obtener alumno");
+
+      const data = await response.json();
+      setInfoAlumno(data);
+    } catch (error) {
+      console.error("Error al cargar datos del alumno:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAlumnoData();
+  }, []);
+
 
   { /* Obtener el rol del usuario */ }
   useEffect(() => {
@@ -51,8 +77,8 @@ export default function EditProfile() {
     // verificar si hubo modificaciones
     const noChanges = Object.keys(editedInfo).every(key => editedInfo[key] === infoAlumno[key])
 
-    if(noChanges) {
-      alert("No se ha realizado ningún cambio.")
+    if (noChanges) {
+      setToast({ message: "No has ingresado ningún cambio", type: "warning" });
       return;
     }
 
@@ -67,13 +93,14 @@ export default function EditProfile() {
 
       if (!response.ok) throw new Error('Error al guardar cambios');
 
-      alert('Datos actualizados con éxito');
-      setInfoAlumno(editedInfo);
+      setToast({ message: "Perfil actualizado", type: "success" });
+      // al actualizarse, se cargan de nuevo los datos.
+      await fetchAlumnoData(); 
       setEditMode(false);
 
     } catch (error) {
       console.error(error);
-      alert('Error al actualizar datos')
+      setToast({ message: "Error al actualizar datos", type: "error" });
     }
   }
 
@@ -212,11 +239,11 @@ export default function EditProfile() {
           <>
             <div className="flex justify-between w-full">
               <input
-              value={editedInfo.currentPassword || ""}
+                value={editedInfo.currentPassword || ""}
                 onChange={(e) =>
                   setEditedInfo({ ...editedInfo, currentPassword: e.target.value })
                 }
-                className="border p-2"
+                className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
                 type="password"
                 placeholder="Contraseña actual"
 
@@ -226,7 +253,7 @@ export default function EditProfile() {
                 onChange={(e) =>
                   setEditedInfo({ ...editedInfo, newPassword: e.target.value })
                 }
-                className="border p-2"
+                className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
                 type="password"
                 placeholder="Nueva contraseña"
               />
@@ -238,6 +265,13 @@ export default function EditProfile() {
         )}
       </div>
 
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
       {editMode ? (
         <div className="flex gap-4 mt-4">
