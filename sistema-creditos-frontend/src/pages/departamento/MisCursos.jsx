@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { 
-  PencilLine, Users, Search, SlidersHorizontal, Pencil, Calendar, Trash2, Check, X, ChevronDown 
+  PencilLine, Users, Search, SlidersHorizontal, Pencil, Trash2, Check, X, ChevronDown 
 } from "lucide-react";
 import predeterminado from "../../images/PredeterminadoCursos.png";
 import Modal from "../../components/Modal";
@@ -11,6 +11,15 @@ const estados = {
   1: "Activo",
   2: "En Progreso",
   3: "Finalizado",
+};
+
+const imagenes = import.meta.glob('../../images/*.{png,jpg,jpeg,gif}', { eager: true });
+
+const obtenerImagen = (nombre) => {
+  const entrada = Object.entries(imagenes).find(([ruta]) =>
+    ruta.includes(nombre)
+  );
+  return entrada ? entrada[1].default : predeterminado;
 };
 
 export default function ActividadesList() {
@@ -57,6 +66,106 @@ export default function ActividadesList() {
       .map((carrera) => carrera.id);
   };
 
+  // Cargar alumnos inscritos para una actividad
+  const cargarAlumnosInscritos = (idActividad) => {
+    fetch(`https://localhost:7238/api/AlumnoActividad/alumnos-inscritos/${idActividad}`, {
+      headers: { Accept: "application/json" },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al obtener alumnos");
+        return res.json();
+      })
+      .then((data) => setAlumnos(data))
+      .catch((error) => {
+        console.error("Error al cargar alumnos inscritos:", error);
+        alert("No se pudieron cargar los alumnos inscritos.");
+      });
+  };
+
+  // Acreditar alumno
+  const acreditarAlumno = (alumnoId, actividadId) => {
+    fetch(`https://localhost:7238/api/AlumnoActividad/${alumnoId}/${actividadId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        alumnoId,
+        actividadId,
+        estadoAlumnoActividad: 4,
+        fechaInscripcion: new Date().toISOString(),
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al acreditar alumno");
+        cargarAlumnosInscritos(actividadId);
+      })
+      .catch(console.error);
+  };
+
+  // No acreditar alumno
+  const noAcreditarAlumno = (alumnoId, actividadId) => {
+    fetch(`https://localhost:7238/api/AlumnoActividad/${alumnoId}/${actividadId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        alumnoId,
+        actividadId,
+        estadoAlumnoActividad: 5,
+        fechaInscripcion: new Date().toISOString(),
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al no acreditar alumno");
+        cargarAlumnosInscritos(actividadId);
+      })
+      .catch(console.error);
+  };
+
+  // Eliminar alumno
+  const eliminarAlumno = (alumnoId, actividadId) => {
+    fetch(`https://localhost:7238/api/AlumnoActividad/${alumnoId}/${actividadId}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al eliminar alumno");
+        alert("Alumno eliminado de la actividad");
+        cargarAlumnosInscritos(actividadId);
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Error al eliminar alumno");
+      });
+  };
+
+  // Acreditar todos los alumnos
+  const acreditarTodos = () => {
+    if (!actividadSeleccionada) return;
+    const solicitudes = alumnos.map((alumno) =>
+      fetch(`https://localhost:7238/api/AlumnoActividad/${alumno.alumnoId}/${actividadSeleccionada.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          alumnoId: alumno.alumnoId,
+          actividadId: actividadSeleccionada.id,
+          estadoAlumnoActividad: 4,
+          fechaInscripcion: new Date().toISOString(),
+        }),
+      })
+    );
+
+    Promise.all(solicitudes)
+      .then((respuestas) => {
+        const algunaFalló = respuestas.some((res) => !res.ok);
+        if (algunaFalló) throw new Error("Al menos una solicitud falló.");
+        alert("Todos los alumnos han sido acreditados");
+        cargarAlumnosInscritos(actividadSeleccionada.id);
+      })
+      .catch((err) => {
+        console.error("Error al acreditar todos:", err);
+        alert("Ocurrió un error al acreditar a los alumnos");
+      });
+  };
+
+  // Actualizar actividad
   const handleUpdateActividad = () => {
     if (!actividadSeleccionada) return;
 
@@ -84,9 +193,7 @@ export default function ActividadesList() {
 
     fetch(`https://localhost:7238/api/Actividades/${actividadSeleccionada.id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(actividadActualizada),
     })
       .then((res) => {
@@ -101,11 +208,7 @@ export default function ActividadesList() {
         setActividades((prev) =>
           prev.map((a) =>
             a.id === actividadSeleccionada.id
-              ? {
-                  ...a,
-                  ...actividadActualizada,
-                  carreraNombres: nuevasCarreraNombres,
-                }
+              ? { ...a, ...actividadActualizada, carreraNombres: nuevasCarreraNombres }
               : a
           )
         );
@@ -118,6 +221,7 @@ export default function ActividadesList() {
       });
   };
 
+  // Cargar actividades al montar el componente
   useEffect(() => {
     let isMounted = true;
     fetch("/api/Actividades", { headers: { Accept: "application/json" } })
@@ -138,9 +242,7 @@ export default function ActividadesList() {
         }
       });
 
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, []);
 
   const tiposActividad = {
@@ -163,8 +265,8 @@ export default function ActividadesList() {
       (tipoSeleccionado === "" || actividad.tipoActividad === obtenerTipoIdPorNombre(tipoSeleccionado))
   );
 
-  const AlumnosBusqueda = alumnos.filter((actividad) =>
-    actividad.nombre.toLowerCase().includes(busquedaAlumno.toLowerCase())
+  const AlumnosBusqueda = alumnos.filter((alumno) =>
+    alumno.nombreCompleto?.toLowerCase().includes(busquedaAlumno.toLowerCase())
   );
 
   return (
@@ -197,10 +299,9 @@ export default function ActividadesList() {
 
           {mostrarFiltro && (
             <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl shadow-lg z-10 p-2 w-48">
-              {/* Aquí reemplazamos el select por Listbox */}
               <Listbox value={tipoSeleccionado} onChange={setTipoSeleccionado}>
                 <div className="relative">
-                    <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none">
+                  <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none">
                     <span>{tipoSeleccionado || "Todos los tipos"}</span>
                     <ChevronDown className="w-5 h-5 text-gray-500" />
                   </Listbox.Button>
@@ -238,15 +339,15 @@ export default function ActividadesList() {
         ) : actividadesFiltradas.length === 0 ? (
           <p className="text-center mt-10 text-black-600">No hay cursos disponibles</p>
         ) : (
-          <div className="flex justify-center">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-25 gap-y-6">
+          <div className="flex justify-center overflow-y-auto max-h-[520px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-25 gap-y-4.5">
               {actividadesFiltradas.map((actividad) => (
                 <div
                   key={actividad.id}
                   className="bg-blue-950 rounded-2xl shadow-md border-6 border-blue-950 h-28 w-[500px] flex items-center px-4"
                 >
                   <img
-                    src={predeterminado}
+                    src={obtenerImagen(actividad.imagenNombre)}
                     alt={actividad.nombre}
                     className="rounded-md object-cover h-20 w-20 mr-4"
                   />
@@ -266,8 +367,6 @@ export default function ActividadesList() {
                     <button
                       className="bg-blue-950 text-white rounded h-8 w-8 flex items-center justify-center"
                       onClick={() => {
-                        console.log("Actividad seleccionada:", actividad);
-
                         setActividadSeleccionada(actividad);
                         setDescripcionEdit(actividad.descripcion || "");
                         setCreditosEdit(actividad.creditos);
@@ -284,11 +383,16 @@ export default function ActividadesList() {
 
                     <button
                       className="bg-blue-950 text-white rounded h-8 w-8 flex items-center justify-center"
-                      onClick={() => setShowList(true)}
+                      onClick={() => {
+                        setActividadSeleccionada(actividad);
+                        cargarAlumnosInscritos(actividad.id);
+                        setShowList(true);
+                      }}
                     >
                       <Users strokeWidth={2} color="white" className="w-6 h-6" />
                     </button>
 
+                    {/* Modal Edición Actividad */}
                     <Modal
                       show={showEdit}
                       onClose={() => setShowEdit(false)}
@@ -297,7 +401,7 @@ export default function ActividadesList() {
                     >
                       <div className="grid grid-cols-[270px_1fr] gap-4">
                         <div className="bg-white rounded-xl flex items-center justify-center p-2">
-                          <img src={predeterminado} alt="Imagen" className="w-full h-auto object-contain" />
+                          <img src={obtenerImagen(actividadSeleccionada?.imagenNombre)} alt={actividadSeleccionada?.nombre} className="w-full h-auto object-contain" />
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
                           <div className="col-span-2 flex items-start gap-2 border border-blue-950 rounded px-2 py-1 bg-gray-200">
@@ -314,147 +418,174 @@ export default function ActividadesList() {
                             <p>Lunes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13:00 - 15:00</p>
                             <p>Jueves &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13:00 - 15:00</p>
                           </div>
-                          <div className="col-span-1">
-                            <div className="grid grid-cols-[90px_auto_auto_auto] items-center gap-2 m-2">
-                              <label className="font-semibold">Capacidad:</label>
-                              <input
-                                type="number"
-                                value={capacidadEdit}
-                                onChange={(e) => setCapacidadEdit(Number(e.target.value))}
-                                className="w-16 border rounded px-1 py-0.5 text-center"
-                              />
-                              <Users size={18} className="text-gray-500" />
-                              <Pencil size={14} className="text-gray-500 cursor-pointer" />
-                            </div>
-                            <div className="grid grid-cols-[90px_auto_auto] items-center gap-2 m-2">
-                              <label className="font-semibold">Créditos:</label>
-                              <input
-                                type="number"
-                                value={creditosEdit}
-                                onChange={(e) => setCreditosEdit(Number(e.target.value))}
-                                className="w-12 border rounded px-1 py-0.5 text-center"
-                              />
-                              <Pencil size={14} className="text-gray-500 cursor-pointer" />
-                            </div>
-                          </div>
-                          <div className="col-span-2">
-                            <label className="font-semibold">Carrera(s):</label>
-                            <div className="relative mt-1 w-full">
-                              <p className="text-sm font-medium mb-1">
-                                Carreras seleccionadas:{" "}
-                                {carreraIdsEdit.length > 0
-                                  ? carreraIdsEdit
-                                      .map((id) => todasLasCarreras.find((c) => c.id === id)?.nombre)
-                                      .filter(Boolean)
-                                      .join(", ")
-                                  : "Ninguna"}
-                              </p>
-                              <div className="w-full border border-blue-950 rounded-lg px-3 py-2 bg-white text-sm text-gray-800 h-40 overflow-y-auto space-y-1">
-                                {todasLasCarreras.map((carrera) => {
-                                  const seleccionada = carreraIdsEdit.includes(carrera.id);
-                                  return (
-                                    <div
-                                      key={carrera.id}
-                                      onClick={() => {
-                                        setCarreraIdsEdit((prev) =>
-                                          seleccionada
-                                            ? prev.filter((id) => id !== carrera.id)
-                                            : [...prev, carrera.id]
-                                        );
-                                      }}
-                                      className={`cursor-pointer px-2 py-1 rounded ${
-                                        seleccionada ? "bg-blue-950 text-white" : "hover:bg-blue-100"
-                                      }`}
-                                    >
-                                      {carrera.nombre}
-                                    </div>
-                                  );
-                                })}
-                              </div>
+
+                          <div className="flex flex-col gap-1 col-span-1">
+                            <label className="font-semibold">Créditos:</label>
+                            <div className="flex gap-2 items-center">
+                              {[1, 2, 3].map((num) => (
+                                <label
+                                  key={num}
+                                  className={`rounded-lg px-3 py-1 cursor-pointer transition duration-300 ${
+                                    creditosEdit === num
+                                      ? "bg-blue-950 text-white font-bold"
+                                      : "bg-gray-200 text-gray-800"
+                                  }`}
+                                >
+                                  <input
+                                    type="radio"
+                                    name="creditos"
+                                    value={num}
+                                    checked={creditosEdit === num}
+                                    onChange={() => setCreditosEdit(num)}
+                                    className="hidden"
+                                  />
+                                  {num}
+                                </label>
+                              ))}
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <label className="font-semibold">Fecha de Inicio:</label>
+                          <div className="flex flex-col gap-1 col-span-1">
+                            <label className="font-semibold">Capacidad:</label>
+                            <input
+                              type="number"
+                              value={capacidadEdit}
+                              min={0}
+                              onChange={(e) => setCapacidadEdit(Number(e.target.value))}
+                              className="rounded-lg px-3 py-1 text-gray-700"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-1 col-span-2">
+                            <label className="font-semibold">Carreras:</label>
+                            <div className="border border-blue-950 rounded p-2 max-h-40 overflow-auto bg-white">
+                              {todasLasCarreras.map((carrera) => (
+                                <label key={carrera.id} className="flex items-center gap-2 mb-1 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={carreraIdsEdit.includes(carrera.id)}
+                                    onChange={() => {
+                                      if (carreraIdsEdit.includes(carrera.id)) {
+                                        setCarreraIdsEdit(carreraIdsEdit.filter((id) => id !== carrera.id));
+                                      } else {
+                                        setCarreraIdsEdit([...carreraIdsEdit, carrera.id]);
+                                      }
+                                    }}
+                                    className="cursor-pointer"
+                                  />
+                                  <span>{carrera.nombre}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col gap-1 col-span-1">
+                            <label className="font-semibold">Fecha inicio:</label>
                             <input
                               type="date"
                               value={fechaInicioEdit}
                               onChange={(e) => setFechaInicioEdit(e.target.value)}
-                              className="border rounded px-2 py-1"
+                              className="rounded-lg px-3 py-1 text-gray-700"
                             />
                           </div>
-                          <div className="flex items-center gap-2">
-                            <label className="font-semibold">Fecha de Fin:</label>
+
+                          <div className="flex flex-col gap-1 col-span-1">
+                            <label className="font-semibold">Fecha fin:</label>
                             <input
                               type="date"
                               value={fechaFinEdit}
                               onChange={(e) => setFechaFinEdit(e.target.value)}
-                              className="border rounded px-2 py-1"
+                              className="rounded-lg px-3 py-1 text-gray-700"
                             />
                           </div>
                         </div>
                       </div>
-                      <div className="flex justify-end gap-4 mt-6">
+                      <div className="mt-6 flex justify-end gap-4">
                         <button
+                          className="bg-red-600 text-white rounded px-4 py-2 hover:bg-red-700 transition"
                           onClick={() => setShowEdit(false)}
-                          className="bg-white border border-blue-950 text-black px-4 py-2 rounded hover:bg-gray-200"
                         >
-                          Descartar Cambios
+                          Cancelar
                         </button>
                         <button
+                          className="bg-blue-950 text-white rounded px-4 py-2 hover:bg-blue-800 transition"
                           onClick={handleUpdateActividad}
-                          className="bg-white text-black border border-blue-950 px-4 py-2 rounded hover:bg-gray-200"
                         >
-                          Guardar Cambios
+                          Guardar
                         </button>
                       </div>
                     </Modal>
 
+                    {/* Modal Lista Alumnos */}
                     <Modal
                       show={showList}
                       onClose={() => setShowList(false)}
-                      className="w-[500px] bg-gray-200"
+                      title={`Alumnos inscritos en ${actividadSeleccionada?.nombre || ""}`}
+                      className="w-[900px] bg-gray-200"
                     >
-                      <div className="text-center mb-4 flex items-center justify-center gap-2 text-blue-950">
-                        <h2 className="text-2xl font-bold">Alumnos Inscritos</h2>
-                        <Users />
-                      </div>
-                      <div className="bg-gray-200 rounded-xl p-4">
-                        <div className="relative w-full max-w-md mb-1">
-                          <input
-                            type="text"
-                            placeholder="Buscar alumnos"
-                            className="w-full border border-blue-950 rounded-3xl px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            value={busquedaAlumno}
-                            onChange={(e) => setBusquedaAlumno(e.target.value)}
-                          />
-                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-950 p-1.5 rounded-full">
-                            <Search className="h-4 w-4 text-white" />
-                          </div>
-                        </div>
-                        <div className="bg-white rounded-lg max-h-60 overflow-y-auto">
-                          {AlumnosBusqueda.map((alumno) => (
-                            <div
-                              key={alumno.id}
-                              className="flex items-center justify-between px-4 py-2 border-b last:border-b-0"
-                            >
-                              <span className="text-sm font-semibold">{alumno.nombre}</span>
-                              <div className="flex items-center gap-2">
-                                <Check className="bg-gray-200 text-blue-950 rounded p-1 w-6 h-6" />
-                                <X className="bg-gray-200 text-blue-950 rounded p-1 w-6 h-6" />
-                                <Trash2 className="bg-gray-200 text-blue-950 rounded p-1 w-6 h-6" />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex justify-center gap-4 mt-6">
-                        <button className="border border-black px-4 py-2 rounded hover:bg-gray-100">
-                          Seleccionar todos
+                      <div className="mb-4 flex items-center gap-2">
+                        <input
+                          type="text"
+                          placeholder="Buscar alumno"
+                          className="border border-blue-950 rounded px-3 py-2 w-full"
+                          value={busquedaAlumno}
+                          onChange={(e) => setBusquedaAlumno(e.target.value)}
+                        />
+                        <button
+                          className="bg-blue-950 text-white px-3 py-2 rounded"
+                          onClick={acreditarTodos}
+                          disabled={alumnos.length === 0}
+                        >
+                          Acreditar todos
                         </button>
-                        <button className="border border-black px-4 py-2 rounded hover:bg-gray-100">
-                          Deseleccionar todos
-                        </button>
+                      </div>
+                      <div className="max-h-80 overflow-y-auto bg-white rounded border border-blue-950">
+                        {AlumnosBusqueda.length === 0 ? (
+                          <p className="p-4 text-center text-gray-600">No hay alumnos inscritos</p>
+                        ) : (
+                          <table className="w-full border-collapse text-left text-sm">
+                            <thead className="bg-blue-950 text-white">
+                              <tr>
+                                <th className="px-3 py-2">Nombre</th>
+                                <th className="px-3 py-2">Correo</th>
+                                <th className="px-3 py-2">Estado</th>
+                                <th className="px-3 py-2 text-center">Acciones</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {AlumnosBusqueda.map((alumno) => (
+                                <tr key={alumno.alumnoId} className="border-b border-gray-200">
+                                  <td className="px-3 py-2">{alumno.nombreCompleto}</td>
+                                  <td className="px-3 py-2">{alumno.email}</td>
+                                  <td className="px-3 py-2">{estados[alumno.estadoAlumnoActividad] || "Pendiente"}</td>
+                                  <td className="px-3 py-2 flex justify-center gap-2">
+                                    <button
+                                      onClick={() => acreditarAlumno(alumno.alumnoId, actividadSeleccionada.id)}
+                                      title="Acreditar"
+                                      className="text-green-600 hover:text-green-800"
+                                    >
+                                      <Check />
+                                    </button>
+                                    <button
+                                      onClick={() => noAcreditarAlumno(alumno.alumnoId, actividadSeleccionada.id)}
+                                      title="No acreditar"
+                                      className="text-orange-600 hover:text-orange-800"
+                                    >
+                                      <X />
+                                    </button>
+                                    <button
+                                      onClick={() => eliminarAlumno(alumno.alumnoId, actividadSeleccionada.id)}
+                                      title="Eliminar"
+                                      className="text-red-600 hover:text-red-800"
+                                    >
+                                      <Trash2 />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
                       </div>
                     </Modal>
                   </div>

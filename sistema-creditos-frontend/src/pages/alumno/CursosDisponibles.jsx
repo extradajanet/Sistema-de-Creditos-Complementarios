@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { CircleAlert, Search, SlidersHorizontal } from "lucide-react";
+import { CircleAlert, Search, SlidersHorizontal, ChevronDown, Check } from "lucide-react";
 import predeterminado from "../../images/PredeterminadoCursos.png";
 import Modal from "../../components/Modal";
+import { Listbox } from "@headlessui/react";
+
 const tipoActividad = {
   1: "Deportivo",
   2: "Cultural",
   3: "Tutorias",
   4: "Mooc",
 };
+
+const tipos = ["", "Deportivo", "Cultural", "Tutorias", "Mooc"];
+
 const dias = {
   1: "Lunes",
   2: "Martes",
@@ -22,42 +27,49 @@ export default function ActividadesList() {
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFiltro, setMostrarFiltro] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState("");
-  const [showModal, setShowModal] = useState(false); //Course Information
-  const [showConfirmModal, setShowConfirmModal] = useState(false); //Course Registration
-  const [isEnrolled, setIsEnrolled] = useState(false); //Tracks enrollment
+  const [showModal, setShowModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
   const [selectedActividad, setSelectedActividad] = useState(null);
   const [selectedTotal, settotalAlumnos] = useState(0);
   const [error, setError] = useState("");
   const userId = localStorage.getItem("alumnoId");
 
-  // Inscribirme a un curso
+  // Manejar inscripción a actividad
   const handleSubmit = async () => {
     setError("");
-
     try {
-      const response = await fetch(
-        "https://localhost:7238/api/AlumnoActividad",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            alumnoId: userId,
-            actividadId: selectedActividad.id,
-            estadoAlumnoActividad: 1,
-          }),
-        }
+      const response = await fetch("https://localhost:7238/api/AlumnoActividad", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          alumnoId: userId,
+          actividadId: selectedActividad.id,
+          estadoAlumnoActividad: 1,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Error al registrarse");
+
+      // Actualizar inscritos inmediatamente tras inscripción
+      const resInscritos = await fetch(
+        `/api/AlumnoActividad/alumnos-inscritos/${selectedActividad.id}`,
+        { headers: { Accept: "application/json" } }
       );
-      if (!response.ok) {
-        throw new Error("Error al registrarse");
-      }
+      if (!resInscritos.ok) throw new Error("Error al actualizar inscritos");
+      const inscritos = await resInscritos.json();
+
+      settotalAlumnos(inscritos.length);
+      setIsEnrolled(inscritos.some((a) => a.alumnoId.toString() === userId));
     } catch (err) {
       console.error(err);
       setError(err.message);
     }
   };
-  //Obtains all the courses
+
+  // Cargar actividades al montar componente
   useEffect(() => {
     let isMounted = true;
     fetch("/api/Actividades", { headers: { Accept: "application/json" } })
@@ -82,9 +94,10 @@ export default function ActividadesList() {
       isMounted = false;
     };
   }, []);
-  //Obtain the total of students in the course
+
+  // Cargar inscritos y estado de inscripción cada vez que cambia la actividad seleccionada
   useEffect(() => {
-    if (!selectedActividad) return; // Don't run if no actividad is selected
+    if (!selectedActividad) return;
 
     let isMounted = true;
 
@@ -98,7 +111,6 @@ export default function ActividadesList() {
       .then((data) => {
         if (isMounted) {
           settotalAlumnos(data.length);
-          // Check if user is in the list
           const alreadyEnrolled = data.some(
             (alumno) => alumno.alumnoId.toString() === userId
           );
@@ -106,27 +118,27 @@ export default function ActividadesList() {
         }
       })
       .catch((err) => {
-        if (isMounted) {
-          console.error("Fetch error:", err);
-        }
+        if (isMounted) console.error("Fetch error:", err);
       });
 
     return () => {
       isMounted = false;
     };
-  }, [selectedActividad]); // rerun every time user selects a new actividad
+  }, [selectedActividad, userId]);
 
+  // Filtrar actividades según búsqueda y tipo seleccionado
   const actividadesFiltradas = actividades.filter(
     (actividad) =>
       actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-      (tipoSeleccionado === "" || actividad.tipoActividad === tipoSeleccionado)
+      (tipoSeleccionado === "" ||
+        tipoActividad[actividad.tipoActividad] === tipoSeleccionado)
   );
 
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Título */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
-        <h1 className="text-3xl font-bold  text-gray-900 custom-heading">
+        <h1 className="text-3xl font-bold text-gray-900 custom-heading">
           Cursos Disponibles
         </h1>
       </div>
@@ -152,23 +164,42 @@ export default function ActividadesList() {
           <button
             className="ml-4 bg-white border-2 border-blue-950 rounded-2xl px-2 py-2 text-base font-semibold hover:bg-blue-800 transition"
             onClick={() => setMostrarFiltro(!mostrarFiltro)}
+            aria-label="Toggle filtro de tipo de actividad"
           >
             <SlidersHorizontal strokeWidth={1} />
           </button>
 
           {/* Filtro desplegable */}
           {mostrarFiltro && (
-            <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl px-3 py-2 shadow-lg z-10">
-              <select
-                className="text-sm border-none focus:outline-none"
-                value={tipoSeleccionado}
-                onChange={(e) => setTipoSeleccionado(e.target.value)}
-              >
-                <option value="">Todos los tipos</option>
-                <option value="Taller">Taller</option>
-                <option value="Conferencia">Conferencia</option>
-                <option value="Seminario">Seminario</option>
-              </select>
+            <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl shadow-lg z-10 p-2 w-48">
+              <Listbox value={tipoSeleccionado} onChange={setTipoSeleccionado}>
+                <div className="relative">
+                  <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none">
+                    <span>{tipoSeleccionado || "Todos los tipos"}</span>
+                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                  </Listbox.Button>
+                  <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg z-10 max-h-48 overflow-auto">
+                    {tipos.map((tipo, index) => (
+                      <Listbox.Option
+                        key={index}
+                        value={tipo}
+                        className={({ active }) =>
+                          `cursor-pointer select-none px-4 py-2 text-sm ${
+                            active ? "bg-blue-100 text-blue-900" : "text-gray-700"
+                          }`
+                        }
+                      >
+                        {({ selected }) => (
+                          <div className="flex justify-between items-center">
+                            <span>{tipo || "Todos los tipos"}</span>
+                            {selected && <Check className="w-4 h-4 text-blue-950" />}
+                          </div>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </div>
+              </Listbox>
             </div>
           )}
         </div>
@@ -176,7 +207,7 @@ export default function ActividadesList() {
 
       {/* Lista de actividades */}
       <div className="max-h-[500px] overflow-y-auto pr-2">
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-9 ">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-9">
           {loading ? (
             <p className="text-center col-span-full mt-10 text-black-600">
               Cargando actividades...
@@ -193,7 +224,8 @@ export default function ActividadesList() {
                   setSelectedActividad(actividad);
                   setShowModal(true);
                 }}
-                className="bg-white rounded-lg shadow-md  cursor-pointer p-6 flex flex-col border-3 border-blue-950 hover:bg-[#D9D9D9]"
+                className="bg-white rounded-lg shadow-md cursor-pointer p-6 flex flex-col border-3 border-blue-950 hover:bg-[#D9D9D9]"
+                aria-label={`Ver detalles del curso ${actividad.nombre}`}
               >
                 {actividad.imagenNombre ? (
                   <img
@@ -209,8 +241,7 @@ export default function ActividadesList() {
 
                 <p className="text-xs text-gray-700 mb-1 text-center">
                   <strong>
-                    {tipoActividad[actividad.tipoActividad]} ·{" "}
-                    {actividad.creditos} Crédito
+                    {tipoActividad[actividad.tipoActividad]} · {actividad.creditos} Crédito
                     {actividad.creditos > 1 ? "s" : ""}
                   </strong>
                 </p>
@@ -222,6 +253,8 @@ export default function ActividadesList() {
               </div>
             ))
           )}
+
+          {/* Modal de detalle de curso */}
           {selectedActividad && (
             <Modal
               show={showModal}
@@ -234,19 +267,20 @@ export default function ActividadesList() {
                 {selectedActividad.descripcion}
               </div>
 
-              {/*Image of course */}
-              <div className="flex h-full  ">
-                <div className="w-1/3 ">
+              {/* Imagen curso y detalles */}
+              <div className="flex h-full">
+                <div className="w-1/3">
                   {selectedActividad.imagenNombre ? (
                     <img
                       src={predeterminado}
                       alt={selectedActividad.nombre}
-                      className="rounded-md object-cover h-[200ox] w-[200px] mx-auto "
+                      className="rounded-md object-cover h-[200px] w-[200px] mx-auto"
                     />
                   ) : null}
                 </div>
-                {/*Course information */}
-                <div className="grid grid-cols-2 w-2/3 h-full  customtext2 text-white ">
+
+                {/* Información de curso */}
+                <div className="grid grid-cols-2 w-2/3 h-full customtext2 text-white relative">
                   <div className="w-full h-full mr-4">
                     <p className="mb-4">
                       Horario:
@@ -257,40 +291,44 @@ export default function ActividadesList() {
                     <p>
                       Carrera(s):
                       <br />
-                      {selectedActividad.carreraNombres
-
-                        .map((carrera, index) => (
-                          <span key={index}>
-                            {carrera.trim()}
-                            <br />
-                          </span>
-                        ))}
+                      {selectedActividad.carreraNombres.map((carrera, index) => (
+                        <span key={index}>
+                          {carrera.trim()}
+                          <br />
+                        </span>
+                      ))}
                     </p>
                   </div>
                   <div>
                     <p>
                       Capacidad: {selectedTotal} / {selectedActividad.capacidad}
                     </p>
-                    <p>Creditos: {selectedActividad.creditos}</p>
+                    <p>Créditos: {selectedActividad.creditos}</p>
                     <p className="mt-10">
                       Fecha de Inicio:{" "}
-                      {new Date(
-                        selectedActividad.fechaInicio
-                      ).toLocaleDateString()}
+                      {new Date(selectedActividad.fechaInicio).toLocaleDateString()}
                     </p>
                     <p>
                       Fecha de Fin:{" "}
-                      {new Date(
-                        selectedActividad.fechaFin
-                      ).toLocaleDateString()}
+                      {new Date(selectedActividad.fechaFin).toLocaleDateString()}
                     </p>
                   </div>
+
+                  {/* Botón inscribirme */}
                   <div
                     onClick={() => setShowConfirmModal(true)}
                     className="absolute bottom-4 cursor-pointer right-4 p-2 bg-[#D9D9D9] w-[155px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") setShowConfirmModal(true);
+                    }}
+                    aria-label="Inscribirme en la actividad"
                   >
                     Inscribirme
                   </div>
+
+                  {/* Error en inscripción */}
                   {error && (
                     <p className="text-red-500 text-sm mt-2 absolute bottom-2 left-4">
                       {error}
@@ -300,6 +338,8 @@ export default function ActividadesList() {
               </div>
             </Modal>
           )}
+
+          {/* Modal confirmación inscripción */}
           {showConfirmModal && (
             <Modal
               show={showConfirmModal}
@@ -318,18 +358,19 @@ export default function ActividadesList() {
 
               <div className="flex justify-center gap-6 mt-8">
                 <button
-                  className={`px-4 py-2 rounded-md font-bold border-2 cursor-pointer 
-    ${
-      isEnrolled
-        ? "bg-[#001F54] text-white cursor-not-allowed"
-        : "border-[#001F54] text-[#001F54]"
-    }`}
+                  className={`px-4 py-2 rounded-md font-bold border-2 cursor-pointer ${
+                    isEnrolled
+                      ? "bg-[#001F54] text-white cursor-not-allowed"
+                      : "border-[#001F54] text-[#001F54]"
+                  }`}
                   disabled={isEnrolled}
                   onClick={async () => {
                     await handleSubmit();
                     setShowConfirmModal(false);
+                    // Opcional: puedes dejar abierto el modal principal
                     setShowModal(false);
                   }}
+                  aria-label={isEnrolled ? "Ya inscrito" : "Confirmar inscripción"}
                 >
                   {isEnrolled ? "Ya inscrito" : "Sí, inscribirme"}
                 </button>
@@ -337,9 +378,10 @@ export default function ActividadesList() {
                 <button
                   className="border-2 border-[#001F54] text-[#001F54] cursor-pointer px-4 py-2 rounded-md font-bold"
                   onClick={() => {
-                    setShowConfirmModal(false); // close confirm
-                    setShowModal(false); // close course info
+                    setShowConfirmModal(false);
+                    setShowModal(false);
                   }}
+                  aria-label="Cancelar inscripción"
                 >
                   Cancelar
                 </button>

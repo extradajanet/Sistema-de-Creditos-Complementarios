@@ -1,26 +1,35 @@
 import React, { useState } from "react";
-import { Users } from "lucide-react";
-import predeterminado from "../../images/PredeterminadoCursos.png";
-import Modal from "../../components/Modal";
+import { Users, Check, ChevronDown } from "lucide-react";
 import { Listbox } from "@headlessui/react";
-import { Check, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+import Modal from "../../components/Modal";
+
+import imagen1 from "../../images/imagen1.png";
+import imagen2 from "../../images/imagen2.png";
+import imagen3 from "../../images/imagen3.png";
+import imagen4 from "../../images/imagen4.png";
+import imagen5 from "../../images/logo-mapache.jpeg";
 
 export default function ActividadesList() {
   const navigate = useNavigate();
-  const [horaInicio, setHoraInicio] = useState("");
-  const [horaFin, setHoraFin] = useState("");
-  const [capacidad, setCapacidad] = useState(0);
-  const [tipoSeleccionado, setTipoSeleccionado] = useState("");
-  const [carreraIds, setCarreraIds] = useState([]);
-  const [creditos, setCreditos] = useState(0);
+
+  // --- Estados ---
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [creditos, setCreditos] = useState(0);
+  const [capacidad, setCapacidad] = useState(0);
+  const [horaInicio, setHoraInicio] = useState("");
+  const [horaFin, setHoraFin] = useState("");
+  const [tipoSeleccionado, setTipoSeleccionado] = useState("");
+  const [carreraIds, setCarreraIds] = useState([]);
+  const [imagenSeleccionada, setImagenSeleccionada] = useState("imagen1.png");
   const [showModal, setShowModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
+  // --- Datos constantes ---
   const carreras = [
     { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
     { id: 2, nombre: "Ingeniería en Tecnologías de la Información y Comunicaciones" },
@@ -35,9 +44,18 @@ export default function ActividadesList() {
     { id: 11, nombre: "Ingeniería Electromecánica" },
     { id: 12, nombre: "Ingeniería en Gestión Empresarial" },
     { id: 13, nombre: "Ingeniería en Desarrollo de Aplicaciones" },
-    { id: 14, nombre: "Todas las carreras" }
+    { id: 14, nombre: "Todas las carreras" },
   ];
 
+  const imagenesPredeterminadas = [
+    { nombre: "imagen1.png", src: imagen1 },
+    { nombre: "imagen2.png", src: imagen2 },
+    { nombre: "imagen3.png", src: imagen3 },
+    { nombre: "imagen4.png", src: imagen4 },
+    { nombre: "imagen5.png", src: imagen5 },
+  ];
+
+  // --- Funciones auxiliares ---
   function obtenerTipoActividad(nombre) {
     switch (nombre) {
       case "Deportiva": return 1;
@@ -65,7 +83,8 @@ export default function ActividadesList() {
   const handleSubmit = async () => {
     let carrerasFinales = [...carreraIds];
     if (carrerasFinales.includes(14)) {
-      carrerasFinales = carreras.filter((c) => c.id !== 14).map((c) => c.id);
+      // Si "Todas las carreras" está seleccionado, incluir todas menos la opción 14
+      carrerasFinales = carreras.filter(c => c.id !== 14).map(c => c.id);
     }
 
     const actividad = {
@@ -75,12 +94,12 @@ export default function ActividadesList() {
       fechaFin: `${fechaFin}T00:00:00Z`,
       creditos,
       capacidad,
-      dias: 1,
+      dias: 1, // fijo, podrías hacerlo dinámico
       horaInicio: `${horaInicio}:00`,
       horaFin: `${horaFin}:00`,
       tipoActividad: obtenerTipoActividad(tipoSeleccionado),
       estadoActividad: 1,
-      imagenNombre: "PredeterminadoCursos.png",
+      imagenNombre: imagenSeleccionada,
       departamentoId: 1,
       carreraIds: carrerasFinales,
     };
@@ -115,13 +134,40 @@ export default function ActividadesList() {
 
         <div className="flex justify-center">
           <div className="grid grid-cols-2 justify-items-center-safe bg-gray-200 rounded-xl p-6 border border-blue-950 h-145 w-295">
+
+            {/* Selección de imagen */}
             <div className="mt-7 text-center text-blue-950 font-bold">
               <p>Selecciona una imagen</p>
-              <div className="bg-gray-200 rounded-xl p-6 border border-blue-950 h-108 w-115"></div>
+              <div className="bg-gray-200 rounded-xl p-6 border border-blue-950 h-108 w-115 flex flex-col items-center">
+                <img
+                  src={imagenesPredeterminadas.find(img => img.nombre === imagenSeleccionada)?.src}
+                  alt="Imagen seleccionada"
+                  className="w-auto h-auto object-cover mb-6 border-4 border-blue-700 rounded-lg shadow-md"
+                />
+                <div className="grid grid-cols-5 gap-3 px-2">
+                  {imagenesPredeterminadas.map(img => (
+                    <img
+                      key={img.nombre}
+                      src={img.src}
+                      alt={img.nombre}
+                      title={img.nombre}
+                      className={`w-auto h-auto object-cover rounded-md cursor-pointer border-2 transition ${
+                        imagenSeleccionada === img.nombre
+                          ? "border-blue-700 shadow-lg scale-105"
+                          : "border-transparent hover:border-blue-400 hover:shadow-sm"
+                      }`}
+                      onClick={() => setImagenSeleccionada(img.nombre)}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
 
+            {/* Formulario de creación */}
             <div className="grid grid-rows-5 bg-gray-200 rounded-xl h-125 w-140">
               <div className="w-full text-blue-950 font-bold">
+
+                {/* Nombre */}
                 <div className="mb-4">
                   <p>Nombre de la actividad:</p>
                   <div className="flex items-start border border-blue-950 rounded bg-gray-200 h-12">
@@ -129,11 +175,12 @@ export default function ActividadesList() {
                       className="flex-1 text-sm resize-none outline-none bg-transparent text-gray-600"
                       rows={1}
                       value={nombre}
-                      onChange={(e) => setNombre(e.target.value)}
+                      onChange={e => setNombre(e.target.value)}
                     />
                   </div>
                 </div>
 
+                {/* Descripción */}
                 <div className="mb-4">
                   <p>Descripción:</p>
                   <div className="flex items-start border border-blue-950 rounded bg-gray-200 h-20">
@@ -141,10 +188,11 @@ export default function ActividadesList() {
                       className="flex-1 text-sm resize-none outline-none bg-transparent text-gray-600"
                       rows={2}
                       value={descripcion}
-                      onChange={(e) => setDescripcion(e.target.value)}
+                      onChange={e => setDescripcion(e.target.value)}
                     />
                   </div>
 
+                  {/* Carrera(s) - Multiselección */}
                   <div>
                     <label>Carrera(s):</label>
                     <div className="relative z-10">
@@ -158,7 +206,7 @@ export default function ActividadesList() {
                               {carreraIds.length === 0
                                 ? "Selecciona carrera(s)"
                                 : carreraIds
-                                    .map((id) => `- ${carreras.find((c) => c.id === id)?.nombre}`)
+                                    .map(id => `- ${carreras.find(c => c.id === id)?.nombre}`)
                                     .filter(Boolean)
                                     .join("\n")}
                             </div>
@@ -166,7 +214,7 @@ export default function ActividadesList() {
                           </Listbox.Button>
 
                           <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg max-h-48 overflow-auto z-20">
-                            {carreras.map((carrera) => (
+                            {carreras.map(carrera => (
                               <Listbox.Option
                                 key={carrera.id}
                                 value={carrera.id}
@@ -190,11 +238,14 @@ export default function ActividadesList() {
                     </div>
                   </div>
 
+                  {/* Días, fechas, tipo actividad */}
                   <div className="grid grid-cols-3 mb-2">
+
+                    {/* Días */}
                     <div className="row">
                       <p>Día(s):</p>
                       <div className="flex flex-col gap-1.5 text-sm text-gray-700 mt-1">
-                        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((dia) => (
+                        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map(dia => (
                           <label key={dia} className="flex items-center gap-1">
                             <input type="checkbox" className="accent-blue-950" />
                             {dia}
@@ -203,6 +254,7 @@ export default function ActividadesList() {
                       </div>
                     </div>
 
+                    {/* Fechas y tipo */}
                     <div className="row">
                       <div className="items-center gap-2 mb-1">
                         <label>Fecha de Inicio:</label>
@@ -210,7 +262,7 @@ export default function ActividadesList() {
                           type="date"
                           className="border rounded px-2 py-1 mt-0.5"
                           value={fechaInicio}
-                          onChange={(e) => setFechaInicio(e.target.value)}
+                          onChange={e => setFechaInicio(e.target.value)}
                         />
                       </div>
                       <div className="items-center gap-2">
@@ -219,14 +271,14 @@ export default function ActividadesList() {
                           type="date"
                           className="border rounded px-2 py-1 mt-0.5"
                           value={fechaFin}
-                          onChange={(e) => setFechaFin(e.target.value)}
+                          onChange={e => setFechaFin(e.target.value)}
                         />
                       </div>
 
                       <div className="z-10 mt-2">
                         Tipo de Actividad
                         <div className="flex flex-row">
-                          {["Deportiva", "Cultural", "Tutorias", "MOOC"].map((tipo) => (
+                          {["Deportiva", "Cultural", "Tutorias", "MOOC"].map(tipo => (
                             <button
                               key={tipo}
                               type="button"
@@ -244,6 +296,7 @@ export default function ActividadesList() {
                       </div>
                     </div>
 
+                    {/* Capacidad y créditos */}
                     <div className="row h-30">
                       <label>Capacidad total:</label>
                       <div className="relative w-fit mt-0.5 mb-1">
@@ -251,7 +304,7 @@ export default function ActividadesList() {
                           type="number"
                           className="border rounded pl-2 pr-8 py-1 text-gray-700 w-28"
                           value={capacidad}
-                          onChange={(e) => setCapacidad(Number(e.target.value))}
+                          onChange={e => setCapacidad(Number(e.target.value))}
                         />
                         <Users
                           className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
@@ -262,7 +315,7 @@ export default function ActividadesList() {
                       <div className="relative w-fit mt-0.5">
                         <p>Créditos:</p>
                         <div className="flex gap-4 text-sm text-gray-700 mt-1">
-                          {[1, 2, 3].map((num) => (
+                          {[1, 2, 3].map(num => (
                             <label key={num} className="flex items-center gap-1">
                               <input
                                 type="radio"
@@ -279,6 +332,7 @@ export default function ActividadesList() {
                       </div>
                     </div>
 
+                    {/* Horario y botón */}
                     <div className="grid grid-cols-2 w-145 z-10">
                       <div className="relative w-fit">
                         <p>Horario:</p>
@@ -286,14 +340,14 @@ export default function ActividadesList() {
                           <input
                             type="time"
                             value={horaInicio}
-                            onChange={(e) => setHoraInicio(e.target.value)}
+                            onChange={e => setHoraInicio(e.target.value)}
                             className="appearance-none text-sm border border-blue-950 rounded px-1 py-1 bg-gray-100 text-gray-700 w-29"
                           />
                           <span>-</span>
                           <input
                             type="time"
                             value={horaFin}
-                            onChange={(e) => setHoraFin(e.target.value)}
+                            onChange={e => setHoraFin(e.target.value)}
                             className="appearance-none text-sm border border-blue-950 rounded px-1 py-1 bg-gray-100 text-gray-700 w-29"
                           />
                         </div>
@@ -315,10 +369,12 @@ export default function ActividadesList() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
+      {/* Modal éxito creación */}
       <Modal
         show={showModal}
         onClose={() => setShowModal(false)}
@@ -335,7 +391,7 @@ export default function ActividadesList() {
               limpiarFormulario();
               setShowModal(false);
             }}
-                    className="bottom-4 cursor-pointer right-4 p-2 bg-[#D9D9D9] w-[50px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]"
+            className="bottom-4 cursor-pointer right-4 p-2 bg-[#D9D9D9] w-[50px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]"
           >
             Sí
           </button>
@@ -348,7 +404,6 @@ export default function ActividadesList() {
           >
             No
           </button>
-
         </div>
       </Modal>
     </>
