@@ -17,7 +17,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.CoordinadorController
             _coordinadorService = coordinadorService;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<CoordinadorDto>> GetById(int id)
         {
             try
@@ -32,7 +32,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.CoordinadorController
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<CoordinadorDto>> Update([FromBody] CoordinadorUpdateDto coordinadorUpdateDto)
         {
             try

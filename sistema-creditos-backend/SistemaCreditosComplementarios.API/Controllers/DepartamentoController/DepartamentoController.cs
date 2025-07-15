@@ -16,7 +16,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.DepartamentoController
             _departamentoService = departamentoService;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<DepartamentoDto>> GetById(int id)
         {
             try
@@ -30,7 +30,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.DepartamentoController
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<DepartamentoDto>> Update([FromBody] DepartamentoUpdateDto departamentoUpdateDto)
         {
             try

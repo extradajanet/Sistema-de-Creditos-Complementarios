@@ -23,6 +23,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         {
             return await _context.Alumnos
                 .Include(a => a.Usuario)
+                .Include(a => a.Carrera)
                 .ToListAsync(); // Obtiene todos los alumnos de la base de datos
         }
 

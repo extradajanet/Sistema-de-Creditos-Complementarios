@@ -17,6 +17,9 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Departamento
     public class DepartamentoUpdateDto
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
+        public string? Nombre { get; set; }
+        public string? CorreoElectronico { get; set; }
+        public string? CurrentPassword { get; set; }
+        public string? NewPassword { get; set; }
     }
 }

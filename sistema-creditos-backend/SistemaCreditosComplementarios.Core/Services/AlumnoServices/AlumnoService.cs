@@ -1,8 +1,11 @@
-﻿using SistemaCreditosComplementarios.Core.Dtos.Alumno;
+﻿using Microsoft.AspNetCore.Identity;
+using SistemaCreditosComplementarios.Core.Dtos.Alumno;
 using SistemaCreditosComplementarios.Core.Dtos.Auth;
+using SistemaCreditosComplementarios.Core.Dtos.Coordinador;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Models.Alumnos;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +17,13 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
     public class AlumnoService : IAlumnoService
     {
         private readonly IAlumnoRepository _alumnoRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         // Constructor que recibe el repositorio de alumnos
-        public AlumnoService(IAlumnoRepository alumnoRepository)
+        public AlumnoService(IAlumnoRepository alumnoRepository, UserManager<ApplicationUser> userManager)
         {
             _alumnoRepository = alumnoRepository;
+            _userManager = userManager;
         }
 
         // Método para obtener todos los alumnos
@@ -36,6 +41,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 Semestre = a.Semestre,
                 TotalCreditos = a.TotalCreditos,
                 CarreraId = a.CarreraId,
+                CarreraNombre = a.Carrera?.Nombre,
             });
         }
 
@@ -145,13 +151,72 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             {
                 throw new Exception("Alumno no encontrado.");
             }
-            // Actualiza los datos del alumno existente
-            alumnoExistente.Nombre = alumnoUpdateDto.Nombre;
-            alumnoExistente.Apellido = alumnoUpdateDto.Apellido;
-            alumnoExistente.Semestre = alumnoUpdateDto.Semestre;
-            alumnoExistente.TotalCreditos = alumnoUpdateDto.TotalCreditos;
-            alumnoExistente.CarreraId = alumnoUpdateDto.CarreraId;
+            var user = await _userManager.FindByIdAsync(alumnoExistente.UsuarioId);
+            if (user == null)
+            {
+                throw new Exception("User is not linked to any record");
+            }
+            // Actualiza los datos del alumno existente si los campos tienen algun valor
+            if (!string.IsNullOrWhiteSpace(alumnoUpdateDto.Nombre))
+                alumnoExistente.Nombre = alumnoUpdateDto.Nombre;
 
+            if (!string.IsNullOrWhiteSpace(alumnoUpdateDto.Apellido))
+                alumnoExistente.Apellido = alumnoUpdateDto.Apellido;
+
+            if (alumnoUpdateDto.Semestre.HasValue && alumnoUpdateDto.Semestre.Value>0)
+                alumnoExistente.Semestre = alumnoUpdateDto.Semestre.Value;
+
+            // Este campo tiene valor por defecto, así que solo lo asignas si cambia
+            if (alumnoUpdateDto.TotalCreditos != alumnoExistente.TotalCreditos)
+                alumnoExistente.TotalCreditos = alumnoUpdateDto.TotalCreditos;
+
+            if (alumnoUpdateDto.CarreraId.HasValue && alumnoUpdateDto.CarreraId.Value > 0)
+            {
+                alumnoExistente.CarreraId = alumnoUpdateDto.CarreraId.Value;
+            }
+
+
+            //updates the email of the student
+
+
+            var newEmail = alumnoUpdateDto.CorreoElectronico?.Trim();
+
+            if (!string.IsNullOrEmpty(newEmail) && user.Email != newEmail)
+            {
+                // Prevents duplicate emails
+                var existingUserWithEmail = await _userManager.FindByEmailAsync(newEmail);
+                if (existingUserWithEmail != null && existingUserWithEmail.Id != user.Id)
+                {
+                    throw new Exception("El correo electrónico ya está en uso por otro usuario.");
+                }
+
+                user.Email = newEmail;
+                user.UserName = newEmail;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                    throw new Exception($"Error al actualizar el correo electrónico: {errors}");
+                }
+            }
+            //Adds old password confirmation when updating
+            var currentPassword = alumnoUpdateDto.CurrentPassword?.Trim();
+            var newPassword = alumnoUpdateDto.NewPassword?.Trim();
+
+            if (!string.IsNullOrEmpty(currentPassword) && !string.IsNullOrEmpty(newPassword))
+            {
+                var passwordChangeResult = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+                if (!passwordChangeResult.Succeeded)
+                {
+                    var errors = string.Join("; ", passwordChangeResult.Errors.Select(e => e.Description));
+                    throw new Exception($"Error al cambiar la contraseña: {errors}");
+                }
+            }
+
+
+
+            //Sends/Saves the new values 
 
             var alumnoActualizado = await _alumnoRepository.UpdateAsync(alumnoExistente); // Llamada al repositorio para actualizar el alumno
             

@@ -77,7 +77,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerAlumno
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<AlumnoDto>> Update([FromBody] AlumnoUpdateDto alumnoUpdateDto)
         {
             try
