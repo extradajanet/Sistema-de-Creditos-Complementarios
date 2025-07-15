@@ -6,7 +6,7 @@ import Graph from "../components/Graph";
 export default function Home() {
   const [userRole, setUserRole] = useState("Alumno"); // por defecto
   const [infoAlumno, setinfoAlumno] = useState([]);
-   const userId = localStorage.getItem("alumnoId");
+  const userId = localStorage.getItem("alumnoId");
 
   useEffect(() => {
     
@@ -25,6 +25,8 @@ export default function Home() {
         .then((data) => {
           if (isMounted) {
             setinfoAlumno(data);
+            console.log("Datos recibidos:", data);
+            localStorage.setItem("alumnoInfo", JSON.stringify(data)); 
             setLoading(false);
           }
         })
