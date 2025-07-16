@@ -43,7 +43,9 @@ function Login() {
       console.log("Login response:", data);
       // Guarda el token en localStorage
       localStorage.setItem("token", data.token);
-      localStorage.setItem("alumnoId",data.alumnoId );
+      localStorage.setItem("alumnoId", data.alumnoId);
+      localStorage.setItem("departamentoId", data.departamentoId)
+      localStorage.setItem("coordinadorId", data.coordinadorId)
 
       // Decodifica el token manualmente
       const decoded = parseJwt(data.token);

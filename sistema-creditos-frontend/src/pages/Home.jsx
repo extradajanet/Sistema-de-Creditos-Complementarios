@@ -10,44 +10,72 @@ import {
 import Graph from "../components/Graph";
 
 export default function Home() {
-  const [userRole, setUserRole] = useState("Alumno"); // por defecto
+  const [loading, setLoading] = useState(true)
+  const [userRole, setUserRole] = useState(null); // por defecto
+
   const [infoAlumno, setinfoAlumno] = useState([]);
-  const userId = localStorage.getItem("alumnoId");
+  const [infoDepartamento, setInfoDepartamento] = useState([]);
+  const [infoCoordinador, setInfoCoordinador] = useState([]);
+
+  const alumnoId = localStorage.getItem("alumnoId");
+  const departamentoId = localStorage.getItem("departamentoId");
+  const coordinadorId = localStorage.getItem("coordinadorId");
 
   useEffect(() => {
-    
+
     const rol = localStorage.getItem("rol");
     if (rol) setUserRole(rol);
   }, []);
 
   useEffect(() => {
-  
-      let isMounted = true;
-      fetch(`https://localhost:7238/api/Alumno/${userId}`, { headers: { Accept: "application/json" } })
-        .then((res) => {
-          if (!res.ok) throw new Error("Error: " + res.status);
-          return res.json();
-        })
-        .then((data) => {
-          if (isMounted) {
-            setinfoAlumno(data);
-            console.log("Datos recibidos:", data);
-            localStorage.setItem("alumnoInfo", JSON.stringify(data)); 
-            setLoading(false);
-          }
-        })
-        .catch((err) => {
-          if (isMounted) {
-            console.error("Fetch error:", err);
-            setLoading(false);
-          }
-        });
-  
-      return () => {
-        isMounted = false;
-      };
-      
-    }, []);
+    if (!userRole) return;
+
+    let isMounted = true;
+    let url = "";
+
+    if (userRole === 'Alumno') {
+      url = `https://localhost:7238/api/Alumno/${alumnoId}`;
+    } else if (userRole === 'Departamento') {
+      url = `https://localhost:7238/api/Departamento/${departamentoId}`;
+    } else if (userRole === 'Coordinador') {
+      url = `https://localhost:7238/api/Coordinador/${coordinadorId}`;
+    }
+
+    fetch(url, { headers: { Accept: "application/json" } })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error: " + res.status);
+        return res.json();
+      })
+      .then((data) => {
+        if (!isMounted) return;
+
+        if (userRole === 'Alumno') {
+          setinfoAlumno(data);
+          localStorage.setItem("alumnoInfo", JSON.stringify(data));
+        } else if (userRole === 'Departamento') {
+          setInfoDepartamento(data)
+          localStorage.setItem("departamentoInfo", JSON.stringify(data));
+        } else if (userRole === 'Coordinador') {
+          setInfoCoordinador(data)
+          localStorage.setItem("coordinadorInfo", JSON.stringify(data));
+        }
+
+        setLoading(false);
+        console.log("Datos recibidos", data)
+
+      })
+      .catch((err) => {
+        if (isMounted) {
+          console.error("Fetch error:", err);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+
+  }, [userRole]);
 
   const cardsByRole = {
     Alumno: [
@@ -98,17 +126,41 @@ export default function Home() {
     ],
   };
 
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-[#001F54] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   const tarjetas = cardsByRole[userRole] || cardsByRole["Alumno"];
 
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Bienvenida */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
-        <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido {infoAlumno.nombre +" " + infoAlumno.apellido || ""}!</h1>
-        {/* Graph Representation */}
-        <div className="w-50 h-50 rounded-full  flex items-center justify-center flex-col text-center">
-          <Graph obtained={infoAlumno.totalCreditos} total={5} />
-        </div>
+        {userRole === 'Alumno' && (
+          <>
+            <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido {infoAlumno.nombre + " " + infoAlumno.apellido || ""}!</h1>
+            {/* Graph Representation */}
+            <div className="w-50 h-50 rounded-full  flex items-center justify-center flex-col text-center">
+              <Graph obtained={infoAlumno.totalCreditos} total={5} />
+            </div>
+          </>
+        )}
+
+        {userRole === 'Departamento' && (
+          <>
+            <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido, departamento de {infoDepartamento.nombre || ""}!</h1>
+          </>
+        )}
+
+        {userRole === 'Coordinador' && (
+          <>
+            <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido, {infoCoordinador.nombre || ""}!</h1>
+          </>
+        )}
       </div>
 
       {/* Tarjetas dinámicas por rol */}
