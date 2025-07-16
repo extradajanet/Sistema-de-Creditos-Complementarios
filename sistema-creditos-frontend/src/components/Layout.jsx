@@ -40,11 +40,15 @@ export default function Layout() {
           </div>
 
           <div className="flex flex-col items-center mt-auto w-full">
-            <SidebarLink
-              to="/login"
-              icon={<LogOut strokeWidth={0.5} className="w-6 h-6" />}
-              label="Cerrar"
-            />
+            <button
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = "/login";
+              }}
+              className="flex items-center w-full px-4 py-2 text-left cursor-pointer">
+              <LogOut strokeWidth={0.5} className="w-6 h-6 mr-2" />
+              <span>Cerrar</span>
+            </button>
           </div>
         </nav>
       </aside>
