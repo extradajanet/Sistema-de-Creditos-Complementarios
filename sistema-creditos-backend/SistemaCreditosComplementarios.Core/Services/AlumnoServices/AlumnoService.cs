@@ -303,6 +303,8 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                         Apellido = alumno.Apellido,
                         NumeroControl = alumno.Usuario.NumeroControl,
                         CorreoElectronico = alumno.Usuario.Email,
+                        Semestre= alumno.Semestre,
+                        CarreraId = alumno.CarreraId,
                         CarreraNombre = alumno.Carrera?.Nombre,
                         TotalCreditos = (decimal)totalCreditos
                     });
