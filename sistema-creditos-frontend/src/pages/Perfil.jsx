@@ -4,44 +4,52 @@ import { Pencil } from "lucide-react";
 import Toast from "../components/Toast";
 
 export default function EditProfile() {
-  const storedAlumno = JSON.parse(localStorage.getItem("alumnoInfo"));
-  const [userRole, setUserRole] = useState("")
-  const [infoAlumno, setInfoAlumno] = useState(storedAlumno || {});
+  const [rol] = useState(() => localStorage.getItem("rol"));
+
+  const ids = {
+    Alumno: localStorage.getItem("alumnoId"),
+    Departamento: localStorage.getItem("departamentoId"),
+    Coordinador: localStorage.getItem("coordinadorId"),
+  };
+
+  const storedData = {
+    Alumno: JSON.parse(localStorage.getItem("alumnoInfo")),
+    Departamento: JSON.parse(localStorage.getItem("departamentoInfo")),
+    Coordinador: JSON.parse(localStorage.getItem("coordinadorInfo")),
+  };
+
+  { /* Se guarda la información correspondiente (que se mostrará en los campos dependiendo del usuario) */ }
+  const [info, setInfo] = useState(storedData[rol]);
+
   const [editedInfo, setEditedInfo] = useState({})
   const [editMode, setEditMode] = useState(false)
+
   const [careers, setCareers] = useState([]);
+
   const [toast, setToast] = useState(null);
 
-  { /* Función para cargar los datos del alumno */}
-  const fetchAlumnoData = async () => {
+  { /* Función para cargar los datos del usuario */ }
+  const fetchData = async () => {
     try {
-      const userId = localStorage.getItem("alumnoId");
-      if (!userId) return;
+      const id = ids[rol];
+      const url = id ? `https://localhost:7238/api/${rol}/${id}` : null;
+      if (!url) return;
 
-      const response = await fetch(`https://localhost:7238/api/Alumno/${userId}`, {
+      const response = await fetch(url, {
         headers: { Accept: "application/json" },
       });
 
-      if (!response.ok) throw new Error("Error al obtener alumno");
+      if (!response.ok) throw new Error("Error al obtener usuario");
 
       const data = await response.json();
-      setInfoAlumno(data);
+      setInfo(data);
     } catch (error) {
-      console.error("Error al cargar datos del alumno:", error);
+      console.error("Error al cargar datos del usuario:", error);
     }
   };
 
   useEffect(() => {
-    fetchAlumnoData();
-  }, []);
-
-
-  { /* Obtener el rol del usuario */ }
-  useEffect(() => {
-    const rol = localStorage.getItem("rol");
-    if (rol) {
-      setUserRole(rol);
-    }
+    fetchData();
   }, []);
 
   { /* Obtener las carreras para el dropdown en modo edición */ }
@@ -62,7 +70,7 @@ export default function EditProfile() {
 
   { /* Manejar botón de edición, al dar clic se habilita el modo de edición */ }
   const handleEditClick = () => {
-    setEditedInfo({ ...infoAlumno })
+    setEditedInfo({ ...info })
     setEditMode(true)
   }
 
@@ -75,7 +83,7 @@ export default function EditProfile() {
   const handleSave = async () => {
 
     // verificar si hubo modificaciones
-    const noChanges = Object.keys(editedInfo).every(key => editedInfo[key] === infoAlumno[key])
+    const noChanges = Object.keys(editedInfo).every(key => editedInfo[key] === info[key])
 
     if (noChanges) {
       setToast({ message: "No has ingresado ningún cambio", type: "warning" });
@@ -83,7 +91,9 @@ export default function EditProfile() {
     }
 
     try {
-      const response = await fetch(`https://localhost:7238/api/Alumno/${infoAlumno.id}`, {
+      const url = `https://localhost:7238/api/${rol}/${info.id}`;
+
+      const response = await fetch(url, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editedInfo),
@@ -95,7 +105,7 @@ export default function EditProfile() {
 
       setToast({ message: "Perfil actualizado", type: "success" });
       // al actualizarse, se cargan de nuevo los datos.
-      await fetchAlumnoData(); 
+      await fetchData();
       setEditMode(false);
 
     } catch (error) {
@@ -120,7 +130,7 @@ export default function EditProfile() {
             className="w-45 h-45 rounded-full object-cover"
           />
 
-          {userRole === "Alumno" | userRole === "Coordinador" && (
+          {(rol === "Alumno" || rol === "Coordinador") && (
             <>
               {editMode ? (
                 <>
@@ -140,13 +150,13 @@ export default function EditProfile() {
                 </>
               ) : (
                 <span className="font-bold text-[40px] text-[#0A1128]">
-                  {infoAlumno.nombre + " " + infoAlumno.apellido}
+                  {info.nombre + " " + info.apellido}
                 </span>
               )}
             </>
           )}
 
-          {userRole === "Departamento" && (
+          {rol === "Departamento" && (
             <>
               {editMode ? (
                 <>
@@ -159,7 +169,7 @@ export default function EditProfile() {
                 </>
               ) : (
                 <span className="font-bold text-[40px] text-[#0A1128]">
-                  {infoAlumno.nombre + " " + infoAlumno.apellido}
+                  {info.nombre}
                 </span>
               )}
             </>
@@ -180,7 +190,7 @@ export default function EditProfile() {
       { /* Datos */}
 
       <div className="grid grid-cols-2 gap-y-4 gap-x-8 w-full px-6">
-        {userRole === "Alumno" && (
+        {rol === "Alumno" && (
           <>
             <h3 className="font-bold text-[30px] text-[#001F54]">Número de control</h3>
             {editMode ? (
@@ -191,7 +201,7 @@ export default function EditProfile() {
                 placeholder="Número de control"
               />
             ) : (
-              <h3 className="font-bold text-[30px] text-[#3F3F3F]">{infoAlumno.numeroControl}</h3>
+              <h3 className="font-bold text-[30px] text-[#3F3F3F]">{info.numeroControl}</h3>
             )}
 
             <h3 className="font-bold text-[30px] text-[#001F54]">Carrera</h3>
@@ -215,7 +225,7 @@ export default function EditProfile() {
                 </select>
               </>
             ) : (
-              <h3 className="font-bold text-[30px] text-[#3F3F3F]">{infoAlumno.carreraNombre}</h3>
+              <h3 className="font-bold text-[30px] text-[#3F3F3F]">{info.carreraNombre}</h3>
             )}
           </>
         )}
@@ -231,7 +241,7 @@ export default function EditProfile() {
             placeholder="Correo electrónico"
           />
         ) : (
-          <h3 className="font-bold text-[30px] text-[#3F3F3F]">{infoAlumno.correoElectronico}</h3>
+          <h3 className="font-bold text-[30px] text-[#3F3F3F]">{info.correoElectronico}</h3>
         )}
 
         <h3 className="font-bold text-[30px] text-[#001F54]">Contraseña</h3>

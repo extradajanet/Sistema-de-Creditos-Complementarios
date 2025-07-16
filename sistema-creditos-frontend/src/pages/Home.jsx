@@ -17,9 +17,11 @@ export default function Home() {
   const [infoDepartamento, setInfoDepartamento] = useState([]);
   const [infoCoordinador, setInfoCoordinador] = useState([]);
 
-  const alumnoId = localStorage.getItem("alumnoId");
-  const departamentoId = localStorage.getItem("departamentoId");
-  const coordinadorId = localStorage.getItem("coordinadorId");
+  const ids = {
+    Alumno: localStorage.getItem("alumnoId"),
+    Departamento: localStorage.getItem("departamentoId"),
+    Coordinador: localStorage.getItem("coordinadorId"),
+  };
 
   useEffect(() => {
 
@@ -31,15 +33,9 @@ export default function Home() {
     if (!userRole) return;
 
     let isMounted = true;
-    let url = "";
 
-    if (userRole === 'Alumno') {
-      url = `https://localhost:7238/api/Alumno/${alumnoId}`;
-    } else if (userRole === 'Departamento') {
-      url = `https://localhost:7238/api/Departamento/${departamentoId}`;
-    } else if (userRole === 'Coordinador') {
-      url = `https://localhost:7238/api/Coordinador/${coordinadorId}`;
-    }
+    const id = ids[userRole];
+    let url = `https://localhost:7238/api/${userRole}/${id}`;
 
     fetch(url, { headers: { Accept: "application/json" } })
       .then((res) => {
