@@ -11,6 +11,8 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepo
     public interface IAlumnoRepository
     {
         Task<IEnumerable<Alumno>> GetAllAsync();
+        Task<IEnumerable<Alumno>> GetByCarreraIdsAsync(IEnumerable<int> carreraIds);
+
         Task<Alumno> GetByIdAsync(int id);
         Task<Alumno> GetByUserIdAsync(string userId);
         Task AddAsync(Alumno alumno);

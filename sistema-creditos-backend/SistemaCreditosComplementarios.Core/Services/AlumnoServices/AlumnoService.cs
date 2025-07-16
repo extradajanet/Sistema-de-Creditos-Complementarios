@@ -3,6 +3,7 @@ using SistemaCreditosComplementarios.Core.Dtos.Alumno;
 using SistemaCreditosComplementarios.Core.Dtos.Auth;
 using SistemaCreditosComplementarios.Core.Dtos.Coordinador;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Models.Alumnos;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
@@ -17,13 +18,15 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
     public class AlumnoService : IAlumnoService
     {
         private readonly IAlumnoRepository _alumnoRepository;
+        private readonly ICarreraRepository _carreraRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
         // Constructor que recibe el repositorio de alumnos
-        public AlumnoService(IAlumnoRepository alumnoRepository, UserManager<ApplicationUser> userManager)
+        public AlumnoService(IAlumnoRepository alumnoRepository, UserManager<ApplicationUser> userManager, ICarreraRepository carreraRepository)
         {
             _alumnoRepository = alumnoRepository;
             _userManager = userManager;
+            _carreraRepository = carreraRepository;
         }
 
         // Método para obtener todos los alumnos
@@ -31,6 +34,24 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
         {
             var alumnos = await _alumnoRepository.GetAllAsync(); // Llamada al repositorio para obtener todos los alumnos
             return alumnos.Select(a => new AlumnoDto
+            {
+                Id = a.Id,
+                NumeroControl = a.Usuario.NumeroControl,
+                Nombre = a.Nombre,
+                Apellido = a.Apellido,
+                CorreoElectronico = a.Usuario.Email,
+                FechaRegistro = a.FechaRegistro,
+                Semestre = a.Semestre,
+                TotalCreditos = a.TotalCreditos,
+                CarreraId = a.CarreraId,
+                CarreraNombre = a.Carrera?.Nombre,
+            });
+        }
+        //Método para obtener la lista de alumnos de una carrera
+        public async Task<IEnumerable<AlumnoDto>> GetByCarreraIdsAsync(IEnumerable<int> carreraIds)
+        {
+            var alumnosCA = await _alumnoRepository.GetByCarreraIdsAsync(carreraIds);
+            return alumnosCA.Select( a => new AlumnoDto
             {
                 Id = a.Id,
                 NumeroControl = a.Usuario.NumeroControl,
@@ -178,7 +199,6 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
 
             //updates the email of the student
 
-
             var newEmail = alumnoUpdateDto.CorreoElectronico?.Trim();
 
             if (!string.IsNullOrEmpty(newEmail) && user.Email != newEmail)
@@ -253,10 +273,45 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             };
         }
 
+
+
         public async Task<double> GetTotalCreditosAsync(int alumnoId)
         {
             var alumno = await _alumnoRepository.GetByIdAsync(alumnoId) ?? throw new Exception("Alumno no encontrado."); // Llamada al repositorio para obtener el alumno por ID
             return (int)alumno.TotalCreditos; // Retorna los créditos totales del alumno
         }
+
+        public async Task<IEnumerable<AlumnoDto>> GetAlumnosCon5CreditosByCoordinadorIdAsync(int coordinadorId)
+        {
+            var carreras = await _carreraRepository.GetByCoordinadorId(coordinadorId);
+            var carreraIds = carreras.Select(c => c.Id);
+
+            var alumnos = await _alumnoRepository.GetByCarreraIdsAsync(carreraIds);
+
+            var result = new List<AlumnoDto>();
+
+            foreach (var alumno in alumnos)
+            {
+                double totalCreditos = (double)alumno.TotalCreditos; 
+
+                if (totalCreditos >= 5)
+                {
+                    result.Add(new AlumnoDto
+                    {
+                        Id = alumno.Id,
+                        Nombre = alumno.Nombre,
+                        Apellido = alumno.Apellido,
+                        NumeroControl = alumno.Usuario.NumeroControl,
+                        CorreoElectronico = alumno.Usuario.Email,
+                        CarreraNombre = alumno.Carrera?.Nombre,
+                        TotalCreditos = (decimal)totalCreditos
+                    });
+                }
+            }
+
+            return result;
+        }
+
+
     }
 }

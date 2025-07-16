@@ -27,6 +27,17 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 .ToListAsync(); // Obtiene todos los alumnos de la base de datos
         }
 
+
+        //Obtener la lista de alumnos de una carrera 
+        public async Task<IEnumerable<Alumno>> GetByCarreraIdsAsync(IEnumerable<int> carreraIds)
+        {
+            return await _context.Alumnos
+                .Include(a => a.Usuario)
+                .Include(a => a.Carrera)
+                .Where(a => carreraIds.Contains(a.CarreraId))
+                .ToListAsync();
+        }
+
         public async Task<Alumno> GetByIdAsync(int id)
         {
             return await _context.Alumnos

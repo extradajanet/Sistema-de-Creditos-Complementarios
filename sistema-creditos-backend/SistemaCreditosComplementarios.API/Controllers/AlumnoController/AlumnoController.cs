@@ -58,6 +58,13 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerAlumno
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
+        [HttpGet("coordinador/{coordinadorId}/alumnos-creditos")]
+        public async Task<IActionResult> GetAlumnosCon5Creditos(int coordinadorId)
+        {
+            var alumnos = await _alumnoService.GetAlumnosCon5CreditosByCoordinadorIdAsync(coordinadorId);
+            return Ok(alumnos);
+        }
+
 
         [HttpPost]
         private async Task<ActionResult<AlumnoDto>> Create([FromBody] AlumnoCreateDto alumnoCreateDto)
