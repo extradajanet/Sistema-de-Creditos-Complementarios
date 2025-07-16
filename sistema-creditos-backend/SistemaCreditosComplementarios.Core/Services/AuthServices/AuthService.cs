@@ -55,6 +55,8 @@ namespace SistemaCreditosComplementarios.Core.Services.AuthServices
         {
             var user = await _authRepository.LoginAsync(loginDto);
 
+            var token = GenerateToken(user);
+
             var alumno = await _alumnoService.GetByUserIdAsync(user.Id);
            
 
