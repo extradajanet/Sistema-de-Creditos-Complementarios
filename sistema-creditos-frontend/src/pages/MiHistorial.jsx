@@ -20,6 +20,18 @@ const opcionesEstado = [
   { id: 5, nombre: "No Acreditado" },
 ];
 
+const imagenes = import.meta.glob('/src/images/*.{png,jpg,jpeg,gif}', { eager: true });
+
+
+const obtenerImagen = (nombre) => {
+  const entrada = Object.entries(imagenes).find(([ruta]) =>
+    ruta.includes(nombre)
+  
+  );
+  console.log("imagenNombre:", nombre);
+
+  return entrada ? entrada[1].default : predeterminado; // usa imagen predeterminada si no se encuentra
+};
 export default function ActividadesList() {
   const [actividades, setActividades] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -145,13 +157,10 @@ export default function ActividadesList() {
               className="grid grid-cols-[150px_auto] bg-[#001F54] w-[550px] h-[100px] rounded-2xl shadow-md border-3 border-black overflow-hidden"
             >
               <div className="flex items-center justify-center">
-                {actividad.imagenNombre ? (
-                  <img
-                    src={predeterminado}
-                    alt={actividad.nombre}
+                <img src={obtenerImagen(actividad.imagenNombre)} alt={actividad.nombre} 
                     className="rounded-md object-cover h-20 w-20"
                   />
-                ) : null}
+                
               </div>
 
               <div className="flex flex-col justify-center p-2">
