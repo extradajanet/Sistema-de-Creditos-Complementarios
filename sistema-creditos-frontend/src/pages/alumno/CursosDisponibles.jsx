@@ -4,6 +4,20 @@ import predeterminado from "../../images/PredeterminadoCursos.png";
 import Modal from "../../components/Modal";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown, Check } from "lucide-react";
+import imagen1 from "../../images/imagen1.png";
+import imagen2 from "../../images/imagen2.png";
+import imagen3 from "../../images/imagen3.png";
+import imagen4 from "../../images/imagen4.png";
+import imagen5 from "../../images/logo-mapache.jpeg";
+
+const imagenes = {
+  "imagen1.png": imagen1,
+  "imagen2.png": imagen2,
+  "imagen3.png": imagen3,
+  "imagen4.png": imagen4,
+  "imagen5.png": imagen5,
+};
+
 
 const tipoActividad = {
   1: "Deportivo",
@@ -216,11 +230,11 @@ export default function ActividadesList() {
                 className="bg-white rounded-lg shadow-md  cursor-pointer p-6 flex flex-col border-3 border-blue-950 hover:bg-[#D9D9D9]"
               >
                 {actividad.imagenNombre ? (
-                  <img
-                    src={predeterminado}
-                    alt={actividad.nombre}
-                    className="rounded-md mb-4 object-cover h-24 w-24 mx-auto"
-                  />
+                    <img
+                      src={imagenes[actividad.imagenNombre] || predeterminado}
+                      alt={actividad.nombre}
+                      className="rounded-md mb-4 object-cover h-24 w-24 mx-auto"
+                    />
                 ) : null}
 
                 <h3 className="text-xl text-blue-950 font-semibold mb-2 text-center">
@@ -259,9 +273,9 @@ export default function ActividadesList() {
                 <div className="w-1/3 ">
                   {selectedActividad.imagenNombre ? (
                     <img
-                      src={predeterminado}
+                      src={imagenes[selectedActividad.imagenNombre] || predeterminado}
                       alt={selectedActividad.nombre}
-                      className="rounded-md object-cover h-[200ox] w-[200px] mx-auto "
+                      className="rounded-md object-cover h-[200px] w-[200px] mx-auto"
                     />
                   ) : null}
                 </div>
@@ -289,7 +303,7 @@ export default function ActividadesList() {
                   </div>
                   <div>
                     <p>
-                      Capacidad: {selectedTotal} / {selectedActividad.capacidad}
+                      Capacidad: {selectedTotal} / {selectedActividad.capacidad ?? "Sin definir"}
                     </p>
                     <p>Creditos: {selectedActividad.creditos}</p>
                     <p className="mt-10">
