@@ -1,4 +1,5 @@
 ﻿using SistemaCreditosComplementarios.Core.Dtos.Actividad;
+using SistemaCreditosComplementarios.Core.Models.ActividadModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadSer
     {
         Task<IEnumerable<ActividadDto>> GetAllAsync();
         Task<ActividadDto> GetByIdAsync(int id);
+
+        Task<IEnumerable<ActividadDto>> GetByCoordinadorIdAsync(int coordinadorId);
+
         Task<ActividadDto> AddAsync(ActividadCreateDto actividadCreateDto);
         Task<ActividadDto> UpdateAsync(int id, ActividadCreateDto actividadUpdateDto);
         Task DeleteAsync(int id);
