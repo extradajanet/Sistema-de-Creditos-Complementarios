@@ -337,7 +337,7 @@ useEffect(() => {
                 setShowModal(false);
               }}
               title="Confirmación"
-              className="w-[500px] h-[220px] max-w-full border-4 bg-[#D9D9D9] text-[#001F54] custom-text font-semibold"
+              className="w-[500px] h-[250px] max-w-full border-4 bg-[#D9D9D9] text-[#001F54] custom-text font-semibold"
               closeButtonClassName="text-[#001F54]"
             >
               <div className="text-center text-[#0A1128] font-medium mt-4">
