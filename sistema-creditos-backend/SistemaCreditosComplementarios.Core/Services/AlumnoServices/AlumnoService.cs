@@ -298,10 +298,19 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             // Filtrar por creditos
             if (cantCreditos.HasValue)
             {
-                alumnos = alumnos.Where(a => (double)a.TotalCreditos == cantCreditos.Value);
+                if (cantCreditos.Value <= 5)
+                {
+                    alumnos = alumnos.Where(a => (decimal)a.TotalCreditos == (decimal)cantCreditos.Value);
+                }
+                else
+                {
+                    // More than 5
+                    alumnos = alumnos.Where(a => a.TotalCreditos > 5);
+                }
             }
 
-      
+
+
             var result = alumnos.Select(alumno => new AlumnoDto
             {
                 Id = alumno.Id,
