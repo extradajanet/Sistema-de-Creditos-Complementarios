@@ -7,7 +7,7 @@ using SistemaCreditosComplementarios.Core.Dtos.Actividad;
 using SistemaCreditosComplementarios.Core.Dtos.ActividadesExtraescolares;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IActividadExtraescolarRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadExtraescolarService;
-using SistemaCreditosComplementarios.Core.Models.ActividadExtraescolar;
+using SistemaCreditosComplementarios.Core.Models.ActividadExtraescolarModel;
 using SistemaCreditosComplementarios.Core.Models.ActividadModel;
 
 namespace SistemaCreditosComplementarios.Core.Services.ActividadExtraescolarServices

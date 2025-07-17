@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
 using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
 using SistemaCreditosComplementarios.Core.Models.ActividadesCarreras;
+using SistemaCreditosComplementarios.Core.Models.ActividadExtraescolarModel;
+using SistemaCreditosComplementarios.Core.Models.AlumnoActividadExtraescolares;
 
 namespace SistemaCreditosComplementarios.Infraestructure.Data
 {
@@ -28,7 +30,13 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
         public DbSet<AlumnoActividad> AlumnosActividades { get; set; }
         public DbSet<ActividadCarrera> ActividadesCarreras { get; set; }
         public DbSet<Actividad> Actividades { get; set; }
-        
+
+        public DbSet<ActividadExtraescolar> ActividadeExtraescolar { get; set; }
+
+        public DbSet<AlumnoActividadExtraescolar> AlumnoActividadeExtraescolar { get; set; }
+
+
+
         public DbSet<Carrera> Carreras { get; set; }
 
         public DbSet<Alumno> Alumnos { get; set; }
@@ -58,6 +66,20 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
                 new Carrera { Id = 13, Nombre = "Ingeniería en  Desarrollo de Aplicaciones " },
                 new Carrera { Id = 14, Nombre = "Todas las carreras " }
             );
+
+            modelBuilder.Entity<AlumnoActividadExtraescolar>()
+                 .HasKey(aa => new { aa.IdAlumno, aa.IdActividadExtraescolar });
+
+            modelBuilder.Entity<AlumnoActividadExtraescolar>()
+                .HasOne(aa => aa.Alumno)
+                .WithMany(a => a.AlumnosActividadesExtraescolares) // Asegúrate de tener esta propiedad en `Alumno`
+                .HasForeignKey(aa => aa.IdAlumno);
+
+            modelBuilder.Entity<AlumnoActividadExtraescolar>()
+                .HasOne(aa => aa.ActividadExtraescolar)
+                .WithMany(a => a.AlumnoActividadExtraescolar) // Asegúrate de tener esta propiedad en `ActividadExtraescolar`
+                .HasForeignKey(aa => aa.IdActividadExtraescolar);
+
 
             modelBuilder.Entity<AlumnoActividad>()
                 .HasKey(aa => new { aa.IdAlumno, aa.IdActividad }); // Clave compuesta

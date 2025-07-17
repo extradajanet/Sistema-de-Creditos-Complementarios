@@ -3,17 +3,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IActividadExtraescolarRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoActividadRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadExtraescolarService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActividadExtraescolarService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActividadService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
+using SistemaCreditosComplementarios.Core.Services.ActividadExtraescolarServices;
 using SistemaCreditosComplementarios.Core.Services.ActividadService;
+using SistemaCreditosComplementarios.Core.Services.AlumnoActividadExtraescolarServices;
 using SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices;
 using SistemaCreditosComplementarios.Core.Services.AlumnoServices;
 using SistemaCreditosComplementarios.Core.Services.AuthServices;
@@ -22,8 +27,12 @@ using SistemaCreditosComplementarios.Core.Services.CarreraServices;
 using SistemaCreditosComplementarios.Core.Settings;
 using SistemaCreditosComplementarios.Infraestructure.Data;
 using SistemaCreditosComplementarios.Infraestructure.Repositories;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActividadExtraescolarService;
+using SistemaCreditosComplementarios.Core.Services.AlumnoActividadExtraescolarServices;
+
 using System;
 using System.Text;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoActividadExtraescolarRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +53,9 @@ builder.Services.AddScoped<IActividadRepository, ActividadRepository>(); //se a�
 builder.Services.AddScoped<ICarreraRepository, CarreraRepository>(); //se añade el repositorio para las carreras
 builder.Services.AddScoped<IAlumnoRepository, AlumnoRepository>(); 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IActividadExtraescolarRepository, ActividadExtraescolarRepository>();
+builder.Services.AddScoped<IAlumnoActividadExtraescolarRepository, AlumnoActividadExtraescolarRepository>();
+
 
 
 //Inyecci�n de dependencias para el servicio 
@@ -52,6 +64,9 @@ builder.Services.AddScoped<IActividadService, ActividadService>(); //se añade e
 builder.Services.AddScoped<ICarreraService, CarreraService>(); //se añade el servicio de carreras
 builder.Services.AddScoped<IAlumnoService, AlumnoService>();
 builder.Services.AddScoped<IAuthService, AuthService>(); //se añade el servicio de autenticaci�n
+builder.Services.AddScoped<IActividadExtraescolarService, ActividadExtraescolarService>();
+builder.Services.AddScoped<IAlumnoActividadExtraescolarService, AlumnoActividadExtraescolarService>();
+
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()

@@ -14,9 +14,5 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadExt
         Task<ActividadExtraescolarDto> AddAsync(ActividadExtraescolarCreateDto actividadextraescolarCreateDto);
         Task<ActividadExtraescolarDto> UpdateAsync(int id, ActividadExtraescolarCreateDto actividadextraescolarCreateDto);
         Task DeleteAsync(int id);
-
-        //métodos para buscar en buscador del frontend
-        //Task<List<ActividadDto>> GetByNombreAsync(string nombreActividad); 
-        //Task<List<ActividadDto>> GetActividadesByTipoAsync(string tipoActividad);
     }
 }

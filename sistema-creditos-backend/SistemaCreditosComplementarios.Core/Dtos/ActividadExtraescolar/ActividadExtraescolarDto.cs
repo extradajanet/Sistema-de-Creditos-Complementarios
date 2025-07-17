@@ -24,7 +24,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.ActividadesExtraescolares
         public TimeSpan HoraFin { get; set; }
 
         public TipoActividad TipoActividad { get; set; }
-        public EstadoActividad EstadoActividad { get; set; } // "Activo = 1", "En Progreso = 2", "Finalizado = 3"
+        public EstadoActividad EstadoActividad { get; set; } 
 
         public string ImagenNombre { get; set; }
 

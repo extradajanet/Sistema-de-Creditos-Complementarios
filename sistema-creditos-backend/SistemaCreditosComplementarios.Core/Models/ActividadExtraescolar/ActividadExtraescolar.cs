@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SistemaCreditosComplementarios.Core.Models.ActividadesCarreras;
-using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
+using SistemaCreditosComplementarios.Core.Models.AlumnoActividadExtraescolares;
 using SistemaCreditosComplementarios.Core.Models.Departamentos;
 using SistemaCreditosComplementarios.Core.Models.Enum;
 
-namespace SistemaCreditosComplementarios.Core.Models.ActividadExtraescolar
+namespace SistemaCreditosComplementarios.Core.Models.ActividadExtraescolarModel
 {
     public class ActividadExtraescolar
     {
@@ -31,7 +30,7 @@ namespace SistemaCreditosComplementarios.Core.Models.ActividadExtraescolar
         public int DepartamentoId { get; set; }
         public Departamento Departamento { get; set; }
 
-        public ICollection<AlumnoActividad> AlumnosActividades { get; set; }
+        public ICollection<AlumnoActividadExtraescolar> AlumnoActividadExtraescolar { get; set; }
 
     }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SistemaCreditosComplementarios.Core.Models.AlumnoActividadExtraescolares;
 using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
 using SistemaCreditosComplementarios.Core.Models.CarreraModel;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
@@ -23,5 +24,8 @@ namespace SistemaCreditosComplementarios.Core.Models.Alumnos
         public string UsuarioId { get; set; }
         public ApplicationUser Usuario { get; set; }
         public ICollection<AlumnoActividad> AlumnosActividades { get; set; }
+
+        public ICollection<AlumnoActividadExtraescolar> AlumnosActividadesExtraescolares { get; set; }
+
     }
 }
