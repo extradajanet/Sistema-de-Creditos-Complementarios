@@ -6,6 +6,7 @@ import {
   FolderOpen,
   Trophy,
   BellRing,
+  Users
 } from "lucide-react";
 import Graph from "../components/Graph";
 
@@ -93,14 +94,19 @@ export default function Home() {
     ],
     Coordinador: [
       {
-        text: "Revisar Actividades",
-        icon: <Trophy strokeWidth={0.5} className="h-40 w-40 mb-2" />,
-        link: "/revisaractividades",
+        text: "Ver Cursos",
+        icon: <FolderOpen strokeWidth={0.5} className="h-40 w-40 mb-2" />,
+        link: "/vercursos",
       },
       {
-        text: "Gestionar Cursos",
-        icon: <LibraryBig strokeWidth={0.5} className="h-40 w-40 mb-2" />,
-        link: "/gestionarcursos",
+        text: "Ver Alumnos",
+        icon: <Users strokeWidth={0.5} className="h-40 w-40 mb-2" />,
+        link: "/veralumnos",
+      },
+      {
+        text: "Avisos",
+        icon: <BellRing strokeWidth={0.5} className="h-40 w-40 mb-2" />,
+        link: "/avisos",
       },
     ],
     Departamento: [
