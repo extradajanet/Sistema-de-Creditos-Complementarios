@@ -8,7 +8,7 @@ export default function Layout() {
     <div className="flex h-screen h-full overflow-hidden">
       {/* Sidebar */}
       <aside
-        className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300 h-[700px] flex flex-col items-center py-5 m-4 rounded-2xl"
+        className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300  flex flex-col items-center py-5 m-4 rounded-2xl"
       >
         {/* Logo */}
         <div className="bg-white p-4 rounded-full mb-20">
