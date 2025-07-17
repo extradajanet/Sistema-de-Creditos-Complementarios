@@ -18,7 +18,7 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoServic
         Task<AlumnoDto> AddFromRegisterAsync(RegisterDto registerDto, string usuarioId);
         Task<AlumnoDto> UpdateAsync(AlumnoUpdateDto alumnoUpdateDto); 
         Task<AlumnoDto> DeleteAsync(int id); // devuelve el dto del alumno eliminado
-        Task<IEnumerable<AlumnoDto>> GetAlumnosCon5CreditosByCoordinadorIdAsync(int coordinadorId);
+        Task<IEnumerable<AlumnoDto>> GetAlumnosFiltradosByCoordinadorIdAsync(int coordinadorId, int? carreraId = null, double? cantCreditos = null);
         Task<double> GetTotalCreditosAsync(int alumnoId); // Método para obtener los créditos totales de un alumno
     }
 }

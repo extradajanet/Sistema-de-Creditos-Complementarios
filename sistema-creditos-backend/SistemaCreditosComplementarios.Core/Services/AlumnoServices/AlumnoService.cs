@@ -281,38 +281,43 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             return (int)alumno.TotalCreditos; // Retorna los créditos totales del alumno
         }
 
-        public async Task<IEnumerable<AlumnoDto>> GetAlumnosCon5CreditosByCoordinadorIdAsync(int coordinadorId)
+
+        //Obtiene lista de alumnos dependiendo la carrera y cantidad de creditos
+        public async Task<IEnumerable<AlumnoDto>> GetAlumnosFiltradosByCoordinadorIdAsync( int coordinadorId,int? carreraId = null,double? cantCreditos = null)
         {
             var carreras = await _carreraRepository.GetByCoordinadorId(coordinadorId);
             var carreraIds = carreras.Select(c => c.Id);
 
+            // Filtrar por carrera
+            if (carreraId.HasValue)
+            {
+                carreraIds = carreraIds.Where(id => id == carreraId.Value);
+            }
             var alumnos = await _alumnoRepository.GetByCarreraIdsAsync(carreraIds);
 
-            var result = new List<AlumnoDto>();
-
-            foreach (var alumno in alumnos)
+            // Filtrar por creditos
+            if (cantCreditos.HasValue)
             {
-                double totalCreditos = (double)alumno.TotalCreditos; 
-
-                if (totalCreditos >= 5)
-                {
-                    result.Add(new AlumnoDto
-                    {
-                        Id = alumno.Id,
-                        Nombre = alumno.Nombre,
-                        Apellido = alumno.Apellido,
-                        NumeroControl = alumno.Usuario.NumeroControl,
-                        CorreoElectronico = alumno.Usuario.Email,
-                        Semestre= alumno.Semestre,
-                        CarreraId = alumno.CarreraId,
-                        CarreraNombre = alumno.Carrera?.Nombre,
-                        TotalCreditos = (decimal)totalCreditos
-                    });
-                }
+                alumnos = alumnos.Where(a => (double)a.TotalCreditos == cantCreditos.Value);
             }
+
+      
+            var result = alumnos.Select(alumno => new AlumnoDto
+            {
+                Id = alumno.Id,
+                Nombre = alumno.Nombre,
+                Apellido = alumno.Apellido,
+                NumeroControl = alumno.Usuario.NumeroControl,
+                CorreoElectronico = alumno.Usuario.Email,
+                Semestre = alumno.Semestre,
+                CarreraId = alumno.CarreraId,
+                CarreraNombre = alumno.Carrera?.Nombre,
+                TotalCreditos = alumno.TotalCreditos
+            }).ToList();
 
             return result;
         }
+
 
 
     }

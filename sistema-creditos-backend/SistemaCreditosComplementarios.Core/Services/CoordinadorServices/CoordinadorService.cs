@@ -32,6 +32,7 @@ namespace SistemaCreditosComplementarios.Core.Services.CoordinadorServices
             {
                 Id = coordinador.Id,
                 Nombre = coordinador.Nombre,
+                Apellido = coordinador.Apellido,
                 CorreoElectronico = coordinador.Usuario.Email,
                 FechaRegistro = coordinador.FechaRegistro,
             };
@@ -45,6 +46,7 @@ namespace SistemaCreditosComplementarios.Core.Services.CoordinadorServices
             {
                 Id = coordinador.Id,
                 Nombre = coordinador.Nombre,
+                Apellido = coordinador.Apellido,
                 CorreoElectronico = coordinador.Usuario.Email,
                 FechaRegistro = coordinador.FechaRegistro,
             };
@@ -66,6 +68,10 @@ namespace SistemaCreditosComplementarios.Core.Services.CoordinadorServices
             if (!string.IsNullOrWhiteSpace(coordinadorUpdateDto.Nombre))
             {
                 coordinadorExistente.Nombre = coordinadorUpdateDto.Nombre;
+            }
+            if (!string.IsNullOrWhiteSpace(coordinadorUpdateDto.Apellido))
+            {
+                coordinadorExistente.Apellido = coordinadorUpdateDto.Apellido;
             }
             //updates the email of the coordinator
 
