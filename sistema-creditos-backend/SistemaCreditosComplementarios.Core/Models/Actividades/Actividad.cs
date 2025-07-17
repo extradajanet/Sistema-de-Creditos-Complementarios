@@ -21,11 +21,10 @@ namespace SistemaCreditosComplementarios.Core.Models.ActividadModel
         public DateTime FechaFin { get; set; }
         public decimal Creditos { get; set; }
         public int Capacidad { get; set; } 
+
         public Dias Dias { get; set; } // días de la semana en los que se imparte la actividad (ejemplo: "Lunes, Miércoles, Viernes")
         public TimeSpan HoraInicio { get; set; } // hora de inicio de la actividad (ejemplo: 08:00 AM)
         public TimeSpan HoraFin { get; set; } // hora de fin de la actividad (ejemplo: 10:00 AM)
-        public int CarreraId { get; set; }
-        public Carrera Carrera { get; set; }
 
         public TipoActividad TipoActividad { get; set; } 
         public EstadoActividad EstadoActividad { get; set; } // estado de la actividad (Activo = 1, En Progreso = 2, Finalizado = 3)

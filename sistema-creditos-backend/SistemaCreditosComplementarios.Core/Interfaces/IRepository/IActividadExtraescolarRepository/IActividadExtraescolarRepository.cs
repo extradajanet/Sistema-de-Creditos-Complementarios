@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SistemaCreditosComplementarios.Core.Models.ActividadExtraescolarModel;
+using SistemaCreditosComplementarios.Core.Models.ActividadExtraescolar;
 
 namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.IActividadExtraescolarRepository
 {
