@@ -134,19 +134,32 @@ export default function EditProfile() {
             <>
               {editMode ? (
                 <>
-                  <input
-                    value={editedInfo.nombre || ""}
-                    onChange={(e) => setEditedInfo({ ...editedInfo, nombre: e.target.value })}
-                    className="border p-2"
-                    placeholder="Nombre"
-                  />
+                  <div className="flex flex-col mb-4">
+                    <label htmlFor="name" className="mb-1 text-sm font-semibold text-[#001F54]">
+                      Nombre
+                    </label>
+                    <input
+                      id="name"
+                      value={editedInfo.nombre || ""}
+                      onChange={(e) => setEditedInfo({ ...editedInfo, nombre: e.target.value })}
+                      className="w-full px-4 py-2 border border-[#001F54] rounded-lg"
+                      placeholder="Nombre"
+                    />
+                  </div>
 
-                  <input
-                    value={editedInfo.apellido || ""}
-                    onChange={(e) => setEditedInfo({ ...editedInfo, apellido: e.target.value })}
-                    className="border p-2"
-                    placeholder="Apellido"
-                  />
+                  <div className="flex flex-col mb-4">
+                    <label htmlFor="apellido" className="mb-1 text-sm font-semibold text-[#001F54]">
+                      Apellidos
+                    </label>
+                    <input
+                      id="apellido"
+                      value={editedInfo.apellido || ""}
+                      onChange={(e) => setEditedInfo({ ...editedInfo, apellido: e.target.value })}
+                      className="w-full px-4 py-2 border border-[#001F54] rounded-lg"
+                      placeholder="Apellidos"
+                    />
+                  </div>
+
                 </>
               ) : (
                 <span className="font-bold text-[40px] text-[#0A1128]">
@@ -197,7 +210,7 @@ export default function EditProfile() {
               <input
                 value={editedInfo.numeroControl || ""}
                 onChange={(e) => setEditedInfo({ ...editedInfo, numeroControl: e.target.value })}
-                className="border p-2"
+                className="w-full px-4 py-2 border border-[#001F54] rounded-lg"
                 placeholder="Número de control"
               />
             ) : (
@@ -212,7 +225,7 @@ export default function EditProfile() {
                   onChange={(e) =>
                     setEditedInfo({ ...editedInfo, carreraId: parseInt(e.target.value) })
                   }
-                  className="border p-2 text-lg"
+                  className="w-full px-4 py-2 border border-[#001F54] rounded-lg"
                 >
                   <option value="" disabled>Selecciona una carrera</option>
                   {careers
@@ -237,7 +250,7 @@ export default function EditProfile() {
           <input
             value={editedInfo.correoElectronico || ""}
             onChange={(e) => setEditedInfo({ ...editedInfo, correoElectronico: e.target.value })}
-            className="border p-2"
+            className="w-full px-4 py-2 border border-[#001F54] rounded-lg"
             placeholder="Correo electrónico"
           />
         ) : (
@@ -248,6 +261,7 @@ export default function EditProfile() {
         {editMode ? (
           <>
             <div className="flex justify-between w-full">
+
               <input
                 value={editedInfo.currentPassword || ""}
                 onChange={(e) =>
