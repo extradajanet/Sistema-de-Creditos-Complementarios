@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaCreditosComplementarios.Core.Models.CarreraModel;
 using SistemaCreditosComplementarios.Core.Models.Coordinadores;
 using SistemaCreditosComplementarios.Core.Models.Departamentos;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
@@ -94,6 +96,33 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
             }
 
             await context.SaveChangesAsync();
+
+            if (!context.Carreras.Any())
+            {
+                var depto = await context.Departamentos.FirstOrDefaultAsync(d => d.Usuario.Email == "deptosistemas@ejemplo.com");
+                var coord = await context.Coordinadores.FirstOrDefaultAsync(c => c.Usuario.Email == "coordinador@ejemplo.com");
+
+                context.Carreras.AddRange(
+                    new Carrera { Nombre = "Ingeniería en Sistemas Computacionales", DepartamentoId = depto?.Id, CoordinadorId = coord?.Id },
+                    new Carrera { Nombre = "Ingeniería en Tecnologías de la Información", DepartamentoId = depto?.Id, CoordinadorId = coord?.Id },
+                    new Carrera { Nombre = "Ingeniería en Administración" },
+                    new Carrera { Nombre = "Licenciatura en Administración" },
+                    new Carrera { Nombre = "Arquitectura" },
+                    new Carrera { Nombre = "Licenciatura en Biología" },
+                    new Carrera { Nombre = "Licenciatura en Turismo" },
+                    new Carrera { Nombre = "Ingeniería Civil" },
+                    new Carrera { Nombre = "Contador Público" },
+                    new Carrera { Nombre = "Ingeniería Eléctrica" },
+                    new Carrera { Nombre = "Ingeniería Electromecánica " },
+                    new Carrera { Nombre = "Ingeniería en Gestión Empresarial " },
+                    new Carrera { Nombre = "Ingeniería en  Desarrollo de Aplicaciones ", DepartamentoId = depto?.Id, CoordinadorId = coord?.Id },
+                    new Carrera { Nombre = "Todas las carreras " }
+
+                );
+
+                await context.SaveChangesAsync();
+            }
+
         }
     }
 }

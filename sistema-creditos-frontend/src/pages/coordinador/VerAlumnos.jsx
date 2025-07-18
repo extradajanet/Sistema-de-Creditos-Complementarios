@@ -19,10 +19,18 @@ export default function VerAlumnos() {
     useEffect(() => {
         const fetchCareers = async () => {
             try {
-                const res = await fetch("https://localhost:7238/api/Carrera/carreras");
-
+                const url = coordinadorId ? `https://localhost:7238/api/Carrera/coordinador/${coordinadorId}` : null;
+                const res = await fetch(url, {
+                    headers: { Accept: "application/json" },
+                });
                 const data = await res.json();
-                setCarreras(data);
+
+                const carrerasLista = [
+                    { id: "", nombre: "Todas las carreras" },
+                    ...data,
+                ];
+
+                setCarreras(carrerasLista);
             } catch (err) {
                 console.error("Error fetching careers:", err);
             }
@@ -56,7 +64,7 @@ export default function VerAlumnos() {
     const alumnosFiltrados = alumnos.filter((alumno) => {
         const nombreCompletoCoincide = `${alumno.nombre} ${alumno.apellido}`.toLowerCase().includes(busqueda.toLowerCase());
 
-        const carreraCoincide = filtroCarrera === "" || alumno.carreraNombre === filtroCarrera;
+        const carreraCoincide = filtroCarrera === "" || alumno.carreraNombre === filtroCarrera || filtroCarrera === "Todas las carreras";
 
         const creditos = alumno.totalCreditos;
 
@@ -124,9 +132,9 @@ export default function VerAlumnos() {
                         <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl shadow-lg z-10 p-2 w-48">
                             <Listbox value={filtroCarrera} onChange={setFiltroCarrera}>
                                 <div className="relative">
-                                    <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none">
+                                    <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none min-h-[40px]">
                                         <span>{filtroCarrera || "Carrera"}</span>
-                                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                                        <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
                                     </Listbox.Button>
                                     <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg z-10 max-h-48 overflow-auto">
                                         {carreras.map((opcion, index) => (
@@ -151,9 +159,9 @@ export default function VerAlumnos() {
                             </Listbox>
                             <Listbox value={filtroCreditos} onChange={setFiltroCreditos}>
                                 <div className="relative">
-                                    <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none">
+                                    <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none min-h-[40px]">
                                         <span>{filtroCreditos || "Créditos"}</span>
-                                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                                        <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
                                     </Listbox.Button>
                                     <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg z-10 max-h-48 overflow-auto">
                                         {creditos.map((opcion, index) => (

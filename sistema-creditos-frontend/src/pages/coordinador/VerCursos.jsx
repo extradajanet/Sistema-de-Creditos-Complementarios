@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 import Modal from "../../components/Modal";
 import { Listbox } from "@headlessui/react";
+import predeterminado from "../../images/PredeterminadoCursos.png";
 
 
 export default function VerCursos() {
@@ -19,6 +20,7 @@ export default function VerCursos() {
     const [listaAlumnos, setListaAlumnos] = useState([])
     const [busquedaAlumnos, setBusquedaAlumnos] = useState("");
 
+    const imagenes = import.meta.glob('../../images/*.{png,jpg,jpeg,gif}', { eager: true });
 
     const tipos = ["Deportiva", "Cultural", "Tutorias", "MOOC", "Todas las actividades"]
 
@@ -73,8 +75,8 @@ export default function VerCursos() {
         const tipoActividad = curso.tipoActividad
         //console.log(tipoActividad)
 
-        const TipoCoincide = (()=> {
-            switch(tipoSeleccionado) {
+        const TipoCoincide = (() => {
+            switch (tipoSeleccionado) {
                 case "Deportiva":
                     return tipoActividad == 1;
                 case "Cultural":
@@ -90,6 +92,14 @@ export default function VerCursos() {
 
         return nombreCoincide && TipoCoincide
     })
+
+    const obtenerImagen = (nombre) => {
+        const entrada = Object.entries(imagenes).find(([ruta]) =>
+            ruta.includes(nombre)
+        );
+        return entrada ? entrada[1].default : predeterminado; // usa imagen predeterminada si no se encuentra
+    };
+
 
     const alumnosFiltrados = listaAlumnos.filter((alumno => {
         const nombreCompletoCoincide = alumno.nombreCompleto.toLowerCase().includes(busquedaAlumnos.toLowerCase());
@@ -174,6 +184,11 @@ export default function VerCursos() {
                                     key={curso.id}
                                     className="bg-blue-950 rounded-2xl shadow-md border-6 border-blue-950 h-28 flex items-center px-4 w-full"
                                 >
+                                    <img
+                                        src={obtenerImagen(curso.imagenNombre)}
+                                        alt={curso.nombre}
+                                        className="rounded-md object-cover h-20 w-20 mr-4"
+                                    />
                                     <div className="flex-1 flex flex-col justify-center items-left text-white">
                                         <h3 className="text-xl font-semibold mb-1">{curso.nombre}</h3>
                                         <p className="text-xs mb-1 text-[#9A9A9A]">
