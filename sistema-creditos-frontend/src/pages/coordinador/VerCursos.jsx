@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 import Modal from "../../components/Modal";
 import { Listbox } from "@headlessui/react";
+import predeterminado from "../../images/PredeterminadoCursos.png";
 
 
 export default function VerCursos() {
