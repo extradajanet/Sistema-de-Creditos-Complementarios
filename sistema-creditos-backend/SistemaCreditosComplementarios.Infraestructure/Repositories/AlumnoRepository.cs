@@ -23,13 +23,26 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         {
             return await _context.Alumnos
                 .Include(a => a.Usuario)
+                .Include(a => a.Carrera)
                 .ToListAsync(); // Obtiene todos los alumnos de la base de datos
+        }
+
+
+        //Obtener la lista de alumnos de una carrera 
+        public async Task<IEnumerable<Alumno>> GetByCarreraIdsAsync(IEnumerable<int> carreraIds)
+        {
+            return await _context.Alumnos
+                .Include(a => a.Usuario)
+                .Include(a => a.Carrera)
+                .Where(a => carreraIds.Contains(a.CarreraId))
+                .ToListAsync();
         }
 
         public async Task<Alumno> GetByIdAsync(int id)
         {
             return await _context.Alumnos
                 .Include(a => a.Usuario) // Incluye la entidad Usuario relacionada
+                .Include(a=> a.Carrera)
                 .FirstOrDefaultAsync(a => a.Id == id); // Busca el alumno por su ID
         }
 
@@ -37,6 +50,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
         {
             return await _context.Alumnos
                 .Include(a => a.Usuario) // Incluye la entidad Usuario relacionada
+                .Include(a => a.Carrera)
                 .FirstOrDefaultAsync(a => a.Usuario.Id == userId); // Busca el alumno por su UserId
         }
 

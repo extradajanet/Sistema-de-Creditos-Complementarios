@@ -43,6 +43,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public int AlumnoId { get; set; }
         public string NombreCompleto { get; set; }
         public string CarreraNombre { get; set; }
+        public int Semestre { get; set; }
         public decimal CreditosObtenidos { get; set; }
         public DateTime FechaInscripcion { get; set; }
         public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }

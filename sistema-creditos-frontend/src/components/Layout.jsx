@@ -8,7 +8,7 @@ export default function Layout() {
     <div className="flex h-screen h-full overflow-hidden">
       {/* Sidebar */}
       <aside
-        className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300 h-[700px] flex flex-col items-center py-5 m-4 rounded-2xl"
+        className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300  flex flex-col items-center py-5 m-4 rounded-2xl"
       >
         {/* Logo */}
         <div className="bg-white p-4 rounded-full mb-20">
@@ -40,11 +40,15 @@ export default function Layout() {
           </div>
 
           <div className="flex flex-col items-center mt-auto w-full">
-            <SidebarLink
-              to="/login"
-              icon={<LogOut strokeWidth={0.5} className="w-6 h-6" />}
-              label="Cerrar"
-            />
+            <button
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = "/login";
+              }}
+              className="flex items-center w-full px-4 py-2 text-left cursor-pointer">
+              <LogOut strokeWidth={0.5} className="w-6 h-6 mr-2" />
+              <span>Cerrar</span>
+            </button>
           </div>
         </nav>
       </aside>

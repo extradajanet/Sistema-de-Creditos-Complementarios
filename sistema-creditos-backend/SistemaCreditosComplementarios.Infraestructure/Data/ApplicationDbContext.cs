@@ -41,24 +41,6 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            //configurar las carreras por defecto 
-            modelBuilder.Entity<Carrera>().HasData(
-                   new Carrera { Id = 1, Nombre = "Ingeniería en Sistemas Computacionales" },
-                new Carrera { Id = 2, Nombre = "Ingeniería en Tecnologías de la Información y Comunicaciones" },
-                new Carrera { Id = 3, Nombre = "Ingeniería en Administración" },
-                new Carrera { Id = 4, Nombre = "Licenciatura en Administración" },
-                new Carrera { Id = 5, Nombre = "Arquitectura" },
-                new Carrera { Id = 6, Nombre = "Licenciatura en Biología" },
-                new Carrera { Id = 7, Nombre = "Licenciatura en Turismo" },
-                new Carrera { Id = 8, Nombre = "Ingeniería Civil" },
-                new Carrera { Id = 9, Nombre = "Contador Público" },
-                new Carrera { Id = 10, Nombre = "Ingeniería Eléctrica" },
-                new Carrera { Id = 11, Nombre = "Ingeniería Electromecánica " },
-                new Carrera { Id = 12, Nombre = "Ingeniería en Gestión Empresarial " },
-                new Carrera { Id = 13, Nombre = "Ingeniería en  Desarrollo de Aplicaciones " },
-                new Carrera { Id = 14, Nombre = "Todas las carreras " }
-            );
-
             modelBuilder.Entity<AlumnoActividad>()
                 .HasKey(aa => new { aa.IdAlumno, aa.IdActividad }); // Clave compuesta
 
@@ -85,6 +67,19 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
                 .WithMany(a => a.ActividadesCarreras)
                 .HasForeignKey(ac => ac.IdActividad)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Carrera>()
+                .HasOne(c => c.Departamento) // a career has one department
+                .WithMany() //a department can have different careers
+                .HasForeignKey(c => c.DepartamentoId)
+                .OnDelete(DeleteBehavior.Restrict); // Can only delete department when not associated to a career
+
+            modelBuilder.Entity<Carrera>()
+                .HasOne(c => c.Coordinador)// a career has one coordinator
+                .WithMany() // a coordinator can have many careers
+                .HasForeignKey(c => c.CoordinadorId)
+                .OnDelete(DeleteBehavior.Restrict); // Can only delete coordinador when not associated to a career
+
         }
     }
 }

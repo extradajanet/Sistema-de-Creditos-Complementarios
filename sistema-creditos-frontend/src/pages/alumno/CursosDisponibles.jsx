@@ -74,32 +74,27 @@ export default function ActividadesList() {
       setError(err.message);
     }
   };
+  //Obtains all the courses
+  const loadActividades = async () => {
+  try {
+    const res = await fetch("/api/Actividades", {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) throw new Error("Error: " + res.status);
+    const data = await res.json();
+    setActividades(data);
+  } catch (err) {
+    console.error("Fetch error:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
-  useEffect(() => {
-    let isMounted = true;
-    fetch("/api/Actividades", { headers: { Accept: "application/json" } })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error: " + res.status);
-        return res.json();
-      })
-      .then((data) => {
-        if (isMounted) {
-          setActividades(data);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          console.error("Fetch error:", err);
-          setLoading(false);
-        }
-      });
+useEffect(() => {
+  loadActividades();
+}, []);
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  //Obtain the total of students in the course
   useEffect(() => {
     if (!selectedActividad) return;
 
@@ -342,7 +337,7 @@ export default function ActividadesList() {
                 setShowModal(false);
               }}
               title="Confirmación"
-              className="w-[500px] h-[220px] max-w-full border-4 bg-[#D9D9D9] text-[#001F54] custom-text font-semibold"
+              className="w-[500px] h-[250px] max-w-full border-4 bg-[#D9D9D9] text-[#001F54] custom-text font-semibold"
               closeButtonClassName="text-[#001F54]"
             >
               <div className="text-center text-[#0A1128] font-medium mt-4">
@@ -370,9 +365,10 @@ export default function ActividadesList() {
 
                 <button
                   className="border-2 border-[#001F54] text-[#001F54] cursor-pointer px-4 py-2 rounded-md font-bold"
-                  onClick={() => {
+                  onClick={async() => {
                     setShowConfirmModal(false); // close confirm
-                    setShowModal(false); // close course info
+                    setShowModal(false); 
+                    await loadActividades();// close course info
                   }}
                 >
                   Cancelar

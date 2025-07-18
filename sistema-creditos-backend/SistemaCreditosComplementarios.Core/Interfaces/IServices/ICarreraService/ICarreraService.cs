@@ -11,5 +11,8 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraServi
     {
         //obtiene todas las carreras
         Task<IEnumerable<CarreraDto>> GetAll();
+
+        //Obtiene todas las carreras con el mismo coordinador
+        Task<IEnumerable<CarreraDto>> GetByCoordinadorId(int coordinadorId);
     }
 }

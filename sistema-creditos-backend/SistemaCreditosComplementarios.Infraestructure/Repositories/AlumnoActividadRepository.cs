@@ -53,6 +53,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 AlumnoId = aa.IdAlumno,
                 NombreCompleto = aa.Alumno.Nombre + " " + aa.Alumno.Apellido,
                 CarreraNombre = aa.Alumno.Carrera.Nombre,
+                Semestre = aa.Alumno.Semestre,
                 EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
                 CreditosObtenidos = aa.Actividad.Creditos,
                 FechaInscripcion = aa.FechaInscripcion,
