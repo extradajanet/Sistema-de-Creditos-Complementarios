@@ -6,46 +6,73 @@ import {
   FolderOpen,
   Trophy,
   BellRing,
+  Users
 } from "lucide-react";
 import Graph from "../components/Graph";
 
 export default function Home() {
-  const [userRole, setUserRole] = useState("Alumno"); // por defecto
+  const [loading, setLoading] = useState(true)
+  const [userRole, setUserRole] = useState(null); // por defecto
+
   const [infoAlumno, setinfoAlumno] = useState([]);
-   const userId = localStorage.getItem("alumnoId");
+  const [infoDepartamento, setInfoDepartamento] = useState([]);
+  const [infoCoordinador, setInfoCoordinador] = useState([]);
+
+  const ids = {
+    Alumno: localStorage.getItem("alumnoId"),
+    Departamento: localStorage.getItem("departamentoId"),
+    Coordinador: localStorage.getItem("coordinadorId"),
+  };
 
   useEffect(() => {
-    
+
     const rol = localStorage.getItem("rol");
     if (rol) setUserRole(rol);
   }, []);
 
   useEffect(() => {
-  
-      let isMounted = true;
-      fetch(`https://localhost:7238/api/Alumno/${userId}`, { headers: { Accept: "application/json" } })
-        .then((res) => {
-          if (!res.ok) throw new Error("Error: " + res.status);
-          return res.json();
-        })
-        .then((data) => {
-          if (isMounted) {
-            setinfoAlumno(data);
-            setLoading(false);
-          }
-        })
-        .catch((err) => {
-          if (isMounted) {
-            console.error("Fetch error:", err);
-            setLoading(false);
-          }
-        });
-  
-      return () => {
-        isMounted = false;
-      };
-      
-    }, []);
+    if (!userRole) return;
+
+    let isMounted = true;
+
+    const id = ids[userRole];
+    let url = `https://localhost:7238/api/${userRole}/${id}`;
+
+    fetch(url, { headers: { Accept: "application/json" } })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error: " + res.status);
+        return res.json();
+      })
+      .then((data) => {
+        if (!isMounted) return;
+
+        if (userRole === 'Alumno') {
+          setinfoAlumno(data);
+          localStorage.setItem("alumnoInfo", JSON.stringify(data));
+        } else if (userRole === 'Departamento') {
+          setInfoDepartamento(data)
+          localStorage.setItem("departamentoInfo", JSON.stringify(data));
+        } else if (userRole === 'Coordinador') {
+          setInfoCoordinador(data)
+          localStorage.setItem("coordinadorInfo", JSON.stringify(data));
+        }
+
+        setLoading(false);
+        console.log("Datos recibidos", data)
+
+      })
+      .catch((err) => {
+        if (isMounted) {
+          console.error("Fetch error:", err);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+
+  }, [userRole]);
 
   const cardsByRole = {
     Alumno: [
@@ -67,14 +94,19 @@ export default function Home() {
     ],
     Coordinador: [
       {
-        text: "Revisar Actividades",
-        icon: <Trophy strokeWidth={0.5} className="h-40 w-40 mb-2" />,
-        link: "/revisaractividades",
+        text: "Ver Cursos",
+        icon: <FolderOpen strokeWidth={0.5} className="h-40 w-40 mb-2" />,
+        link: "/vercursos",
       },
       {
-        text: "Gestionar Cursos",
-        icon: <LibraryBig strokeWidth={0.5} className="h-40 w-40 mb-2" />,
-        link: "/gestionarcursos",
+        text: "Ver Alumnos",
+        icon: <Users strokeWidth={0.5} className="h-40 w-40 mb-2" />,
+        link: "/veralumnos",
+      },
+      {
+        text: "Avisos",
+        icon: <BellRing strokeWidth={0.5} className="h-40 w-40 mb-2" />,
+        link: "/avisos",
       },
     ],
     Departamento: [
@@ -96,17 +128,41 @@ export default function Home() {
     ],
   };
 
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-[#001F54] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   const tarjetas = cardsByRole[userRole] || cardsByRole["Alumno"];
 
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Bienvenida */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
-        <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido {infoAlumno.nombre +" " + infoAlumno.apellido || ""}!</h1>
-        {/* Graph Representation */}
-        <div className="w-50 h-50 rounded-full  flex items-center justify-center flex-col text-center">
-          <Graph obtained={infoAlumno.totalCreditos} total={5} />
-        </div>
+        {userRole === 'Alumno' && (
+          <>
+            <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido {infoAlumno.nombre + " " + infoAlumno.apellido || ""}!</h1>
+            {/* Graph Representation */}
+            <div className="w-50 h-50 rounded-full  flex items-center justify-center flex-col text-center">
+              <Graph obtained={infoAlumno.totalCreditos} total={5} />
+            </div>
+          </>
+        )}
+
+        {userRole === 'Departamento' && (
+          <>
+            <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido, departamento de {infoDepartamento.nombre || ""}!</h1>
+          </>
+        )}
+
+        {userRole === 'Coordinador' && (
+          <>
+            <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido, {infoCoordinador.nombre || ""}!</h1>
+          </>
+        )}
       </div>
 
       {/* Tarjetas dinámicas por rol */}

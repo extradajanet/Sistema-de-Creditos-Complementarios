@@ -1,8 +1,12 @@
-﻿using SistemaCreditosComplementarios.Core.Dtos.Alumno;
+﻿using Microsoft.AspNetCore.Identity;
+using SistemaCreditosComplementarios.Core.Dtos.Alumno;
 using SistemaCreditosComplementarios.Core.Dtos.Auth;
+using SistemaCreditosComplementarios.Core.Dtos.Coordinador;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Models.Alumnos;
+using SistemaCreditosComplementarios.Core.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +18,15 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
     public class AlumnoService : IAlumnoService
     {
         private readonly IAlumnoRepository _alumnoRepository;
+        private readonly ICarreraRepository _carreraRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         // Constructor que recibe el repositorio de alumnos
-        public AlumnoService(IAlumnoRepository alumnoRepository)
+        public AlumnoService(IAlumnoRepository alumnoRepository, UserManager<ApplicationUser> userManager, ICarreraRepository carreraRepository)
         {
             _alumnoRepository = alumnoRepository;
+            _userManager = userManager;
+            _carreraRepository = carreraRepository;
         }
 
         // Método para obtener todos los alumnos
@@ -36,6 +44,25 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 Semestre = a.Semestre,
                 TotalCreditos = a.TotalCreditos,
                 CarreraId = a.CarreraId,
+                CarreraNombre = a.Carrera?.Nombre,
+            });
+        }
+        //Método para obtener la lista de alumnos de una carrera
+        public async Task<IEnumerable<AlumnoDto>> GetByCarreraIdsAsync(IEnumerable<int> carreraIds)
+        {
+            var alumnosCA = await _alumnoRepository.GetByCarreraIdsAsync(carreraIds);
+            return alumnosCA.Select( a => new AlumnoDto
+            {
+                Id = a.Id,
+                NumeroControl = a.Usuario.NumeroControl,
+                Nombre = a.Nombre,
+                Apellido = a.Apellido,
+                CorreoElectronico = a.Usuario.Email,
+                FechaRegistro = a.FechaRegistro,
+                Semestre = a.Semestre,
+                TotalCreditos = a.TotalCreditos,
+                CarreraId = a.CarreraId,
+                CarreraNombre = a.Carrera?.Nombre,
             });
         }
 
@@ -58,6 +85,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 Semestre = alumno.Semestre,
                 TotalCreditos = alumno.TotalCreditos,
                 CarreraId = alumno.CarreraId,
+                CarreraNombre = alumno.Carrera?.Nombre,
             };
         }
 
@@ -79,6 +107,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 Semestre = alumno.Semestre,
                 TotalCreditos = alumno.TotalCreditos,
                 CarreraId = alumno.CarreraId,
+                CarreraNombre= alumno.Carrera?.Nombre,
             };
         }
 
@@ -91,7 +120,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
                 Apellido = alumnoCreateDto.Apellido,
                 Semestre = alumnoCreateDto.Semestre,
                 TotalCreditos = alumnoCreateDto.TotalCreditos,
-                CarreraId = alumnoCreateDto.CarreraId, 
+                CarreraId = alumnoCreateDto.CarreraId,
                 FechaRegistro = DateTime.UtcNow
             };
             await _alumnoRepository.AddAsync(nuevoAlumno); // Llamada al repositorio para agregar el nuevo alumno
@@ -143,13 +172,71 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             {
                 throw new Exception("Alumno no encontrado.");
             }
-            // Actualiza los datos del alumno existente
-            alumnoExistente.Nombre = alumnoUpdateDto.Nombre;
-            alumnoExistente.Apellido = alumnoUpdateDto.Apellido;
-            alumnoExistente.Semestre = alumnoUpdateDto.Semestre;
-            alumnoExistente.TotalCreditos = alumnoUpdateDto.TotalCreditos;
-            alumnoExistente.CarreraId = alumnoUpdateDto.CarreraId;
+            var user = await _userManager.FindByIdAsync(alumnoExistente.UsuarioId);
+            if (user == null)
+            {
+                throw new Exception("User is not linked to any record");
+            }
+            // Actualiza los datos del alumno existente si los campos tienen algun valor
+            if (!string.IsNullOrWhiteSpace(alumnoUpdateDto.Nombre))
+                alumnoExistente.Nombre = alumnoUpdateDto.Nombre;
 
+            if (!string.IsNullOrWhiteSpace(alumnoUpdateDto.Apellido))
+                alumnoExistente.Apellido = alumnoUpdateDto.Apellido;
+
+            if (alumnoUpdateDto.Semestre.HasValue && alumnoUpdateDto.Semestre.Value>0)
+                alumnoExistente.Semestre = alumnoUpdateDto.Semestre.Value;
+
+            // Este campo tiene valor por defecto, así que solo lo asignas si cambia
+            if (alumnoUpdateDto.TotalCreditos != alumnoExistente.TotalCreditos)
+                alumnoExistente.TotalCreditos = alumnoUpdateDto.TotalCreditos;
+
+            if (alumnoUpdateDto.CarreraId.HasValue && alumnoUpdateDto.CarreraId.Value > 0)
+            {
+                alumnoExistente.CarreraId = alumnoUpdateDto.CarreraId.Value;
+            }
+
+
+            //updates the email of the student
+
+            var newEmail = alumnoUpdateDto.CorreoElectronico?.Trim();
+
+            if (!string.IsNullOrEmpty(newEmail) && user.Email != newEmail)
+            {
+                // Prevents duplicate emails
+                var existingUserWithEmail = await _userManager.FindByEmailAsync(newEmail);
+                if (existingUserWithEmail != null && existingUserWithEmail.Id != user.Id)
+                {
+                    throw new Exception("El correo electrónico ya está en uso por otro usuario.");
+                }
+
+                user.Email = newEmail;
+                user.UserName = newEmail;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                    throw new Exception($"Error al actualizar el correo electrónico: {errors}");
+                }
+            }
+            //Adds old password confirmation when updating
+            var currentPassword = alumnoUpdateDto.CurrentPassword?.Trim();
+            var newPassword = alumnoUpdateDto.NewPassword?.Trim();
+
+            if (!string.IsNullOrEmpty(currentPassword) && !string.IsNullOrEmpty(newPassword))
+            {
+                var passwordChangeResult = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+                if (!passwordChangeResult.Succeeded)
+                {
+                    var errors = string.Join("; ", passwordChangeResult.Errors.Select(e => e.Description));
+                    throw new Exception($"Error al cambiar la contraseña: {errors}");
+                }
+            }
+
+
+
+            //Sends/Saves the new values 
 
             var alumnoActualizado = await _alumnoRepository.UpdateAsync(alumnoExistente); // Llamada al repositorio para actualizar el alumno
             
@@ -186,10 +273,61 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoServices
             };
         }
 
+
+
         public async Task<double> GetTotalCreditosAsync(int alumnoId)
         {
             var alumno = await _alumnoRepository.GetByIdAsync(alumnoId) ?? throw new Exception("Alumno no encontrado."); // Llamada al repositorio para obtener el alumno por ID
             return (int)alumno.TotalCreditos; // Retorna los créditos totales del alumno
         }
+
+
+        //Obtiene lista de alumnos dependiendo la carrera y cantidad de creditos
+        public async Task<IEnumerable<AlumnoDto>> GetAlumnosFiltradosByCoordinadorIdAsync( int coordinadorId,int? carreraId = null,double? cantCreditos = null)
+        {
+            var carreras = await _carreraRepository.GetByCoordinadorId(coordinadorId);
+            var carreraIds = carreras.Select(c => c.Id);
+
+            // Filtrar por carrera
+            if (carreraId.HasValue)
+            {
+                carreraIds = carreraIds.Where(id => id == carreraId.Value);
+            }
+            var alumnos = await _alumnoRepository.GetByCarreraIdsAsync(carreraIds);
+
+            // Filtrar por creditos
+            if (cantCreditos.HasValue)
+            {
+                if (cantCreditos.Value <= 5)
+                {
+                    alumnos = alumnos.Where(a => (decimal)a.TotalCreditos == (decimal)cantCreditos.Value);
+                }
+                else
+                {
+                    // More than 5
+                    alumnos = alumnos.Where(a => a.TotalCreditos > 5);
+                }
+            }
+
+
+
+            var result = alumnos.Select(alumno => new AlumnoDto
+            {
+                Id = alumno.Id,
+                Nombre = alumno.Nombre,
+                Apellido = alumno.Apellido,
+                NumeroControl = alumno.Usuario.NumeroControl,
+                CorreoElectronico = alumno.Usuario.Email,
+                Semestre = alumno.Semestre,
+                CarreraId = alumno.CarreraId,
+                CarreraNombre = alumno.Carrera?.Nombre,
+                TotalCreditos = alumno.TotalCreditos
+            }).ToList();
+
+            return result;
+        }
+
+
+
     }
 }

@@ -43,7 +43,9 @@ function Login() {
       console.log("Login response:", data);
       // Guarda el token en localStorage
       localStorage.setItem("token", data.token);
-      localStorage.setItem("alumnoId",data.alumnoId );
+      localStorage.setItem("alumnoId", data.alumnoId);
+      localStorage.setItem("departamentoId", data.departamentoId)
+      localStorage.setItem("coordinadorId", data.coordinadorId)
 
       // Decodifica el token manualmente
       const decoded = parseJwt(data.token);
@@ -75,6 +77,9 @@ function Login() {
           </h3>
           <div className="p-6 pt-2 ">
             <form className="flex flex-col items-center space-y-3" onSubmit={handleSubmit}>
+              <label htmlFor="username" className="mb-1 text-sm font-semibold text-[#001F54]">
+                Número de control
+              </label>
               <input
                 type="text"
                 value={username}
@@ -83,6 +88,9 @@ function Login() {
                 required
                 className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
               />
+              <label htmlFor="password" className="mb-1 text-sm font-semibold text-[#001F54]">
+                Contraseña
+              </label>
               <input
                 type="password"
                 value={password}

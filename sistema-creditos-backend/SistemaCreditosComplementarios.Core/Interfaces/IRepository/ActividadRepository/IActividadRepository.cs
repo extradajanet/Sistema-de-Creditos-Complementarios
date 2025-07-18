@@ -11,6 +11,8 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadRe
     {
         public Task<IEnumerable<Actividad>> GetAllAsync();
         public Task<Actividad> GetByIdAsync(int id);
+        public Task<IEnumerable<Actividad>> GetByCarreraIds(IEnumerable<int> carreraIds);
+
         public Task AddAsync(Actividad actividad);
         public Task<Actividad> UpdateAsync(int id, Actividad actividadUpdate);
         public Task DeleteAsync(int id);
