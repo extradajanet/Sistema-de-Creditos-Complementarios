@@ -23,12 +23,14 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Actividad
 
         public TipoActividad TipoActividad { get; set; } 
         public EstadoActividad EstadoActividad { get; set; } // "Activo = 1", "En Progreso = 2", "Finalizado = 3"
-        
+    
         public string ImagenNombre { get; set; }
 
         public int DepartamentoId { get; set; }
         public string DepartamentoNombre { get; set; } 
         public List<string> CarreraNombres { get; set; } // Lista de nombres de carreras asociadas a la actividad
+
+        public Genero Genero {  get; set; }
 
     }
 
@@ -48,5 +50,6 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Actividad
         public string ImagenNombre { get; set; }
         public int DepartamentoId { get; set; } 
         public List<int> CarreraIds { get; set; } // Lista de IDs de carreras asociadas a la actividad
+        public Genero Genero { get; set; }
     }
 }

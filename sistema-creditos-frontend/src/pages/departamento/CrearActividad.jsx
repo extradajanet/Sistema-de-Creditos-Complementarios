@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Users } from "lucide-react";
-import predeterminado from "../../images/PredeterminadoCursos.png";
 import Modal from "../../components/Modal";
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
@@ -17,6 +16,7 @@ export default function ActividadesList() {
   const [horaFin, setHoraFin] = useState("");
   const [capacidad, setCapacidad] = useState(0);
   const [tipoSeleccionado, setTipoSeleccionado] = useState("");
+  const [subTipoExtraescolar, setSubTipoExtraescolar] = useState(""); // Cultural o Deportiva dentro de Extraescolar
   const [carreraIds, setCarreraIds] = useState([]);
   const [creditos, setCreditos] = useState(0);
   const [nombre, setNombre] = useState("");
@@ -27,7 +27,7 @@ export default function ActividadesList() {
   const [showModal, setShowModal] = useState(false);
   const [imagenSeleccionada, setImagenSeleccionada] = useState("imagen1.png");
   const [diaSeleccionado, setDiaSeleccionado] = useState("");
-
+  const [generoSeleccionado, setGeneroSeleccionado] = useState(null);
 
   const carreras = [
     { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
@@ -47,14 +47,12 @@ export default function ActividadesList() {
   ];
 
   const imagenesPredeterminadas = [
-  { nombre: "imagen1.png", src: imagen1 },
-  { nombre: "imagen2.png", src: imagen2 },
-  { nombre: "imagen3.png", src: imagen3 },
-  { nombre: "imagen4.png", src: imagen4 },
+    { nombre: "imagen1.png", src: imagen1 },
+    { nombre: "imagen2.png", src: imagen2 },
+    { nombre: "imagen3.png", src: imagen3 },
+    { nombre: "imagen4.png", src: imagen4 },
     { nombre: "imagen5.png", src: imagen5 },
-
-];
-
+  ];
 
   function obtenerTipoActividad(nombre) {
     switch (nombre) {
@@ -67,18 +65,17 @@ export default function ActividadesList() {
   }
 
   function obtenerNumeroDia(dia) {
-  switch (dia) {
-    case "Lunes": return 1;
-    case "Martes": return 2;
-    case "Miércoles": return 3;
-    case "Jueves": return 4;
-    case "Viernes": return 5;
-    case "Sábado": return 6;
-    case "Domingo": return 7;
-    default: return 0;
+    switch (dia) {
+      case "Lunes": return 1;
+      case "Martes": return 2;
+      case "Miércoles": return 3;
+      case "Jueves": return 4;
+      case "Viernes": return 5;
+      case "Sábado": return 6;
+      case "Domingo": return 7;
+      default: return 0;
+    }
   }
-}
-
 
   const limpiarFormulario = () => {
     setNombre("");
@@ -91,69 +88,95 @@ export default function ActividadesList() {
     setHoraFin("");
     setDiaSeleccionado("");
     setTipoSeleccionado("");
+    setSubTipoExtraescolar("");
     setCarreraIds([]);
+    setGeneroSeleccionado(null);
     setSuccessMessage("");
   };
 
-const handleSubmit = async () => {
-  // Validación de fechas
-  if (!fechaInicio || !fechaFin) {
-    alert("Por favor selecciona las fechas de inicio y fin.");
-    return;
-  }
-
-  const inicio = new Date(fechaInicio);
-  const fin = new Date(fechaFin);
-
-  if (fin < inicio) {
-    alert("La fecha de fin no puede ser anterior a la fecha de inicio ");
-    return;
-  }
-
-  // Resto de la función...
-  let carrerasFinales = [...carreraIds];
-  if (carrerasFinales.includes(14)) {
-    carrerasFinales = carreras.filter((c) => c.id !== 14).map((c) => c.id);
-  }
-
-  const actividad = {
-    nombre,
-    descripcion,
-    fechaInicio: `${fechaInicio}T00:00:00Z`,
-    fechaFin: `${fechaFin}T00:00:00Z`,
-    creditos,
-    capacidad,
-    dias: obtenerNumeroDia(diaSeleccionado),
-    horaInicio: `${horaInicio}:00`,
-    horaFin: `${horaFin}:00`,
-    tipoActividad: obtenerTipoActividad(tipoSeleccionado),
-    estadoActividad: 1,
-    imagenNombre: imagenSeleccionada,
-    departamentoId: 1,
-    carreraIds: carrerasFinales,
-  };
-
-  try {
-    const response = await fetch("https://localhost:7238/api/Actividades", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(actividad)
-    });
-
-    if (response.ok) {
-      setShowModal(true);
-      limpiarFormulario();
+  useEffect(() => {
+    if (tipoSeleccionado === "Extraescolar") {
+      setCarreraIds([14]); // Selecciona todas las carreras
+      if (!subTipoExtraescolar) setSubTipoExtraescolar("Cultural");
     } else {
-      const error = await response.text();
-      console.error("Error al crear actividad:", error);
-      alert("Error al crear actividad ");
+      if (carreraIds.includes(14)) setCarreraIds([]);
+      setSubTipoExtraescolar("");
+      setGeneroSeleccionado(null);
     }
-  } catch (err) {
-    console.error("Excepción al hacer POST:", err);
-    alert("Error de red o servidor ");
-  }
+  }, [tipoSeleccionado]);
+
+  const handleSubmit = async () => {
+    if (!fechaInicio || !fechaFin) {
+      alert("Por favor selecciona las fechas de inicio y fin.");
+      return;
+    }
+
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(fechaFin);
+
+    if (fin < inicio) {
+      alert("La fecha de fin no puede ser anterior a la fecha de inicio.");
+      return;
+    }
+
+    if (tipoSeleccionado === "Extraescolar" && !generoSeleccionado) {
+      alert("Por favor selecciona el género.");
+      return;
+    }
+
+    let carrerasFinales = [...carreraIds];
+    if (carrerasFinales.includes(14)) {
+      carrerasFinales = carreras.filter((c) => c.id !== 14).map((c) => c.id);
+    }
+
+    let tipoAct = tipoSeleccionado;
+    if (tipoSeleccionado === "Extraescolar") {
+      tipoAct = subTipoExtraescolar;
+    }
+
+const actividad = {
+  nombre,
+  descripcion,
+  fechaInicio: `${fechaInicio}T00:00:00Z`,
+  fechaFin: `${fechaFin}T00:00:00Z`,
+  creditos,
+  capacidad,
+  dias: obtenerNumeroDia(diaSeleccionado),
+  horaInicio: `${horaInicio}:00`,
+  horaFin: `${horaFin}:00`,
+  tipoActividad: obtenerTipoActividad(tipoAct),
+  estadoActividad: 1,
+  imagenNombre: imagenSeleccionada,
+  departamentoId: 1,
+  carreraIds: carrerasFinales,
 };
 
+// Agregar el género si el tipoActividad es 1 (Deportiva) o 2 (Cultural)
+if ([1, 2].includes(actividad.tipoActividad)) {
+  actividad.genero = generoSeleccionado;
+}
+
+
+    try {
+      const response = await fetch("https://localhost:7238/api/Actividades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(actividad),
+      });
+
+      if (response.ok) {
+        setShowModal(true);
+        limpiarFormulario();
+      } else {
+        const error = await response.text();
+        console.error("Error al crear actividad:", error);
+        alert("Error al crear actividad");
+      }
+    } catch (err) {
+      console.error("Excepción al hacer POST:", err);
+      alert("Error de red o servidor");
+    }
+  };
 
   return (
     <>
@@ -166,30 +189,29 @@ const handleSubmit = async () => {
           <div className="grid grid-cols-2 justify-items-center-safe bg-gray-200 rounded-xl p-6 border border-blue-950 h-145 w-295">
             <div className="mt-7 text-center text-blue-950 font-bold">
               <p>Selecciona una imagen</p>
-<div className="bg-gray-200 rounded-xl p-6 border border-blue-950 h-108 w-115 flex flex-col items-center">
-  <img
-    src={imagenesPredeterminadas.find(img => img.nombre === imagenSeleccionada)?.src}
-    alt="Imagen seleccionada"
-    className="w-auto h-auto object-cover mb-6 border-4 border-blue-700 rounded-lg shadow-md"
-  />
-<div className="grid grid-cols-5 gap-3 px-2">
-    {imagenesPredeterminadas.map((img) => (
-<img
-  key={img.nombre}
-  src={img.src}
-  alt={img.nombre}
-  title={img.nombre}
-  className={` w-auto h-auto object-cover rounded-md cursor-pointer border-2 transition ${
-    imagenSeleccionada === img.nombre
-      ? "border-blue-700 shadow-lg scale-105"
-      : "border-transparent hover:border-blue-400 hover:shadow-sm"
-  }`}
-  onClick={() => setImagenSeleccionada(img.nombre)}
-/>
-
-    ))}
-  </div>
-</div>
+              <div className="bg-gray-200 rounded-xl p-6 border border-blue-950 h-108 w-115 flex flex-col items-center">
+                <img
+                  src={imagenesPredeterminadas.find((img) => img.nombre === imagenSeleccionada)?.src}
+                  alt="Imagen seleccionada"
+                  className="w-auto h-auto object-cover mb-6 border-4 border-blue-700 rounded-lg shadow-md"
+                />
+                <div className="grid grid-cols-5 gap-3 px-2">
+                  {imagenesPredeterminadas.map((img) => (
+                    <img
+                      key={img.nombre}
+                      src={img.src}
+                      alt={img.nombre}
+                      title={img.nombre}
+                      className={`w-auto h-auto object-cover rounded-md cursor-pointer border-2 transition ${
+                        imagenSeleccionada === img.nombre
+                          ? "border-blue-700 shadow-lg scale-105"
+                          : "border-transparent hover:border-blue-400 hover:shadow-sm"
+                      }`}
+                      onClick={() => setImagenSeleccionada(img.nombre)}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-rows-5 bg-gray-200 rounded-xl h-125 w-140">
@@ -217,10 +239,16 @@ const handleSubmit = async () => {
                     />
                   </div>
 
+                  {/* Carrera(s) */}
                   <div>
                     <label>Carrera(s):</label>
                     <div className="relative z-10">
-                      <Listbox value={carreraIds} onChange={setCarreraIds} multiple>
+                      <Listbox
+                        value={carreraIds}
+                        onChange={setCarreraIds}
+                        multiple
+                        disabled={tipoSeleccionado === "Extraescolar"}
+                      >
                         <div className="relative">
                           <Listbox.Button className="w-full flex items-start justify-between border border-blue-950 bg-white py-2 px-3 text-sm text-gray-800 rounded h-auto min-h-[3rem]">
                             <div
@@ -237,49 +265,75 @@ const handleSubmit = async () => {
                             <ChevronDown className="w-5 h-5 text-gray-500 ml-2 flex-shrink-0 mt-1" />
                           </Listbox.Button>
 
-                          <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg max-h-48 overflow-auto z-20">
-                            {carreras.map((carrera) => (
-                              <Listbox.Option
-                                key={carrera.id}
-                                value={carrera.id}
-                                className={({ active }) =>
-                                  `cursor-pointer select-none px-4 py-2 text-sm ${
-                                    active ? "bg-blue-100 text-blue-900" : "text-gray-700"
-                                  }`
-                                }
-                              >
-                                {({ selected }) => (
-                                  <div className="flex justify-between items-center">
-                                    <span>{carrera.nombre}</span>
-                                    {selected && <Check className="w-4 h-4 text-blue-600" />}
-                                  </div>
-                                )}
-                              </Listbox.Option>
-                            ))}
-                          </Listbox.Options>
+                          {tipoSeleccionado !== "Extraescolar" && (
+                            <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg max-h-48 overflow-auto z-20">
+                              {carreras.map((carrera) => (
+                                <Listbox.Option
+                                  key={carrera.id}
+                                  value={carrera.id}
+                                  className={({ active }) =>
+                                    `cursor-pointer select-none px-4 py-2 text-sm ${
+                                      active ? "bg-blue-100 text-blue-900" : "text-gray-700"
+                                    }`
+                                  }
+                                >
+                                  {({ selected }) => (
+                                    <div className="flex justify-between items-center">
+                                      <span>{carrera.nombre}</span>
+                                      {selected && <Check className="w-4 h-4 text-blue-600" />}
+                                    </div>
+                                  )}
+                                </Listbox.Option>
+                              ))}
+                            </Listbox.Options>
+                          )}
                         </div>
                       </Listbox>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 mb-2">
+                  {/* Día, fechas y tipo actividad */}
+                  <div className="grid grid-cols-3">
                     <div className="row">
                       <p>Día:</p>
                       <div className="flex flex-col gap-1.5 text-sm text-gray-700 mt-1">
-                          {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((dia) => (
-                            <label key={dia} className="flex items-center gap-1">
-                              <input
-                                type="radio"
-                                name="dia"
-                                value={dia}
-                                checked={diaSeleccionado === dia}
-                                onChange={() => setDiaSeleccionado(dia)}
-                                className="accent-blue-950"
-                              />
-                              {dia}
-                            </label>
-                          ))}
+                        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((dia) => (
+                          <label key={dia} className="flex items-center gap-1">
+                            <input
+                              type="radio"
+                              name="dia"
+                              value={dia}
+                              checked={diaSeleccionado === dia}
+                              onChange={() => setDiaSeleccionado(dia)}
+                              className="accent-blue-950"
+                            />
+                            {dia}
+                          </label>
+                        ))}
                       </div>
+
+                      <label>Horario:</label>
+                      <div className="row gap-2 mt-1">
+                        
+                        <input
+                          type="time"
+                          className="border border-blue-950 rounded px-2 py-1 text-sm flex-1 "
+                          value={horaInicio}
+                          onChange={(e) => setHoraInicio(e.target.value)}
+                        />
+                        <div className="ms-14">a</div>
+                
+                        <input
+                        
+                          type="time"
+                          className="border border-blue-950 rounded px-2 py-1 text-sm flex-1"
+                          value={horaFin}
+                          onChange={(e) => setHoraFin(e.target.value)}
+                        />
+
+                      </div>
+
+                      
                     </div>
 
                     <div className="row">
@@ -302,10 +356,10 @@ const handleSubmit = async () => {
                         />
                       </div>
 
-                      <div className="z-10 mt-2">
-                        Tipo de Actividad
-                        <div className="flex flex-row">
-                          {["Deportiva", "Cultural", "Tutorias", "MOOC"].map((tipo) => (
+                     <div className="z-10 mt-2 relative">
+                        <label>Tipo de Actividad</label>
+                        <div className="flex flex-row gap-2">
+                          {["Extraescolar", "Tutorias", "MOOC"].map((tipo) => (
                             <button
                               key={tipo}
                               type="button"
@@ -320,75 +374,85 @@ const handleSubmit = async () => {
                             </button>
                           ))}
                         </div>
-                      </div>
-                    </div>
 
-                    <div className="row h-30">
-                      <label>Capacidad total:</label>
-                      <div className="relative w-fit mt-0.5 mb-1">
-                        <input
-                          type="number"
-                          className="border rounded pl-2 pr-8 py-1 text-gray-700 w-28"
-                          value={capacidad}
-                          onChange={(e) => setCapacidad(Number(e.target.value))}
-                        />
-                        <Users
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
-                          size={18}
-                        />
-                      </div>
+                        {/* Subtipo */}
+                        {tipoSeleccionado === "Extraescolar" && (
+                          <>
+                            <div className="flex flex-row gap-2 mt-2">
+                              {["Cultural", "Deportiva"].map((subtipo) => (
+                                <button
+                                  key={subtipo}
+                                  type="button"
+                                  className={`px-4 m-0.5 rounded border border-blue-950 text-sm font-medium transition h-8 w-28 ${
+                                    subTipoExtraescolar === subtipo
+                                      ? "bg-blue-950 text-white"
+                                      : "bg-white text-blue-950 hover:bg-blue-100"
+                                  }`}
+                                  onClick={() => setSubTipoExtraescolar(subtipo)}
+                                >
+                                  {subtipo}
+                                </button>
+                              ))}
+                            </div>
 
-                      <div className="relative w-fit mt-0.5">
-                        <p>Créditos:</p>
-                        <div className="flex gap-4 text-sm text-gray-700 mt-1">
-                          {[1, 2, 3].map((num) => (
-                            <label key={num} className="flex items-center gap-1">
-                              <input
-                                type="radio"
-                                name="creditos"
-                                value={num}
-                                className="accent-blue-950"
-                                checked={creditos === num}
-                                onChange={() => setCreditos(num)}
-                              />
-                              {num}
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 w-145 z-10">
-                      <div className="relative w-fit">
-                        <p>Horario:</p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="time"
-                            value={horaInicio}
-                            onChange={(e) => setHoraInicio(e.target.value)}
-                            className="appearance-none text-sm border border-blue-950 rounded px-1 py-1 bg-gray-100 text-gray-700 w-29"
-                          />
-                          <span>-</span>
-                          <input
-                            type="time"
-                            value={horaFin}
-                            onChange={(e) => setHoraFin(e.target.value)}
-                            className="appearance-none text-sm border border-blue-950 rounded px-1 py-1 bg-gray-100 text-gray-700 w-29"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col items-end mt-5 mr-4">
-                        <button
-                          className="bg-blue-950 text-white px-6 py-2 rounded hover:bg-blue-800 transition w-50"
-                          onClick={handleSubmit}
-                        >
-                          Crear Actividad
-                        </button>
-                        {successMessage && (
-                          <p className="text-sm text-green-700 mt-2 font-medium">{successMessage}</p>
+                            {/* Campo Género con posición absoluta */}
+                            <div className="absolute top-[6.5rem] left-0">
+                              <label>Género:</label>
+                              <div className="flex gap-4 text-gray-700 mt-1">
+                                {[{ id: 1, nombre: "Masculino" }, { id: 2, nombre: "Femenino" }].map((g) => (
+                                  <label key={g.id} className="flex items-center gap-1">
+                                    <input
+                                      type="radio"
+                                      name="genero"
+                                      value={g.id}
+                                      className="accent-blue-950"
+                                      checked={generoSeleccionado === g.id}
+                                      onChange={() => setGeneroSeleccionado(g.id)}
+                                    />
+                                    {g.nombre}
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          </>
                         )}
                       </div>
+
+                    </div>
+
+                    <div className="row">
+                      <label>Créditos:</label>
+                      <div className="flex items-center gap-2 mt-1 text-gray-700 mb-3">
+                        {[1, 2, 3, 4].map((num) => (
+                          <label key={num} className="flex items-center gap-1">
+                            <input
+                              type="radio"
+                              name="creditos"
+                              value={num}
+                              className="accent-blue-950"
+                              checked={creditos === num}
+                              onChange={() => setCreditos(num)}
+                            />
+                            {num}
+                          </label>
+                        ))}
+                      </div>
+
+                      <label>Capacidad:</label>
+                      <input
+                        type="number"
+                        className="border border-blue-950 rounded px-2 py-1 mt-0.5 text-sm w-35"
+                        value={capacidad}
+                        onChange={(e) => setCapacidad(Number(e.target.value))}
+                        min={0}
+                      />
+                  <button
+                    onClick={handleSubmit}
+                    className="bg-blue-950 text-white px-6 py-2 rounded ms-6 mt-25 hover:bg-blue-800 transition"
+                    type="button"
+                  >
+                    Crear actividad
+                  </button>
                     </div>
                   </div>
                 </div>
@@ -396,9 +460,10 @@ const handleSubmit = async () => {
             </div>
           </div>
         </div>
-      </div>
 
-      <Modal
+        
+
+        <Modal
         show={showModal}
         onClose={() => setShowModal(false)}
         title="¡La actividad ha sido creada con éxito!"
@@ -430,6 +495,7 @@ const handleSubmit = async () => {
 
         </div>
       </Modal>
+      </div>
     </>
   );
 }

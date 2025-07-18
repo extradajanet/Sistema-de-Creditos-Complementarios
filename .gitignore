@@ -311,3 +311,5 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sw?
+sistema-creditos-backend/SistemaCreditosComplementarios.Infraestructure/Migrations/20250717192511_init1.cs
+sistema-creditos-backend/SistemaCreditosComplementarios.Infraestructure/Migrations/20250717192511_init1.Designer.cs

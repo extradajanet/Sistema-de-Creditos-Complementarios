@@ -66,8 +66,14 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+                return StatusCode(500, new
+                {
+                    error = "Error interno del servidor",
+                    message = ex.Message,
+                    inner = ex.InnerException?.Message
+                });
             }
+
         }
 
         // PUT: api/actividades/{id}

@@ -39,6 +39,9 @@ export default function ActividadesList() {
   const [capacidadEdit, setCapacidadEdit] = useState(0);
   const [fechaInicioEdit, setFechaInicioEdit] = useState("");
   const [fechaFinEdit, setFechaFinEdit] = useState("");
+  const [generoSeleccionado, setGeneroSeleccionado] = useState(1);
+
+  
 
   const todasLasCarreras = [
     { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
@@ -190,66 +193,75 @@ const acreditarTodos = () => {
 
 
 
-  const handleUpdateActividad = () => {
-    if (!actividadSeleccionada) return;
+const handleUpdateActividad = () => {
+  if (!actividadSeleccionada) return;
 
-    let carrerasFinales = [...carreraIdsEdit];
-    if (carrerasFinales.includes(14)) {
-      carrerasFinales = todasLasCarreras.filter(c => c.id !== 14).map(c => c.id);
-    }
+  if (!fechaInicioEdit || !fechaFinEdit) {
+    alert("Por favor ingresa fecha inicio y fecha fin");
+    return;
+  }
 
-    const actividadActualizada = {
-      nombre: actividadSeleccionada.nombre,
-      descripcion: descripcionEdit,
-      fechaInicio: fechaInicioEdit,
-      fechaFin: fechaFinEdit,
-      creditos: creditosEdit,
-      capacidad: capacidadEdit,
-      dias: actividadSeleccionada.dias || 1,
-      horaInicio: actividadSeleccionada.horaInicio || "00:00:00",
-      horaFin: actividadSeleccionada.horaFin || "00:00:00",
-      tipoActividad: actividadSeleccionada.tipoActividad || 1,
-      estadoActividad: actividadSeleccionada.estadoActividad || 1,
-      imagenNombre: actividadSeleccionada.imagenNombre || "PredeterminadoCursos.png",
-      departamentoId: actividadSeleccionada.departamentoId || 1,
-      carreraIds: carrerasFinales,
-    };
+  const fechaInicioISO = new Date(fechaInicioEdit + "T00:00:00.000Z").toISOString();
+  const fechaFinISO = new Date(fechaFinEdit + "T00:00:00.000Z").toISOString();
 
-    fetch(`https://localhost:7238/api/Actividades/${actividadSeleccionada.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(actividadActualizada),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al actualizar");
-        return res.json();
-      })
-      .then(() => {
-        const nuevasCarreraNombres = todasLasCarreras
-          .filter(c => actividadActualizada.carreraIds.includes(c.id))
-          .map(c => c.nombre);
+  let carrerasFinales = [...carreraIdsEdit];
+  if (carrerasFinales.includes(14)) {
+    carrerasFinales = todasLasCarreras.filter(c => c.id !== 14).map(c => c.id);
+  }
 
-        setActividades((prev) =>
-          prev.map((a) =>
-            a.id === actividadSeleccionada.id
-              ? {
-                  ...a,
-                  ...actividadActualizada,
-                  carreraNombres: nuevasCarreraNombres,
-                }
-              : a
-          )
-        );
-
-        setShowEdit(false);
-      })
-      .catch((err) => {
-        console.error("Error actualizando:", err);
-        alert("Error al guardar los cambios");
-      });
+  const actividadActualizada = {
+    nombre: actividadSeleccionada.nombre,
+    descripcion: descripcionEdit,
+    fechaInicio: fechaInicioISO,
+    fechaFin: fechaFinISO,
+    creditos: creditosEdit || 0,
+    capacidad: capacidadEdit || 0,
+    dias: actividadSeleccionada.dias || 1,
+    horaInicio: actividadSeleccionada.horaInicio || "00:00:00",
+    horaFin: actividadSeleccionada.horaFin || "00:00:00",
+    tipoActividad: actividadSeleccionada.tipoActividad || 1,
+    estadoActividad: actividadSeleccionada.estadoActividad || 1,
+    imagenNombre: actividadSeleccionada.imagenNombre || "PredeterminadoCursos.png",
+    departamentoId: actividadSeleccionada.departamentoId || 1,
+    carreraIds: carrerasFinales,
+    genero: actividadSeleccionada.genero || 1,
   };
+
+  if ([1, 2].includes(actividadActualizada.tipoActividad) && typeof generoSeleccionado !== "undefined") {
+    actividadActualizada.genero = generoSeleccionado;
+  }
+
+  fetch(`https://localhost:7238/api/Actividades/${actividadSeleccionada.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(actividadActualizada),
+  })
+  .then((res) => {
+    if (!res.ok) throw new Error("Error al actualizar");
+    return res.json(); // asumo que devuelve la actividad actualizada
+  })
+  .then((actividadActualizadaRespuesta) => {
+    const actividadActualizadaFinal = actividadActualizadaRespuesta || actividadActualizada;
+
+    setActividades((prevActividades) =>
+      prevActividades.map((act) =>
+        act.id === actividadSeleccionada.id ? { ...act, ...actividadActualizadaFinal } : act
+      )
+    );
+
+    setActividadSeleccionada((prev) => ({
+      ...prev,
+      ...actividadActualizadaFinal,
+    }));
+
+    setShowEdit(false);
+  })
+  .catch((err) => {
+    console.error("Error actualizando:", err);
+    alert("Error al guardar los cambios");
+  });
+};
+
 
   useEffect(() => {
     let isMounted = true;

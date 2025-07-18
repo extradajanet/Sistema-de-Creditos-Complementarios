@@ -46,7 +46,8 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = a.ImagenNombre,
                 DepartamentoId = a.DepartamentoId,
                 DepartamentoNombre = a.Departamento?.Nombre,
-                CarreraNombres = a.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
+                CarreraNombres = a.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>(),
+                Genero = a.Genero
             });
         }
 
@@ -75,7 +76,8 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = actividad.ImagenNombre,
                 DepartamentoId = actividad.DepartamentoId,
                 DepartamentoNombre = actividad.Departamento?.Nombre,
-                CarreraNombres = actividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
+                CarreraNombres = actividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>(),
+                Genero = actividad.Genero
 
             };
         }
@@ -99,7 +101,9 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 EstadoActividad = actividadCreateDto.EstadoActividad,
                 ImagenNombre = actividadCreateDto.ImagenNombre,
                 DepartamentoId = actividadCreateDto.DepartamentoId,
+                Genero = actividadCreateDto.Genero,
                 ActividadesCarreras = []
+                
             };
 
             // Asignar las carreras asociadas a la actividad
@@ -134,7 +138,8 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = actividadCreada.ImagenNombre,
                 DepartamentoId = actividadCreada.DepartamentoId,
                 DepartamentoNombre = actividadCreada.Departamento?.Nombre,
-                CarreraNombres = actividadCreada.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
+                CarreraNombres = actividadCreada.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>(),
+                Genero = actividadCreada.Genero
             };
         }
 
@@ -157,6 +162,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
             actividad.ImagenNombre = actividadUpdateDto.ImagenNombre;
             actividad.DepartamentoId = actividadUpdateDto.DepartamentoId;
             actividad.ActividadesCarreras.Clear(); // Limpiar las carreras asociadas antes de agregar nuevas
+            actividad.Genero = actividadUpdateDto.Genero;
 
             foreach (var carreraId in actividadUpdateDto.CarreraIds)
             {
@@ -187,7 +193,8 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = updatedActividad.ImagenNombre,
                 DepartamentoId = updatedActividad.DepartamentoId,
                 DepartamentoNombre = updatedActividad.Departamento?.Nombre,
-                CarreraNombres = updatedActividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
+                CarreraNombres = updatedActividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>(),
+                Genero = updatedActividad.Genero
 
             };
         }
