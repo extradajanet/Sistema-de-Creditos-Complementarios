@@ -53,6 +53,14 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
             }
         }
 
+        // GET: api/actividad/coordinador/5
+        [HttpGet("coordinador/{coordinadorId}")]
+        public async Task<IActionResult> GetByCoordinador(int coordinadorId)
+        {
+            var actividades = await _actividadService.GetByCoordinadorIdAsync(coordinadorId);
+            return Ok(actividades);
+        }
+
         // POST: api/actividades
         [HttpPost]
         

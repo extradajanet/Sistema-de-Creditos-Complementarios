@@ -7,6 +7,8 @@ import CursosDisponibles from "./pages/alumno/CursosDisponibles";
 import MisCursos from "./pages/departamento/MisCursos";
 import CrearActividad from "./pages/departamento/CrearActividad";
 import ActividadesExtraescolares from "./pages/alumno/ActividadesExtraescolares";
+import VerCursos from "./pages/coordinador/VerCursos";
+import VerAlumnos from "./pages/coordinador/VerAlumnos";
 import MiHistorialDepartamento from "./pages/departamento/MiHistorialDepartamento";
 
 import Login from "./pages/Auth/Login";
@@ -26,8 +28,8 @@ function App() {
           <Route path="/actividadesextraescolares" element={<ActividadesExtraescolares />} />
           <Route path="/miscursos" element={<MisCursos/>} />
           <Route path="/crearactividad" element={<CrearActividad/>} />
-          <Route path="historialdepartamento" element={<MiHistorialDepartamento />} />
-
+          <Route path="historialdepartamento" element={<MiHistorialDepartamento />} />          <Route path="/vercursos" element={<VerCursos/>} />
+          <Route path="/veralumnos" element={<VerAlumnos/>} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -58,6 +58,15 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerAlumno
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
+        [HttpGet("filtrados/{coordinadorId}")]
+        public async Task<IActionResult> GetAlumnosFiltrados(int coordinadorId,[FromQuery] int? carreraId,[FromQuery] double? cantCreditos)
+        {
+            var alumnos = await _alumnoService.GetAlumnosFiltradosByCoordinadorIdAsync(
+                coordinadorId, carreraId, cantCreditos);
+            return Ok(alumnos);
+        }
+
+
 
         [HttpPost]
         private async Task<ActionResult<AlumnoDto>> Create([FromBody] AlumnoCreateDto alumnoCreateDto)
@@ -77,7 +86,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerAlumno
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<AlumnoDto>> Update([FromBody] AlumnoUpdateDto alumnoUpdateDto)
         {
             try

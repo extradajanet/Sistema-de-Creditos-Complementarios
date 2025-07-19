@@ -31,6 +31,25 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerCarreras
                 throw new Exception($"Error al obtener las carreras: {ex.Message}");
             }
         }
+        // GET: api/carreras
+        [HttpGet("coordinador/{coordinadorId}")]
+        public async Task<ActionResult<IEnumerable<CarreraDto>>> GetCarrerasByCoordinadorId(int coordinadorId)
+        {
+            try
+            {
+                var carreras = await _carreraService.GetByCoordinadorId(coordinadorId);
+                if (carreras == null || !carreras.Any())
+                    return NotFound("No se encontraron carreras para este coordinador.");
+
+                return Ok(carreras);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener carreras: {ex.Message}");
+            }
+        }
+
+
 
         //public async Task<IActionResult> GetAllCarreras()
         //{

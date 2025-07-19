@@ -43,6 +43,19 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 .ThenInclude(c => c.Carrera) // Incluye la relación con Carrera dentro de ActividadCarreras
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
+        //Obtiene las actividades dependiendo el coordinador de la carrera
+
+        public async Task<IEnumerable<Actividad>> GetByCarreraIds(IEnumerable<int> carreraIds)
+        {
+            return await _context.Actividades
+                .Include(a => a.Departamento)
+                .Include(a => a.ActividadesCarreras)
+                    .ThenInclude(ac => ac.Carrera)
+                .Where(a => a.ActividadesCarreras
+                    .Any(ac => carreraIds.Contains(ac.IdCarrera)))
+                .ToListAsync();
+        }
+
 
         // añade actividad
         public async Task AddAsync(Actividad actividad)

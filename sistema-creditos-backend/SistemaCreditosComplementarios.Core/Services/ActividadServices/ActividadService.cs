@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICoordinadorRepository;
 
 namespace SistemaCreditosComplementarios.Core.Services.ActividadService
 {
@@ -19,10 +20,12 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
     {
         private readonly IActividadRepository _actividadRepository;
         private readonly ICarreraRepository _carreraRepository;
+        
         public ActividadService(IActividadRepository actividadRepository, ICarreraRepository carreraRepository)
         {
             _actividadRepository = actividadRepository;
             _carreraRepository = carreraRepository;
+ 
         }
 
         // obtiene todas las actividades
@@ -81,6 +84,41 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
 
             };
         }
+
+        //Obtiene las actividades dependiendo el coordinador de la carrera
+
+        public async Task<IEnumerable<ActividadDto>> GetByCoordinadorIdAsync(int coordinadorId)
+        {
+            var carreras = await _carreraRepository.GetByCoordinadorId(coordinadorId);
+            var carreraIds = carreras.Select(c => c.Id);
+
+            var actividades = await _actividadRepository.GetByCarreraIds(carreraIds);
+
+            return actividades.Select(a => new ActividadDto
+            {
+                Id = a.Id,
+                Nombre = a.Nombre,
+                Descripcion = a.Descripcion,
+                FechaInicio = a.FechaInicio,
+                FechaFin = a.FechaFin,
+                Creditos = a.Creditos,
+                Capacidad = a.Capacidad,
+                Dias = a.Dias,
+                HoraInicio = a.HoraInicio,
+                HoraFin = a.HoraFin,
+                TipoActividad = a.TipoActividad,
+                EstadoActividad = a.EstadoActividad,
+                ImagenNombre = a.ImagenNombre,
+                DepartamentoId = a.DepartamentoId,
+                DepartamentoNombre = a.Departamento?.Nombre,
+                CarreraNombres = a.ActividadesCarreras?
+                    .Select(ac => ac.Carrera?.Nombre)
+                    .ToList() ?? new List<string>()
+            });
+        }
+
+
+
 
         // agrega actividad
         public async Task<ActividadDto> AddAsync(ActividadCreateDto actividadCreateDto)
