@@ -20,13 +20,11 @@ const imagenes = {
 
 
 const tipoActividad = {
-  1: "Deportivo",
-  2: "Cultural",
   3: "Tutorias",
   4: "Mooc",
 };
 
-const tipos = ["", "Deportivo", "Cultural", "Tutorias", "Mooc"];
+const tipos = ["", "Tutorias", "Mooc"];
 
 const dias = {
   1: "Lunes",
@@ -310,16 +308,15 @@ export default function ActividadesList() {
                     </p>
                     <p>
                       Carrera(s):
-                      <br />
-                      {selectedActividad.carreraNombres
-
-                        .map((carrera, index) => (
-                          <span key={index}>
-                            {carrera.trim()}
-                            <br />
-                          </span>
-                        ))}
                     </p>
+                    {/* Contenedor con scroll para las carreras */}
+                  <div className="max-h-[80px] overflow-y-auto pr-2 custom-scrollbar">
+                  {selectedActividad.carreraNombres.map((carrera, index) => (
+                    <span key={index} className="block">
+                      {carrera.trim()}
+                    </span>
+                  ))}
+                </div>
                   </div>
                   <div>
                     <p>

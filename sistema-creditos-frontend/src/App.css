@@ -31,3 +31,12 @@
   font-size: 16px;
   font-family: 'Montserrat';
 }
+
+.custom-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}

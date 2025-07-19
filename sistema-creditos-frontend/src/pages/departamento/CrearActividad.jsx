@@ -10,6 +10,12 @@ import imagen3 from "../../images/imagen3.png";
 import imagen4 from "../../images/imagen4.png";
 import imagen5 from "../../images/logo-mapache.jpeg";
 
+import img1E from "../../images/img1E.jpg";
+import img2E from "../../images/img2E.jpg";
+import img3E from "../../images/img3E.jpg";
+import img4E from "../../images/img4E.jpg";
+import img5E from "../../images/img5E.jpg";
+
 export default function ActividadesList() {
   const navigate = useNavigate();
   const [horaInicio, setHoraInicio] = useState("");
@@ -53,6 +59,16 @@ export default function ActividadesList() {
     { nombre: "imagen4.png", src: imagen4 },
     { nombre: "imagen5.png", src: imagen5 },
   ];
+
+  //imagenes para extraescolar
+  const imagenesExtraescolar = {
+    "img1E.jpg": img1E,
+    "img2E.jpg": img2E,
+    "img3E.jpg": img3E,
+    "img4E.jpg": img4E,
+    "img5E.jpg": img5E,
+  }
+  
 
   function obtenerTipoActividad(nombre) {
     switch (nombre) {
@@ -178,6 +194,13 @@ if ([1, 2].includes(actividad.tipoActividad)) {
     }
   };
 
+  // Decide qué set de imágenes usar
+const imagenesAMostrar =
+  // Muestra las extraescolares SOLO si elegiste Extraescolar o Cultural dentro de Extraescolar
+  tipoSeleccionado === "Extraescolar" || subTipoExtraescolar === "Cultural"
+    ? Object.entries(imagenesExtraescolar).map(([nombre, src]) => ({ nombre, src }))
+    : imagenesPredeterminadas;
+
   return (
     <>
       <div className="flex flex-col gap-6 w-full">
@@ -191,12 +214,12 @@ if ([1, 2].includes(actividad.tipoActividad)) {
               <p>Selecciona una imagen</p>
               <div className="bg-gray-200 rounded-xl p-6 border border-blue-950 h-108 w-115 flex flex-col items-center">
                 <img
-                  src={imagenesPredeterminadas.find((img) => img.nombre === imagenSeleccionada)?.src}
+                  src={imagenesAMostrar.find((img) => img.nombre === imagenSeleccionada)?.src}
                   alt="Imagen seleccionada"
                   className="w-auto h-auto object-cover mb-6 border-4 border-blue-700 rounded-lg shadow-md"
                 />
                 <div className="grid grid-cols-5 gap-3 px-2">
-                  {imagenesPredeterminadas.map((img) => (
+                  {imagenesAMostrar.map((img) => (
                     <img
                       key={img.nombre}
                       src={img.src}
