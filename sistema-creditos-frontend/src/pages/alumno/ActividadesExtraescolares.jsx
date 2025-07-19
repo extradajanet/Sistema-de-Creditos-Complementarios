@@ -33,6 +33,11 @@ const dias = {
   5: "Viernes",
 };
 
+const genero = {
+  1: "Masculino",
+  2: "Femenino",
+}
+
 export default function ActividadesList() {
   const [actividades, setActividades] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -297,6 +302,34 @@ export default function ActividadesList() {
                     </span>
                   ))}
                 </div>
+
+                <br></br>
+
+                <div className="w-full h-full mr-4">
+                  <p className="mb-4 text-sm">Género:</p>
+                  <div className="flex gap-4 text-sm">
+                    {/* Masculino */}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 rounded-full border border-white ${
+                          selectedActividad.genero === 1 ? "bg-white" : ""
+                        }`}
+                      ></div>
+                      <span className="text-white">Masculino</span>
+                    </div>
+
+                    {/* Femenino */}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 rounded-full border border-white ${
+                          selectedActividad.genero === 2 ? "bg-white" : ""
+                        }`}
+                      ></div>
+                      <span className="text-white">Femenino</span>
+                    </div>
+                  </div>
+                </div>
+
                 </div>
                 <div>
                   <p>
@@ -350,11 +383,11 @@ export default function ActividadesList() {
             <div className="flex justify-center gap-6 mt-8">
               <button
                 className={`px-4 py-2 rounded-md font-bold border-2 cursor-pointer 
-  ${
-    isEnrolled
-      ? "bg-[#001F54] text-white cursor-not-allowed"
-      : "border-[#001F54] text-[#001F54]"
-  }`}
+              ${
+                isEnrolled
+                  ? "bg-[#001F54] text-white cursor-not-allowed"
+                  : "border-[#001F54] text-[#001F54]"
+              }`}
                 disabled={isEnrolled}
                 onClick={async () => {
                   await handleSubmit();
