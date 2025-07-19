@@ -2,8 +2,22 @@
 import { Link, Outlet } from "react-router-dom";
 import { Home, GraduationCap, User, LogOut } from "lucide-react";
 import logo from "../images/logo2.png";
+import { useEffect, useState } from "react";
 
 export default function Layout() {
+  const [historialPath, setHistorialPath] = useState("/historial");
+
+  useEffect(() => {
+    const rol = localStorage.getItem("rol");
+    if (rol === "Departamento") {
+      setHistorialPath("/historialdepartamento");
+    } else if (rol === "Coordinador") {
+      setHistorialPath("/historial-coordinador");
+    } else {
+      setHistorialPath("/historial"); // Alumno o default
+    }
+  }, []);
+
   return (
     <div className="flex h-screen h-full overflow-hidden">
       {/* Sidebar */}
@@ -28,7 +42,7 @@ export default function Layout() {
               label="Inicio"
             />
             <SidebarLink
-              to="/historial"
+              to={historialPath}
               icon={<GraduationCap strokeWidth={0.5} className="w-6 h-6" />}
               label="Mi historial"
             />

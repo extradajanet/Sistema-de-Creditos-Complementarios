@@ -125,9 +125,9 @@ export default function ActividadesList() {
     }
 
     let carrerasFinales = [...carreraIds];
-    if (carrerasFinales.includes(14)) {
-      carrerasFinales = carreras.filter((c) => c.id !== 14).map((c) => c.id);
-    }
+    // if (carrerasFinales.includes(14)) { esta parte incluye todas las carreras
+    //   carrerasFinales = carreras.filter((c) => c.id !== 14).map((c) => c.id);
+    // }
 
     let tipoAct = tipoSeleccionado;
     if (tipoSeleccionado === "Extraescolar") {

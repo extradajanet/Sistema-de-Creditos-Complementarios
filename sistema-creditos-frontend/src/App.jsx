@@ -7,6 +7,7 @@ import CursosDisponibles from "./pages/alumno/CursosDisponibles";
 import MisCursos from "./pages/departamento/MisCursos";
 import CrearActividad from "./pages/departamento/CrearActividad";
 import ActividadesExtraescolares from "./pages/alumno/ActividadesExtraescolares";
+import MiHistorialDepartamento from "./pages/departamento/MiHistorialDepartamento";
 
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -25,7 +26,7 @@ function App() {
           <Route path="/actividadesextraescolares" element={<ActividadesExtraescolares />} />
           <Route path="/miscursos" element={<MisCursos/>} />
           <Route path="/crearactividad" element={<CrearActividad/>} />
-
+          <Route path="historialdepartamento" element={<MiHistorialDepartamento />} />
 
         </Route>
       </Routes>

@@ -79,7 +79,11 @@ export default function ActividadesList() {
       })
       .then((data) => {
         if (isMounted) {
-          setActividades(data);
+          // Filtrar actividades para mostrar solo deportivas y culturales
+          const actividadesFiltradas = data.filter(
+            (actividad) => actividad.tipoActividad === 1 || actividad.tipoActividad === 2
+          );
+          setActividades(actividadesFiltradas);
           setLoading(false);
         }
       })

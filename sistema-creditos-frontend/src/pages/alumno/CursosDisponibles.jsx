@@ -84,7 +84,11 @@ export default function ActividadesList() {
       })
       .then((data) => {
         if (isMounted) {
-          setActividades(data);
+          // filtrar las actividades tutorias o mooc..
+          const actividadesFiltradas = data.filter(
+            (actividad) => actividad.tipoActividad === 3 || actividad.tipoActividad === 4
+          );
+          setActividades(actividadesFiltradas);
           setLoading(false);
         }
       })
