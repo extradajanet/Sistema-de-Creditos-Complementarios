@@ -6,6 +6,7 @@ using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ActividadReposi
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoActividadRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAuthRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAvisoRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICarreraRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICoordinadorRepository;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IDepartamentoRepository;
@@ -13,6 +14,7 @@ using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActividadService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
+using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAvisoService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICoordinadorService;
 using SistemaCreditosComplementarios.Core.Interfaces.IServices.IDepartmentService;
@@ -21,6 +23,7 @@ using SistemaCreditosComplementarios.Core.Services.ActividadService;
 using SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices;
 using SistemaCreditosComplementarios.Core.Services.AlumnoServices;
 using SistemaCreditosComplementarios.Core.Services.AuthServices;
+using SistemaCreditosComplementarios.Core.Services.AvisoService;
 using SistemaCreditosComplementarios.Core.Services.CarreraServices;
 using SistemaCreditosComplementarios.Core.Services.CoordinadorServices;
 using SistemaCreditosComplementarios.Core.Services.DepartamentoServices;
@@ -57,6 +60,7 @@ builder.Services.AddScoped<ICarreraRepository, CarreraRepository>(); //se añade
 builder.Services.AddScoped<IAlumnoRepository, AlumnoRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartamentoRepository>();
 builder.Services.AddScoped<ICoordinadorRepository, CoordinadorRepository>();
+builder.Services.AddScoped<IAvisoRepository, AvisoRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 
@@ -67,6 +71,7 @@ builder.Services.AddScoped<ICarreraService, CarreraService>(); //se añade el se
 builder.Services.AddScoped<IAlumnoService, AlumnoService>();
 builder.Services.AddScoped<IDepartamentoService, DepartmentService>();
 builder.Services.AddScoped<ICoordinadorService, CoordinadorService>();
+builder.Services.AddScoped<IAvisoService, AvisoService>();
 builder.Services.AddScoped<IAuthService, AuthService>(); //se añade el servicio de autenticaci�n
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
