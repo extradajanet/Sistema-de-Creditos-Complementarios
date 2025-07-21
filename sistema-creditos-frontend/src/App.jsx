@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import MiHistorial from "./pages/MiHistorial"
+import MiHistorial from "./pages/MiHistorial";
 import Perfil from "./pages/Perfil";
 import CursosDisponibles from "./pages/alumno/CursosDisponibles";
 import MisCursos from "./pages/departamento/MisCursos";
@@ -36,11 +36,18 @@ function App() {
           <Route path="/historial" element={<MiHistorial />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
-          <Route path="/actividadesextraescolares" element={<ActividadesExtraescolares />} />
-          <Route path="/miscursos" element={<MisCursos/>} />
-          <Route path="/crearactividad" element={<CrearActividad/>} />
-          <Route path="historialdepartamento" element={<MiHistorialDepartamento />} />          <Route path="/vercursos" element={<VerCursos/>} />
-          <Route path="/veralumnos" element={<VerAlumnos/>} />
+          <Route
+            path="/actividadesextraescolares"
+            element={<ActividadesExtraescolares />}
+          />
+          <Route path="/miscursos" element={<MisCursos />} />
+          <Route path="/crearactividad" element={<CrearActividad />} />
+          <Route
+            path="historialdepartamento"
+            element={<MiHistorialDepartamento />}
+          />{" "}
+          <Route path="/vercursos" element={<VerCursos />} />
+          <Route path="/veralumnos" element={<VerAlumnos />} />
         </Route>
       </Routes>
     </BrowserRouter>
