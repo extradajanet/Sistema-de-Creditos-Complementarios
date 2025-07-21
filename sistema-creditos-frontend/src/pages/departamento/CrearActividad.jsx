@@ -4,12 +4,13 @@ import Modal from "../../components/Modal";
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify'
+
 import imagen1 from "../../images/imagen1.png";
 import imagen2 from "../../images/imagen2.png";
 import imagen3 from "../../images/imagen3.png";
 import imagen4 from "../../images/imagen4.png";
 import imagen5 from "../../images/logo-mapache.jpeg";
-
 import img1E from "../../images/img1E.jpg";
 import img2E from "../../images/img2E.jpg";
 import img3E from "../../images/img3E.jpg";
@@ -37,7 +38,7 @@ export default function ActividadesList() {
 
   const carreras = [
     { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
-    { id: 2, nombre: "Ingeniería en Tecnologías de la Información y Comunicaciones" },
+    { id: 2, nombre: "Ingeniería en Tecnologías de la Información" },
     { id: 3, nombre: "Ingeniería en Administración" },
     { id: 4, nombre: "Licenciatura en Administración" },
     { id: 5, nombre: "Arquitectura" },
@@ -122,21 +123,50 @@ export default function ActividadesList() {
   }, [tipoSeleccionado]);
 
   const handleSubmit = async () => {
-    if (!fechaInicio || !fechaFin) {
-      alert("Por favor selecciona las fechas de inicio y fin.");
+
+    //validar que el nombre y la descripción no esté vacías.
+    if (!nombre.trim() || !descripcion.trim()) {
+      toast.error("Por favor completa el nombre y la descripción de la actividad.");
       return;
     }
 
+
+    if (!fechaInicio || !fechaFin) {
+      toast.error("Por favor selecciona las fechas de inicio y fin.");
+      return;
+    }
+    
     const inicio = new Date(fechaInicio);
     const fin = new Date(fechaFin);
 
     if (fin < inicio) {
-      alert("La fecha de fin no puede ser anterior a la fecha de inicio.");
+      toast.error("La fecha de fin no puede ser anterior a la fecha de inicio.");
       return;
     }
 
+
+    if (!horaInicio || !horaFin) {
+      toast.error("Por favor selecciona las horas de inicio y fin.");
+      return;
+    }
+
+    // validar que la hora de inicio sea antes de la hora de fin
+    const hi = new Date(`1970-01-01T${horaInicio}:00Z`)
+    const hf = new Date(`1970-01-01T${horaFin}:00Z`)
+
+    if (hf <= hi) {
+      toast.error("La hora de fin debe ser posterior a la hora de inicio.")
+      return
+    }
+
     if (tipoSeleccionado === "Extraescolar" && !generoSeleccionado) {
-      alert("Por favor selecciona el género.");
+      toast.error("Por favor selecciona el género.");
+      return;
+    }
+
+    //que la capacidad no sea mayor a 30
+    if (capacidad <= 10 || capacidad > 30) {
+      toast.error("La capacidad debe tener un mínimo de 10 estudiantes y un máximo de 30.");
       return;
     }
 
@@ -172,7 +202,6 @@ if ([1, 2].includes(actividad.tipoActividad)) {
   actividad.genero = generoSeleccionado;
 }
 
-
     try {
       const response = await fetch("https://localhost:7238/api/Actividades", {
         method: "POST",
@@ -186,11 +215,11 @@ if ([1, 2].includes(actividad.tipoActividad)) {
       } else {
         const error = await response.text();
         console.error("Error al crear actividad:", error);
-        alert("Error al crear actividad");
+        toast.error("Error al crear actividad")
       }
     } catch (err) {
       console.error("Excepción al hacer POST:", err);
-      alert("Error de red o servidor");
+      toast.error("Error de red o servidor")
     }
   };
 
@@ -337,7 +366,6 @@ const imagenesAMostrar =
 
                       <label>Horario:</label>
                       <div className="row gap-2 mt-1">
-                        
                         <input
                           type="time"
                           className="border border-blue-950 rounded px-2 py-1 text-sm flex-1 "
@@ -345,18 +373,13 @@ const imagenesAMostrar =
                           onChange={(e) => setHoraInicio(e.target.value)}
                         />
                         <div className="ms-14">a</div>
-                
                         <input
-                        
                           type="time"
                           className="border border-blue-950 rounded px-2 py-1 text-sm flex-1"
                           value={horaFin}
                           onChange={(e) => setHoraFin(e.target.value)}
                         />
-
                       </div>
-
-                      
                     </div>
 
                     <div className="row">
@@ -369,6 +392,7 @@ const imagenesAMostrar =
                           onChange={(e) => setFechaInicio(e.target.value)}
                         />
                       </div>
+
                       <div className="items-center gap-2">
                         <label>Fecha de Fin:</label>
                         <input

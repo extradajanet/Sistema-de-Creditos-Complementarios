@@ -44,7 +44,7 @@ export default function ActividadesList() {
 
   const todasLasCarreras = [
     { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
-    { id: 2, nombre: "Ingeniería en Tecnologías de la Información y Comunicaciones" },
+    { id: 2, nombre: "Ingeniería en Tecnologías de la Información" },
     { id: 3, nombre: "Ingeniería en Administración" },
     { id: 4, nombre: "Licenciatura en Administración" },
     { id: 5, nombre: "Arquitectura" },

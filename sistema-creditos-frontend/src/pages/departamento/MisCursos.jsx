@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { toast } from 'react-toastify'
 import { 
-  PencilLine, Users, Search, SlidersHorizontal, Pencil, Calendar, Trash2, Check, X, ChevronDown 
+  PencilLine, Users, Search, SlidersHorizontal, Pencil, Calendar, Trash2, Check, X, ChevronDown, 
+  User,
+  Folder
 } from "lucide-react";
 import predeterminado from "../../images/PredeterminadoCursos.png";
 import Modal from "../../components/Modal";
@@ -40,12 +43,16 @@ export default function ActividadesList() {
   const [fechaInicioEdit, setFechaInicioEdit] = useState("");
   const [fechaFinEdit, setFechaFinEdit] = useState("");
   const [generoSeleccionado, setGeneroSeleccionado] = useState(1);
+  const [imagenEdit, setImagenEdit] = useState("");
+  // para finalizar la actividad
+  const [showFinalize, setShowFinalize] = useState(false);
+  const [canFinalize, setCanFinalize] = useState(false);
 
   
 
   const todasLasCarreras = [
     { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
-    { id: 2, nombre: "Ingeniería en Tecnologías de la Información y Comunicaciones" },
+    { id: 2, nombre: "Ingeniería en Tecnologías de la Información" },
     { id: 3, nombre: "Ingeniería en Administración" },
     { id: 4, nombre: "Licenciatura en Administración" },
     { id: 5, nombre: "Arquitectura" },
@@ -92,6 +99,8 @@ export default function ActividadesList() {
     })
     .then((data) => {
       setAlumnos(data);
+      //verifica si hay algún alumno con estado distinto de 4 o 5 para no terminar la actividad
+      setCanFinalize(data.every(a => [4, 5].includes(a.estadoAlumnoActividad)));
     })
     .catch((error) => {
       console.error("Error al cargar alumnos inscritos:", error);
@@ -115,14 +124,12 @@ const acreditarAlumno = (alumnoId, actividadId) => {
       return;
     })
     .then(() => {
-      cargarAlumnosInscritos(actividadId); // ✅ actualiza lista
+      cargarAlumnosInscritos(actividadId); // actualiza lista
     })
     .catch((err) => {
       console.error(err);
     });
 };
-
-
 
 const noAcreditarAlumno = (alumnoId, actividadId) => {
   fetch(`https://localhost:7238/api/AlumnoActividad/${alumnoId}/${actividadId}`, {
@@ -140,7 +147,7 @@ const noAcreditarAlumno = (alumnoId, actividadId) => {
       return;
     })
     .then(() => {
-      cargarAlumnosInscritos(actividadId); // ✅ actualiza lista
+      cargarAlumnosInscritos(actividadId); // actualiza lista
     })
     .catch((err) => {
       console.error(err);
@@ -182,12 +189,12 @@ const acreditarTodos = () => {
       if (algunaFalló) {
         throw new Error("Al menos una solicitud falló.");
       }
-      alert("Todos los alumnos han sido acreditados");
+      toast.success("Todos los alumnos han sido acreditados");
       cargarAlumnosInscritos(actividadSeleccionada.id); // actualiza la lista
     })
     .catch((err) => {
       console.error("Error al acreditar todos:", err);
-      alert("Ocurrió un error al acreditar a los alumnos");
+      toast.error("Ocurrió un error al acreditar a los alumnos");
     });
 };
 
@@ -197,12 +204,23 @@ const handleUpdateActividad = () => {
   if (!actividadSeleccionada) return;
 
   if (!fechaInicioEdit || !fechaFinEdit) {
-    alert("Por favor ingresa fecha inicio y fecha fin");
+    toast.error("Por favor ingresa fecha inicio y fecha fin");
     return;
   }
 
   const fechaInicioISO = new Date(fechaInicioEdit + "T00:00:00.000Z").toISOString();
   const fechaFinISO = new Date(fechaFinEdit + "T00:00:00.000Z").toISOString();
+
+  if (new Date(fechaInicioISO) > new Date(fechaFinISO)) {
+    toast.error("La fecha de fin no puede ser anterior a la fecha de inicio.");
+    return;
+  }
+
+  //validar la capacidad
+  if (capacidadEdit < 10 || capacidadEdit > 30) {
+    toast.error("La capacidad debe tener un mínimo de 10 estudiantes y un máximo de 30.");
+    return;
+  }
 
   let carrerasFinales = [...carreraIdsEdit];
   if (carrerasFinales.includes(14)) {
@@ -263,30 +281,98 @@ const handleUpdateActividad = () => {
 };
 
 
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   fetch("/api/Actividades", { headers: { Accept: "application/json" } })
+  //     .then((res) => {
+  //       if (!res.ok) throw new Error("Error: " + res.status);
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       if (isMounted) {
+  //         setActividades(data);
+  //         setLoading(false);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       if (isMounted) {
+  //         console.error("Fetch error:", err);
+  //         setLoading(false);
+  //       }
+  //     });
+
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, []);
+
   useEffect(() => {
     let isMounted = true;
+
     fetch("/api/Actividades", { headers: { Accept: "application/json" } })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error: " + res.status);
-        return res.json();
-      })
-      .then((data) => {
-        if (isMounted) {
-          setActividades(data);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          console.error("Fetch error:", err);
-          setLoading(false);
-        }
+    .then((res) => res.ok ? res.json() : Promise.reject(res.status))
+    .then(async (data) => {
+      if (!isMounted) return;
+      setActividades(data);
+      setLoading(false);
+
+        const ahoraMs = Date.now();
+
+        // filtrar las actividades vencidas
+        const vencidas = data.filter((act) => {
+        // tomamos sólo la parte fecha sin la Z
+        const datePart = act.fechaFin.split("T")[0];    // "2025-07-21"
+        const timePart = act.horaFin || "00:00:00";     // "23:42:00"
+        // construimos la fecha-local
+        const finExactoMs = new Date(`${datePart}T${timePart}`).getTime();
+        return finExactoMs < ahoraMs && act.estadoActividad !== 3;
       });
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+        console.log("Se auto‑finalizarán estas actividades:", 
+                  vencidas.map(a => `${a.id} (${a.fechaFin.split("T")[0]} ${a.horaFin})`));
+
+        await Promise.all(vencidas.map(async (act) => {
+            const payload = {
+              nombre: act.nombre,
+              descripcion: act.descripcion,
+              fechaInicio: act.fechaInicio,
+              fechaFin: act.fechaFin,
+              creditos: act.creditos,
+              capacidad: act.capacidad,
+              dias: act.dias,
+              horaInicio: act.horaInicio,
+              horaFin: act.horaFin,
+              tipoActividad: act.tipoActividad,
+              estadoActividad: 3,             
+              imagenNombre: act.imagenNombre,
+              departamentoId: act.departamentoId,
+              carreraIds: act.carreraIds || [],  
+              genero: act.genero,
+            };
+            const res = await fetch(`/api/Actividades/${act.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          console.error("Auto‑finalizar falló:", act.id, await res.text());
+          return;
+        }
+        setActividades((prev) =>
+          prev.map((a) =>
+            a.id === act.id ? { ...a, estadoActividad: 3 } : a
+          )
+        );
+      }));
+    })
+    .catch((err) => {
+      console.error("Error cargando para auto‑finalizar:", err);
+      setLoading(false);
+    });
+
+  return () => { isMounted = false };
+}, []);
+
 
   const tiposActividad = {
     1: "Deportiva",
@@ -305,12 +391,18 @@ const handleUpdateActividad = () => {
   const actividadesFiltradas = actividades.filter(
     (actividad) =>
       actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-      (tipoSeleccionado === "" || actividad.tipoActividad === obtenerTipoIdPorNombre(tipoSeleccionado))
+      (tipoSeleccionado === "" || actividad.tipoActividad === obtenerTipoIdPorNombre(tipoSeleccionado)) &&
+
+      //solo muestra las actividades activas
+      (actividad.estadoActividad === 1 || actividad.estadoActividad === 2)
   );
 
 const AlumnosBusqueda = alumnos.filter((alumno) =>
   alumno.nombreCompleto?.toLowerCase().includes(busquedaAlumno.toLowerCase())
 );
+
+// Verifica si la actividad es de tipo 1 o 2 (Deportiva o Cultural) para deshabilitar edición de carreras
+const disableCarrerasEdit = [1, 2].includes(actividadSeleccionada?.tipoActividad);
 
 
   return (
@@ -415,6 +507,7 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
                         console.log("Actividad seleccionada:", actividad);
 
                         setActividadSeleccionada(actividad);
+                        setImagenEdit(actividad.imagenNombre || "");
                         setDescripcionEdit(actividad.descripcion || "");
                         setCreditosEdit(actividad.creditos);
                         setCapacidadEdit(actividad.capacidad);
@@ -428,17 +521,30 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
                       <PencilLine strokeWidth={2} color="white" className="w-6 h-6" />
                     </button>
 
-<button
-  className="bg-blue-950 text-white rounded h-8 w-8 flex items-center justify-center"
-  onClick={() => {
-    setActividadSeleccionada(actividad);
-    cargarAlumnosInscritos(actividad.id); // 👈 Cargar alumnos desde API
-    setShowList(true);
-  }}
->
-  <Users strokeWidth={2} color="white" className="w-6 h-6" />
-</button>
-
+                    <button
+                      className="bg-blue-950 text-white rounded h-8 w-8 flex items-center justify-center"
+                      onClick={() => {
+                        setActividadSeleccionada(actividad);
+                        cargarAlumnosInscritos(actividad.id); // Cargar alumnos desde API
+                        setShowList(true);
+                      }}
+                    >
+                      <Users strokeWidth={2} color="white" className="w-6 h-6" />
+                    </button>
+  
+                  {/* Finalizar actividad */}
+                  <button
+                    className={`bg-blue-950 text-white rounded h-8 w-8 flex items-center justify-center ${
+                      !canFinalize ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    // disabled={!canFinalize}
+                    onClick={() => setShowFinalize(true)}
+                    title={canFinalize
+                      ? "Finalizar actividad"
+                      : "Debes acreditar/reprobar a todos primero"}
+                  >
+                    <Calendar strokeWidth={2} className="w-6 h-6" />
+                  </button>
 
                     <Modal
                       show={showEdit}
@@ -448,7 +554,7 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
                     >
                       <div className="grid grid-cols-[270px_1fr] gap-4">
                         <div className="bg-white rounded-xl flex items-center justify-center p-2">
-                          <img src={obtenerImagen(actividad.imagenNombre)} alt={actividad.nombre} className="w-full h-auto object-contain" />
+                          <img src={obtenerImagen(imagenEdit)} alt={actividadSeleccionada?.nombre} className="w-full h-auto object-contain" />
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-800">
                           <div className="col-span-2 flex items-start gap-2 border border-blue-950 rounded px-2 py-1 bg-gray-200">
@@ -490,17 +596,29 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
                               <Users size={18} className="text-gray-500" />
                               <Pencil size={14} className="text-gray-500 cursor-pointer" />
                             </div>
+
                             <div className="grid grid-cols-[90px_auto_auto] items-center gap-2 m-2">
                               <label className="font-semibold">Créditos:</label>
-                              <input
-                                type="number"
-                                value={creditosEdit}
-                                onChange={(e) => setCreditosEdit(Number(e.target.value))}
-                                className="w-12 border rounded px-1 py-0.5 text-center"
-                              />
+                              {/* Campo editable para créditos */}
+                              <div className="flex items-center gap-2 text-gray-700"> 
+                                {[1, 2, 3, 4].map((num) => (
+                                  <label key={num} className="flex items-center gap-1"> 
+                                  <input
+                                    type="radio"
+                                    value={creditosEdit}
+                                    className="accent-blue-950"
+                                    checked={creditosEdit === num} 
+                                    onChange={() => setCreditosEdit(num)}
+                                  />
+                                  {num}
+                                  </label>
+                                ))}
+                              </div>
                               <Pencil size={14} className="text-gray-500 cursor-pointer" />
                             </div>
                           </div>
+
+                          {/* Carrera(s) */}
                           <div className="col-span-2">
                             <label className="font-semibold">Carrera(s):</label>
                             <div className="relative mt-1 w-full">
@@ -513,7 +631,9 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
                                       .join(", ")
                                   : "Ninguna"}
                               </p>
-                              <div className="w-full border border-blue-950 rounded-lg px-3 py-2 bg-white text-sm text-gray-800 h-40 overflow-y-auto space-y-1">
+                              <div className={`w-full border border-blue-950 rounded-lg px-3 py-2 bg-white text-sm text-gray-800 h-40 overflow-y-auto space-y-1
+                              ${disableCarrerasEdit ? "opacity-50 pointer-events-none" : ""}`}
+                              >
                                 {todasLasCarreras.map((carrera) => {
                                   const seleccionada = carreraIdsEdit.includes(carrera.id);
                                   return (
@@ -612,7 +732,7 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
         onClick={() => acreditarAlumno(alumno.alumnoId, actividadSeleccionada.id)}
         disabled={
           alumno.estadoAlumnoActividad === 4 || 
-          new Date() < new Date(actividadSeleccionada.fechaFin) // ❌ aún no termina la actividad
+          new Date() < new Date(actividadSeleccionada.fechaFin) // aún no termina la actividad
         }
       >
         <Check
@@ -669,6 +789,83 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
                           </button>
                         </div>
                     </Modal>
+
+                  {showFinalize && (
+                    <Modal
+                      show={showFinalize}
+                      onClose={() => setShowFinalize(false)}
+                      title="Finalizar Actividad"
+                      className="w-[400px] bg-gray-200"
+                    >
+                      <p className="mb-4">
+                        {canFinalize
+                          ? `¿Confirmas que deseas finalizar "${actividadSeleccionada.nombre}"?`
+                          : "No puedes finalizar hasta acreditar/reprobar a todos."}
+                      </p>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => setShowFinalize(false)}
+                          className="px-4 py-2 border rounded"
+                        >
+                          Cancelar
+                        </button>
+                    <button
+                      disabled={!canFinalize}
+                      onClick={async () => {
+                      const payload = {
+                            nombre: actividadSeleccionada.nombre,
+                            descripcion: actividadSeleccionada.descripcion,
+                            fechaInicio: actividadSeleccionada.fechaInicio,
+                            fechaFin: actividadSeleccionada.fechaFin,
+                            creditos: actividadSeleccionada.creditos,
+                            capacidad: actividadSeleccionada.capacidad,
+                            dias: actividadSeleccionada.dias,
+                            horaInicio: actividadSeleccionada.horaInicio,
+                            horaFin: actividadSeleccionada.horaFin,
+                            tipoActividad: actividadSeleccionada.tipoActividad,
+                            estadoActividad: 3,
+                            imagenNombre: actividadSeleccionada.imagenNombre,
+                            departamentoId: actividadSeleccionada.departamentoId,
+                            carreraIds: actividadSeleccionada.carreraIds || [],  
+                            genero: actividadSeleccionada.genero,
+                          };
+                        
+                        const res = await fetch(
+                          `https://localhost:7238/api/Actividades/${actividadSeleccionada.id}`,
+                          {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(payload),
+                          }
+                        );
+                        
+                        if (!res.ok) {
+                          console.error("Falló el PUT:", await res.text());
+                          alert("No se pudo finalizar la actividad");
+                          return;
+                        }
+                        {/*  Actualiza el estado de la actividad */}
+                        setActividades((prev) =>
+                          prev.map((a) =>
+                            a.id === actividadSeleccionada.id
+                              ? { ...a, estadoActividad: 3 }
+                              : a
+                          )
+                        );
+                        
+                        setShowFinalize(false);
+                      }}
+                      className={`px-4 py-2 rounded text-white ${
+                        canFinalize ? "bg-red-600" : "bg-gray-400"
+                      }`}
+                    >
+                      Sí, finalizar
+                    </button>
+
+                      </div>
+                    </Modal>
+                  )}
+
                   </div>
                 </div>
               ))}

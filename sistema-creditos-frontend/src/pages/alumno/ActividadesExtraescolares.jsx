@@ -152,7 +152,10 @@ export default function ActividadesList() {
     (actividad) =>
       actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
       (tipoSeleccionado === "" ||
-        tipoActividad[actividad.tipoActividad] === tipoSeleccionado)
+        tipoActividad[actividad.tipoActividad] === tipoSeleccionado) &&
+
+        //solo muestra las actividades activas
+      (actividad.estadoActividad === 1 || actividad.estadoActividad === 2)
   );
 
   return (
@@ -263,10 +266,10 @@ export default function ActividadesList() {
             show={showModal}
             onClose={() => setShowModal(false)}
             title={selectedActividad.nombre}
-            className="w-[700px] h-[350px] max-w-full border-4 bg-[#001F54] text-white"
+            className="w-[700px] max-w-full max-h-screen overflow-y-auto border-4 bg-[#001F54] text-white"
             closeButtonClassName="text-white"
           >
-            <div className="text-center mb-4 text-[#BFBFBF] font-semibold">
+            <div className="text-center mb-4 text-[#BFBFBF] font-semibold px-4">
               {selectedActividad.descripcion}
             </div>
 
@@ -291,17 +294,29 @@ export default function ActividadesList() {
                     {selectedActividad.horaInicio.slice(0, 5)} -{" "}
                     {selectedActividad.horaFin.slice(0, 5)}
                   </p>
-                  <p>
+
+                  {/* <p>
                     Carrera(s):
-                  </p>
+                  </p> */}
                   {/* Contenedor con scroll para las carreras */}
-                  <div className="max-h-[80px] overflow-y-auto pr-2 custom-scrollbar">
+                  {/* <div className="max-h-[80px] overflow-y-auto pr-2 custom-scrollbar">
                   {selectedActividad.carreraNombres.map((carrera, index) => (
                     <span key={index} className="block">
                       {carrera.trim()}
                     </span>
                   ))}
-                </div>
+                </div> */}
+
+
+                <p className="mb-1"><strong>Carrera(s):</strong></p>
+                        <div className="max-h-[80px] overflow-y-auto pr-2 custom-scrollbar">
+                          {selectedActividad.carreraNombres.map((carrera, index) => (
+                            <span key={index} className="block">
+                              {carrera.trim()}
+                            </span>
+                          ))}
+                        </div>
+                
 
                 <br></br>
 

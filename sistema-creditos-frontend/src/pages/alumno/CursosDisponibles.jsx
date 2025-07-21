@@ -152,7 +152,10 @@ export default function ActividadesList() {
     (actividad) =>
       actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
       (tipoSeleccionado === "" ||
-        tipoActividad[actividad.tipoActividad] === tipoSeleccionado)
+        tipoActividad[actividad.tipoActividad] === tipoSeleccionado) &&
+
+        //solo muestra las actividades activas
+      (actividad.estadoActividad === 1 || actividad.estadoActividad === 2)
   );
 
   return (
@@ -279,7 +282,7 @@ export default function ActividadesList() {
               show={showModal}
               onClose={() => setShowModal(false)}
               title={selectedActividad.nombre}
-              className="w-[700px] h-[350px] max-w-full border-4 bg-[#001F54] text-white"
+              className="w-[700px] max-w-full max-h-screen overflow-y-auto border-4 bg-[#001F54] text-white"
               closeButtonClassName="text-white"
             >
               <div className="text-center mb-4 text-[#BFBFBF] font-semibold">

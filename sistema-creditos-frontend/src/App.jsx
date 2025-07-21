@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import MiHistorial from "./pages/MiHistorial"
@@ -16,7 +18,16 @@ import Register from "./pages/Auth/Register";
 
 function App() {
   return (
+
     <BrowserRouter>
+    
+    <ToastContainer 
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar
+            pauseOnHover
+          />
+
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
