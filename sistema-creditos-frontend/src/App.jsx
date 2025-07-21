@@ -11,6 +11,7 @@ import CrearActividad from "./pages/departamento/CrearActividad";
 import ActividadesExtraescolares from "./pages/alumno/ActividadesExtraescolares";
 import VerCursos from "./pages/coordinador/VerCursos";
 import VerAlumnos from "./pages/coordinador/VerAlumnos";
+import Avisos from "./pages/Avisos";
 import MiHistorialDepartamento from "./pages/departamento/MiHistorialDepartamento";
 
 import Login from "./pages/Auth/Login";
@@ -50,18 +51,16 @@ function App() {
           <Route path="/historial" element={<MiHistorial />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
-          <Route
-            path="/actividadesextraescolares"
-            element={<ActividadesExtraescolares />}
-          />
-          <Route path="/miscursos" element={<MisCursos />} />
-          <Route path="/crearactividad" element={<CrearActividad />} />
+          <Route path="/actividadesextraescolares" element={<ActividadesExtraescolares />} />
+          <Route path="/miscursos" element={<MisCursos/>} />
+          <Route path="/crearactividad" element={<CrearActividad/>} />
           <Route
             path="historialdepartamento"
             element={<MiHistorialDepartamento />}
           />{" "}
-          <Route path="/vercursos" element={<VerCursos />} />
-          <Route path="/veralumnos" element={<VerAlumnos />} />
+          <Route path="/vercursos" element={<VerCursos/>} />
+          <Route path="/veralumnos" element={<VerAlumnos/>} />
+          <Route path="/avisos" element={<Avisos/>} />
         </Route>
       </Routes>
     </BrowserRouter>
