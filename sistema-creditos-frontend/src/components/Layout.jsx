@@ -38,7 +38,7 @@ export default function Layout() {
         <nav className="flex flex-col w-full px-2 gap-4 flex-grow">
           <div className="flex flex-col gap-4 items-center">
             <SidebarLink
-              to="/"
+              to="/home"
               icon={<Home strokeWidth={0.5} className="w-6 h-6" />}
               label="Inicio"
             />

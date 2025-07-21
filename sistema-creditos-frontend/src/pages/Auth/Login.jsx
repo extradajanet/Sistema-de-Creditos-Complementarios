@@ -59,7 +59,7 @@ function Login() {
         localStorage.setItem("rol", userRole);
       }
 
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       console.error(err);
       setError(err.message);

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Layout from "./components/Layout";
@@ -15,6 +15,7 @@ import MiHistorialDepartamento from "./pages/departamento/MiHistorialDepartament
 
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -29,10 +30,23 @@ function App() {
           />
 
       <Routes>
+        {/* Redirect root to login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/*Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
+
+        {/*Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/home" element={<Home />} />
           <Route path="/historial" element={<MiHistorial />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
