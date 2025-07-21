@@ -171,7 +171,7 @@ export default function ActividadesList() {
 
 
   return (
-    <div className="flex flex-col gap-6 w-full h-screen">
+    <div className="flex flex-col gap-6 w-full h-full">
       {/* Título */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
         <h1 className="text-3xl font-bold  text-gray-900 custom-heading">
@@ -243,7 +243,7 @@ export default function ActividadesList() {
 
       {/* Lista de actividades */}
       <div className="flex-1 overflow-y-auto pr-2 mb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-9 ">
+        <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] ">
           {loading ? (
             <p className="text-center col-span-full mt-10 text-black-600">
               Cargando actividades...

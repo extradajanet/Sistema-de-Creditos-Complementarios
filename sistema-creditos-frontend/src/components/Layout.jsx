@@ -22,7 +22,7 @@ export default function Layout() {
   }, []);
 
   return (
-    <div className="flex h-screen h-full overflow-hidden">
+    <div className="flex h-screen w-screen overflow-hidden">
       {/* Sidebar */}
       <aside className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300  flex flex-col items-center py-5 m-4 rounded-2xl">
         {/* Logo */}
