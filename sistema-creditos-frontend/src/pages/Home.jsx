@@ -167,7 +167,7 @@ export default function Home() {
 
       {/* Tarjetas dinámicas por rol */}
       <div className="flex-1 overflow-y-auto p-8">
-        <div className="p-8 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6">
+        <div className="p-8 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-8">
         {tarjetas.map((card, index) => (
           <div
             key={index}
