@@ -11,6 +11,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Aviso
         public int Id { get; set; }
         public string Titulo { get; set; }
         public string Mensaje { get; set; }
+        public DateTime Fecha { get; set; }
         public int? DepartamentoId { get; set; }
         public string? DepartamentoNombre { get; set; }
         public int? CoordinadorId { get; set; }
@@ -22,9 +23,9 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Aviso
     {
         public string Titulo { get; set; }
         public string Mensaje { get; set; }
-
-        public int? DepartamentoId { get; set; } // nullable: only one sender required
-        public int? CoordinadorId { get; set; }
+       
+        public int? DepartamentoId { get; set; } = null; // nullable: only one sender required
+        public int? CoordinadorId { get; set; } = null;
     }
 
 }

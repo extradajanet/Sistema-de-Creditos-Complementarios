@@ -61,10 +61,11 @@ export default function Avisos() {
                 departamentoId: ids.Departamento ? parseInt(ids.Departamento) : null,
                 coordinadorId: ids.Coordinador ? parseInt(ids.Coordinador) : null
             };
-
+            
+            const token = localStorage.getItem("token");
             const response = await fetch("https://localhost:7238/api/Aviso", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json","Authorization": `Bearer ${token}` },
                 body: JSON.stringify(avisoData)
             });
 
@@ -152,7 +153,7 @@ export default function Avisos() {
                         <div className="bg-white px-4 py-3">
                             <div className="flex justify-between items-center mb-1">
                                 <h4 className="text-base font-bold text-[#001F54]">{aviso.titulo}</h4>
-                                <span className="text-xs text-gray-500">[Fecha]</span>
+                                <span className="text-xs text-gray-500">{new Date(aviso.fecha).toLocaleDateString()}</span>
                             </div>
                             <p className="text-sm text-gray-800">{aviso.mensaje}</p>
                         </div>

@@ -34,6 +34,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AvisoService
                 Id = aviso.Id,
                 Titulo = aviso.Titulo,
                 Mensaje = aviso.Mensaje,
+                Fecha = aviso.Fecha,
                 DepartamentoId = aviso.DepartamentoId ?? 0,
                 DepartamentoNombre = aviso.Departamento?.Nombre,
                 CoordinadorId = aviso.CoordinadorId ?? 0,
@@ -42,14 +43,40 @@ namespace SistemaCreditosComplementarios.Core.Services.AvisoService
             });
         }
 
+        public async Task<AvisoDto> GetByIdAsync(int id)
+        {
+            var aviso = await _avisoRepository.GetByIdAsync(id);
+            if (aviso == null)
+            {
+                throw new Exception("Aviso no encontrado");
+            }
+            return new AvisoDto
+            {
+                Id = aviso.Id,
+                Titulo = aviso.Titulo,
+                Mensaje = aviso.Mensaje,
+                Fecha = aviso.Fecha,
+                DepartamentoId = aviso.DepartamentoId ?? 0,
+                DepartamentoNombre = aviso.Departamento?.Nombre,
+                CoordinadorId = aviso.CoordinadorId ?? 0,
+                CoordinadorNombre = aviso.Coordinador?.Nombre,
+                CoordinadorApellido = aviso.Coordinador?.Apellido,
+            };
+        }
+
         public async Task<AvisoDto> CreateAvisoAsync(AvisoCreateDto createDto)
         {
+            if (createDto.CoordinadorId == 0)
+                createDto.CoordinadorId = null;
+
+            if (createDto.DepartamentoId == 0)
+                createDto.DepartamentoId = null;
             // Validation: only one sender allowed
             if (createDto.CoordinadorId != null && createDto.DepartamentoId != null)
             {
                 throw new Exception("Solo puede haber un remitente: Coordinador o Departamento.");
             }
-
+            
             if (createDto.CoordinadorId == null && createDto.DepartamentoId == null)
             {
                 throw new Exception("Debe especificar un Coordinador o un Departamento como remitente.");
@@ -59,6 +86,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AvisoService
             {
                 Titulo = createDto.Titulo,
                 Mensaje = createDto.Mensaje,
+                Fecha = DateTime.UtcNow,
                 DepartamentoId = createDto?.DepartamentoId,
                 CoordinadorId = createDto?.CoordinadorId,
             };
@@ -70,11 +98,32 @@ namespace SistemaCreditosComplementarios.Core.Services.AvisoService
                 Id = created.Id,
                 Titulo = created.Titulo,
                 Mensaje = created.Mensaje,
+                Fecha= DateTime.UtcNow,
                 DepartamentoId = created?.DepartamentoId,
                 CoordinadorId = created?.CoordinadorId,
               
             };
 
+        }
+
+
+        public async Task DeleteAvisoAsync(int id, int? coordinadorId, int? departamentoId)
+        {
+            var aviso = await _avisoRepository.GetByIdAsync(id);
+            if (aviso == null) { throw new Exception("Aviso no encontrado"); }
+
+
+            //Ownership Validation
+            var isOwnedByRequester = (aviso.DepartamentoId != null && aviso.DepartamentoId == departamentoId) ||(aviso.CoordinadorId != null && aviso.CoordinadorId == coordinadorId);
+
+            if (!isOwnedByRequester)
+            {
+                throw new UnauthorizedAccessException("No tienes permisos para eliminar este aviso.");
+            }
+
+
+
+            await _avisoRepository.DeleteAvisoAsync(aviso);
         }
 
     }

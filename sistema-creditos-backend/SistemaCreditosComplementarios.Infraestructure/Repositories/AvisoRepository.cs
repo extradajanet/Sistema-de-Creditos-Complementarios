@@ -42,5 +42,22 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 .FirstOrDefaultAsync(a => a.Id == aviso.Id);
         }
 
+        // Get by Id
+        public async Task<Aviso> GetByIdAsync(int id)
+        {
+            return await _context.Avisos
+               .Include(a => a.Departamento)
+               .Include(a => a.Coordinador)
+               .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        // Eliminar un aviso
+
+        public async Task DeleteAvisoAsync (Aviso aviso)
+        {
+            _context.Avisos.Remove(aviso);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

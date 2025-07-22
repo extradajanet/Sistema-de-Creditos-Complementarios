@@ -12,5 +12,9 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAvisoRepos
         Task<Aviso> CreateAvisoAsync(Aviso aviso);
 
         public Task<IEnumerable<Aviso>> GetAllAvisoAsync();
+        
+        public Task<Aviso> GetByIdAsync(int id);
+
+        public Task DeleteAvisoAsync(Aviso aviso);
     }
 }

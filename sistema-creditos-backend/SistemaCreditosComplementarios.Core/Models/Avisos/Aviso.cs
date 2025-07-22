@@ -13,6 +13,7 @@ namespace SistemaCreditosComplementarios.Core.Models.Avisos
         public int Id { get; set; }
         public string Titulo { get; set; }
         public string Mensaje { get; set; }
+        public DateTime Fecha { get; set; }
 
         public int? DepartamentoId { get; set; }
         public Departamento? Departamento { get; set; }

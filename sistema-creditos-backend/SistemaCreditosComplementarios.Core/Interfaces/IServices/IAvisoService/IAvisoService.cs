@@ -12,5 +12,8 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.IAvisoService
         Task<AvisoDto> CreateAvisoAsync(AvisoCreateDto createDto);
 
         Task<IEnumerable<AvisoDto>> GetAllAvisoAsync();
+        Task<AvisoDto> GetByIdAsync(int id);
+
+        Task DeleteAvisoAsync(int id, int? coordinadorId, int? departamentoId);
     }
 }
