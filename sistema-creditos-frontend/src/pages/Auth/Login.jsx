@@ -95,7 +95,7 @@ function Login() {
                     Número de control
                   </label>
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type="text"
                     value={username}
                     placeholder="Número de control"
                     onChange={(e) => setUsername(e.target.value)}
