@@ -30,7 +30,6 @@ export default function ActividadesList() {
   const [descripcion, setDescripcion] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [imagenSeleccionada, setImagenSeleccionada] = useState("imagen1.png");
   const [diaSeleccionado, setDiaSeleccionado] = useState("");
@@ -122,24 +121,30 @@ export default function ActividadesList() {
     }
   }, [tipoSeleccionado]);
 
-  const handleSubmit = async () => {
 
+
+  const handleSubmit = async () => {
     //validar que el nombre y la descripción no esté vacías.
-    if (!nombre.trim() || !descripcion.trim()) {
+    if (!nombre.trim()) {
       toast.error("Por favor completa el nombre y la descripción de la actividad.");
       return;
     }
-
 
     if (!fechaInicio || !fechaFin) {
       toast.error("Por favor selecciona las fechas de inicio y fin.");
       return;
     }
     
-    const inicio = new Date(fechaInicio);
-    const fin = new Date(fechaFin);
+    function parseDateToNumber(fecha) {
+      // fecha = "YYYY-MM-DD"
+      const [year, month, day] = fecha.split("-").map(Number);
+      return year * 10000 + month * 100 + day; // un número que representa la fecha para comparar fácilmente
+    }
 
-    if (fin < inicio) {
+    const inicioNum = parseDateToNumber(fechaInicio);
+    const finNum = parseDateToNumber(fechaFin);
+
+    if (finNum < inicioNum) {
       toast.error("La fecha de fin no puede ser anterior a la fecha de inicio.");
       return;
     }
@@ -165,42 +170,39 @@ export default function ActividadesList() {
     }
 
     //que la capacidad no sea mayor a 30
-    if (capacidad <= 10 || capacidad > 30) {
+    if (capacidad < 10 || capacidad > 30) {
       toast.error("La capacidad debe tener un mínimo de 10 estudiantes y un máximo de 30.");
       return;
     }
 
     let carrerasFinales = [...carreraIds];
-    // if (carrerasFinales.includes(14)) { esta parte incluye todas las carreras
-    //   carrerasFinales = carreras.filter((c) => c.id !== 14).map((c) => c.id);
-    // }
 
     let tipoAct = tipoSeleccionado;
     if (tipoSeleccionado === "Extraescolar") {
       tipoAct = subTipoExtraescolar;
     }
 
-const actividad = {
-  nombre,
-  descripcion,
-  fechaInicio: `${fechaInicio}T00:00:00Z`,
-  fechaFin: `${fechaFin}T00:00:00Z`,
-  creditos,
-  capacidad,
-  dias: obtenerNumeroDia(diaSeleccionado),
-  horaInicio: `${horaInicio}:00`,
-  horaFin: `${horaFin}:00`,
-  tipoActividad: obtenerTipoActividad(tipoAct),
-  estadoActividad: 1,
-  imagenNombre: imagenSeleccionada,
-  departamentoId: 1,
-  carreraIds: carrerasFinales,
-};
+    const actividad = {
+      nombre,
+      descripcion,
+      fechaInicio: new Date(`${fechaInicio}T00:00:00`).toISOString(),
+      fechaFin: new Date(`${fechaFin}T00:00:00`).toISOString(),
+      creditos,
+      capacidad,
+      dias: obtenerNumeroDia(diaSeleccionado),
+      horaInicio: `${horaInicio}:00`,
+      horaFin: `${horaFin}:00`,
+      tipoActividad: obtenerTipoActividad(tipoAct),
+      estadoActividad: 1,
+      imagenNombre: imagenSeleccionada,
+      departamentoId: 1,
+      carreraIds: carrerasFinales,
+    };
 
-// Agregar el género si el tipoActividad es 1 (Deportiva) o 2 (Cultural)
-if ([1, 2].includes(actividad.tipoActividad)) {
-  actividad.genero = generoSeleccionado;
-}
+    // Agregar el género si el tipoActividad es 1 (Deportiva) o 2 (Cultural)
+    if ([1, 2].includes(actividad.tipoActividad)) {
+      actividad.genero = generoSeleccionado;
+    }
 
     try {
       const response = await fetch("https://localhost:7238/api/Actividades", {
@@ -224,12 +226,11 @@ if ([1, 2].includes(actividad.tipoActividad)) {
   };
 
   // Decide qué set de imágenes usar
-const imagenesAMostrar =
-  // Muestra las extraescolares SOLO si elegiste Extraescolar o Cultural dentro de Extraescolar
-  tipoSeleccionado === "Extraescolar" || subTipoExtraescolar === "Cultural"
-    ? Object.entries(imagenesExtraescolar).map(([nombre, src]) => ({ nombre, src }))
-    : imagenesPredeterminadas;
-
+  const imagenesAMostrar =
+    // Muestra las extraescolares SOLO si elegiste Extraescolar o Cultural dentro de Extraescolar
+    tipoSeleccionado === "Extraescolar" || subTipoExtraescolar === "Cultural"
+      ? Object.entries(imagenesExtraescolar).map(([nombre, src]) => ({ nombre, src }))
+      : imagenesPredeterminadas;
   return (
     <>
       <div className="flex flex-col gap-6 w-full">
@@ -318,7 +319,7 @@ const imagenesAMostrar =
                           </Listbox.Button>
 
                           {tipoSeleccionado !== "Extraescolar" && (
-                            <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg max-h-48 overflow-auto z-20">
+                            <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg max-h-48 overflow-auto ">
                               {carreras.map((carrera) => (
                                 <Listbox.Option
                                   key={carrera.id}
@@ -403,7 +404,7 @@ const imagenesAMostrar =
                         />
                       </div>
 
-                     <div className="z-10 mt-2 relative">
+                     <div className="mt-2 relative">
                         <label>Tipo de Actividad</label>
                         <div className="flex flex-row gap-2">
                           {["Extraescolar", "Tutorias", "MOOC"].map((tipo) => (

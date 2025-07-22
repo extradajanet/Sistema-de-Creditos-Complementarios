@@ -22,6 +22,24 @@ const obtenerImagen = (nombre) => {
   return entrada ? entrada[1].default : predeterminado; // usa imagen predeterminada si no se encuentra
 };
 
+const obtenerEstadoActividad = (actividad) => {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0); // Normaliza a medianoche
+
+  const inicio = new Date(actividad.fechaInicio);
+  inicio.setHours(0, 0, 0, 0);
+
+  const fin = new Date(actividad.fechaFin);
+  fin.setHours(0, 0, 0, 0);
+
+  if (hoy < inicio) return "Activo";
+  if (hoy >= inicio && hoy <= fin) return "En Progreso";
+  return "Finalizado";
+};
+
+
+
+
 export default function ActividadesList() {
   const [carreraIdsEdit, setCarreraIdsEdit] = useState([]);
   const [actividades, setActividades] = useState([]);
@@ -249,12 +267,7 @@ const AlumnosBusqueda = alumnos.filter((alumno) =>
                       </strong>
                     </p>
                     <p className="text-xs text-[#9A9A9A]">
-                    <strong>Estado: </strong>
-                    {actividad.estadoActividad === 1
-                        ? "Activo"
-                        : actividad.estadoActividad === 2
-                        ? "En Progreso"
-                        : "Finalizado"}
+                      <strong>Estado: </strong>{obtenerEstadoActividad(actividad)}
                     </p>
                   </div>
                   {/* Botones de acción */}

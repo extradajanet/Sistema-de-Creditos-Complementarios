@@ -148,15 +148,27 @@ export default function ActividadesList() {
     };
   }, [selectedActividad]);
 
-  const actividadesFiltradas = actividades.filter(
-    (actividad) =>
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0); // poner la hora en 00:00:00 para comparar solo la fecha
+
+  const actividadesFiltradas = actividades.filter((actividad) => {
+    const fechaInicio = new Date(actividad.fechaInicio);
+    const fechaFin = new Date(actividad.fechaFin);
+
+    // Limpiar horas para comparar solo fechas
+    fechaInicio.setHours(0, 0, 0, 0);
+    fechaFin.setHours(0, 0, 0, 0);
+
+    return (
       actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
       (tipoSeleccionado === "" ||
         tipoActividad[actividad.tipoActividad] === tipoSeleccionado) &&
+      (actividad.estadoActividad === 1 || actividad.estadoActividad === 2) &&
+      fechaInicio > hoy && // empieza después de hoy
+      fechaFin > hoy // no ha terminado ya
+    );
+  });
 
-        //solo muestra las actividades activas
-      (actividad.estadoActividad === 1 || actividad.estadoActividad === 2)
-  );
 
   return (
     <div className="flex flex-col gap-6 w-full">

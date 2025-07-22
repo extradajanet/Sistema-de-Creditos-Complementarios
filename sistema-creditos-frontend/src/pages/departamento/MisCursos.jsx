@@ -474,7 +474,7 @@ const disableCarrerasEdit = [1, 2].includes(actividadSeleccionada?.tipoActividad
         {loading ? (
           <p className="text-center mt-10 text-black-600">Cargando actividades...</p>
         ) : actividadesFiltradas.length === 0 ? (
-          <p className="text-center mt-10 text-black-600">No hay cursos disponibles</p>
+          <p className="text-center mt-10 text-black-600">No hay cursos activos</p>
         ) : (
           <div className="flex justify-center overflow-y-auto max-h-[520px]">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-25 gap-y-4.5">
