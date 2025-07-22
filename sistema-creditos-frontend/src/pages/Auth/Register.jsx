@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { EyeClosed, Eye } from "lucide-react";
 import CareerDropdown from "../../components/CareerDropdown";
 import "/src/App.css";
 
@@ -12,6 +13,8 @@ function Register() {
   const [career, setCareer] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmpassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [careers, setCareers] = useState([]);
   const navigate = useNavigate();
@@ -168,10 +171,12 @@ function Register() {
                 />
               </div>
 
-              <CareerDropdown
-                careers={careers}
-                onChange={(val) => setCareer(val)}
-              />
+              <div className="relative z-50">
+                <CareerDropdown
+                  careers={careers}
+                  onChange={(val) => setCareer(val)}
+                />
+              </div>
               <div className="flex flex-col text-left">
                 <label
                   htmlFor="password"
@@ -180,22 +185,39 @@ function Register() {
                   Contraseña
                 </label>
 
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Contraseña"
-                  required
-                  className="w-[250px] px-4 py-2 mb-2 border border-[#001F54] rounded-lg"
-                />
-                <input
-                  type="password"
-                  value={confirmpassword}
-                  onChange={(e) => setConfirmpassword(e.target.value)}
-                  placeholder="Confirmar Contraseña"
-                  required
-                  className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
-                />
+                <div className="relative w-[250px]">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Contraseña"
+                    required
+                    className="w-[250px] px-4 py-2 mb-2 border border-[#001F54] rounded-lg"
+                  />
+                  <div
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#001F54] cursor-pointer"
+                  >
+                    {showPassword ? <EyeClosed /> : <Eye />}
+                  </div>
+                </div>
+                <div className="relative w-[250px]">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmpassword}
+                    onChange={(e) => setConfirmpassword(e.target.value)}
+                    placeholder="Confirmar Contraseña"
+                    required
+                    className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
+                  />
+                  <div
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#001F54] cursor-pointer"
+                  >
+                    {showConfirmPassword ? <EyeClosed /> : <Eye />}
+                  </div>
+                </div>
+
               </div>
 
               {error && (
