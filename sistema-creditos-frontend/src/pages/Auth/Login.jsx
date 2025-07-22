@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { EyeClosed, Eye } from "lucide-react";
 import Modal from "../../components/Modal";
 import "/src/App.css";
 
@@ -19,11 +20,13 @@ function parseJwt(token) {
   }
 }
 
+
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -92,7 +95,7 @@ function Login() {
                     Número de control
                   </label>
                   <input
-                    type="text"
+                    type={showPassword ? "text" : "password"}
                     value={username}
                     placeholder="Número de control"
                     onChange={(e) => setUsername(e.target.value)}
@@ -107,18 +110,27 @@ function Login() {
                   >
                     Contraseña
                   </label>
-                  <input
-                    type="password"
-                    value={password}
-                    placeholder="Contraseña"
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
-                  />
+                  <div className="relative w-[250px]">
+                    <input
+                      type={ showPassword ? "text" : "password"}
+                      value={password}
+                      placeholder="Contraseña"
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full px-4 py-2 border border-[#001F54] rounded-lg pr-10"
+                    />
+                    <div
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#001F54] cursor-pointer"
+                    >
+                      {showPassword ? <EyeClosed /> : <Eye />}
+                    </div>
+                  </div>
+
                 </div>
                 <p className="custom-smtext font-semibold text-[#001F54] underline cursor-pointer">
-                  <a  onClick={() => {
-                  setShowModal(true);
-                }}>¿Olvidaste tu contraseña?</a>
+                  <a onClick={() => {
+                    setShowModal(true);
+                  }}>¿Olvidaste tu contraseña?</a>
                 </p>
                 <div className="pt-2">
                   <Link to={"/register"}>
