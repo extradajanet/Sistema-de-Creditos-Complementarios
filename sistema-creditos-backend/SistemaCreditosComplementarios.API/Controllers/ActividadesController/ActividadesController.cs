@@ -86,12 +86,13 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
 
         // PUT: api/actividades/{id}
         [HttpPut("{id}")]
-        
-        public async Task<ActionResult<ActividadDto>> Update(int id, [FromBody] ActividadCreateDto actividadUpdateDto)
+        public async Task<ActionResult<ActividadDto>> Update(int id, [FromBody] ActividadUpdateDto actividadUpdateDto)
         {
             try
             {
-                if (actividadUpdateDto == null) return BadRequest("Datos de actividad no válidos.");
+                if (actividadUpdateDto == null)
+                    return BadRequest("Datos de actividad no válidos.");
+
                 var actividadActualizada = await _actividadService.UpdateAsync(id, actividadUpdateDto);
                 return Ok(actividadActualizada);
             }
@@ -100,6 +101,8 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
+
+
 
         // DELETE: api/actividades/{id}
         [HttpDelete("{id}")]

@@ -52,4 +52,15 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Actividad
         public List<int> CarreraIds { get; set; } // Lista de IDs de carreras asociadas a la actividad
         public Genero Genero { get; set; }
     }
+    public class ActividadUpdateDto
+    {
+        public string? Descripcion { get; set; }
+        public DateTime? FechaInicio { get; set; }
+        public DateTime? FechaFin { get; set; }
+        public decimal? Creditos { get; set; }
+        public int? Capacidad { get; set; }
+        public List<int>? CarreraIds { get; set; }
+    }
+
+
 }
