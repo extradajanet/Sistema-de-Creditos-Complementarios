@@ -16,7 +16,6 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
         public DateTime FechaRegistro { get; set; }
         public decimal CreditosObtenidos { get; set; }
-        public Genero Genero { get; set; }
     }
 
     public class AlumnoActividadCreateDto
@@ -25,7 +24,6 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public int ActividadId { get; set; }
         public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
         public DateTime FechaInscripcion { get; set; } = DateTime.UtcNow;
-        public Genero Genero { get; set; }
     }
 
     public class AlumnoActividadUpdate
@@ -34,7 +32,6 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public int ActividadId { get; set; }
         public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
         public DateTime FechaInscripcion { get; set; } = DateTime.UtcNow;
-        public Genero Genero { get; set; }
     }
 
 
@@ -47,7 +44,6 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public decimal CreditosObtenidos { get; set; }
         public DateTime FechaInscripcion { get; set; }
         public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
-        public Genero Genero { get; set; }
     }
 
     public class CursoAlumnoDto
@@ -60,7 +56,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
         public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
-        public Genero Genero { get; set; }
+        public EstadoActividad EstadoActividad { get; set; }
     }
 
 }

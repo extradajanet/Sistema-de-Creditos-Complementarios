@@ -16,7 +16,7 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadSer
         Task<IEnumerable<ActividadDto>> GetByCoordinadorIdAsync(int coordinadorId);
 
         Task<ActividadDto> AddAsync(ActividadCreateDto actividadCreateDto);
-        Task<ActividadDto> UpdateAsync(int id, ActividadUpdateDto actividadUpdateDto);
+        Task<ActividadDto> UpdateAsync(int id, ActividadCreateDto actividadUpdateDto);
         Task DeleteAsync(int id);
 
         //métodos para buscar en buscador del frontend

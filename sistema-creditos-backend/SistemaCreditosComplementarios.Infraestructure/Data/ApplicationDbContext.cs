@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using SistemaCreditosComplementarios.Core.Models.Usuario;
 using SistemaCreditosComplementarios.Core.Models.AlumnosActividades;
 using SistemaCreditosComplementarios.Core.Models.ActividadesCarreras;
+using SistemaCreditosComplementarios.Core.Models.Avisos;
 
 namespace SistemaCreditosComplementarios.Infraestructure.Data
 {
@@ -32,6 +33,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Data
         public DbSet<Carrera> Carreras { get; set; }
 
         public DbSet<Alumno> Alumnos { get; set; }
+        public DbSet<Aviso> Avisos { get; set; }
 
         public DbSet<Departamento> Departamentos { get; set; }
 

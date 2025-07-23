@@ -40,8 +40,7 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 ActividadNombre = aa.Actividad.Nombre,
                 EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
                 FechaRegistro = aa.FechaInscripcion,
-                CreditosObtenidos = aa.Actividad.Creditos,
-                Genero = aa.Actividad.Genero
+                CreditosObtenidos = aa.Actividad.Creditos
             });
         }
 
@@ -61,24 +60,55 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 ActividadNombre = alumnoActividad.Actividad.Nombre,
                 EstadoAlumnoActividad = alumnoActividad.EstadoAlumnoActividad,
                 FechaRegistro = alumnoActividad.FechaInscripcion,
-                CreditosObtenidos = alumnoActividad.Actividad.Creditos,
-                Genero = alumnoActividad.Actividad.Genero
+                CreditosObtenidos = alumnoActividad.Actividad.Creditos
             };
         }
 
+        /*Janet Estrada*/
         //obtener a los alumnos inscritos por actividad
         public async Task<IEnumerable<AlumnoInscritoDto>> GetAlumnosInscritosPorActividadAsync(int actividadId)
         {
             var alumnos = await _alumnoActividadRepository.GetAlumnosInscritosPorActividadAsync(actividadId);
-            return alumnos;
+            return alumnos.Select(a => new AlumnoInscritoDto
+            {
+                AlumnoId = a.IdAlumno,
+                NombreCompleto= $"{a.Alumno.Nombre} {a.Alumno.Apellido}",
+                CarreraNombre = a.Alumno.Carrera.Nombre,
+                Semestre = a.Alumno.Semestre,
+                CreditosObtenidos= a.Alumno.TotalCreditos,
+                FechaInscripcion= a.FechaInscripcion,
+                EstadoAlumnoActividad=a.EstadoAlumnoActividad,
+            });
         }
 
+
+
+        /*Janet Estrada*/
         // obtener los cursos por alumno
-        public async Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado = null)
+        public async Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado, EstadoActividad? estadoAct)
         {
-            var cursos = await _alumnoActividadRepository.GetCursosPorAlumnoAsync(alumnoId, estado);
-            return cursos;
+            var alumnoActividades = await _alumnoActividadRepository.GetCursosPorAlumnoAsync(alumnoId, estado, estadoAct);
+
+            return alumnoActividades.Select(aa => new CursoAlumnoDto
+            {
+                ActividadId = aa.Actividad.Id,
+                Nombre = aa.Actividad.Nombre,
+                Descripcion = aa.Actividad.Descripcion,
+                ImagenNombre = aa.Actividad.ImagenNombre,
+                Creditos = aa.Actividad.Creditos,
+                FechaInicio = aa.Actividad.FechaInicio,
+                FechaFin = aa.Actividad.FechaFin,
+                EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
+                EstadoActividad = aa.Actividad.EstadoActividad
+            });
         }
+
+
+
+
+
+
+
 
         // añade una relación con curso y alumno
         public async Task<AlumnoActividadDto> AddAsync(AlumnoActividadCreateDto alumnoActividadCreateDto)
@@ -133,40 +163,32 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 ActividadNombre = actividad.Nombre,
                 EstadoAlumnoActividad = alumnoActividad.EstadoAlumnoActividad,
                 FechaRegistro = alumnoActividad.FechaInscripcion,
-                CreditosObtenidos = actividad.Creditos,
-                Genero = actividad.Genero
+                CreditosObtenidos = actividad.Creditos
             };
         }
 
         // actualiza la actividad de un alumno
-        public async Task UpdateAsync(int alumnoId, int actividadId, AlumnoActividadUpdate alumnoActividadDto)
+        public async Task UpdateAsync(int alumnoId, int actividadId, EstadoAlumnoActividad estadoAlumnoActividad)
         {
-            var alumnoActividad = await _alumnoActividadRepository.GetByIdAsync(alumnoId, actividadId) 
-                ?? throw new Exception("Actividad del alumno no encontrada para actualizar.");
+            var alumnoActividad = await _alumnoActividadRepository.GetByIdAsync(alumnoId, actividadId)
+       ?? throw new Exception("Actividad del alumno no encontrada para actualizar.");
 
             var alumno = await _alumnoRepository.GetByIdAsync(alumnoId) ?? throw new Exception($"El alumno con ID {alumnoId} no existe.");
 
             var estadoAnterior = alumnoActividad.EstadoAlumnoActividad;
-            var estadoNuevo = alumnoActividadDto.EstadoAlumnoActividad;
 
-            // Si el estado ha cambiado de "Acreditado" a cualquier otro estado, se restan los créditos
-            if (estadoAnterior == EstadoAlumnoActividad.Acreditado && estadoNuevo != EstadoAlumnoActividad.Acreditado)
+            if (estadoAnterior == EstadoAlumnoActividad.Acreditado && estadoAlumnoActividad != EstadoAlumnoActividad.Acreditado)
             {
-                alumno.TotalCreditos -= alumnoActividad.Actividad.Creditos; // Resta los créditos del alumno
-                await _alumnoRepository.UpdateAsync(alumno); 
+                alumno.TotalCreditos -= alumnoActividad.Actividad.Creditos;
+                await _alumnoRepository.UpdateAsync(alumno);
             }
-            else if (estadoAnterior != EstadoAlumnoActividad.Acreditado && estadoNuevo == EstadoAlumnoActividad.Acreditado)
+            else if (estadoAnterior != EstadoAlumnoActividad.Acreditado && estadoAlumnoActividad == EstadoAlumnoActividad.Acreditado)
             {
-                // Si el estado ha cambiado a "Acreditado", se suman los créditos
-                alumno.TotalCreditos += alumnoActividad.Actividad.Creditos; // Aumenta los créditos del alumno
-                await _alumnoRepository.UpdateAsync(alumno); 
+                alumno.TotalCreditos += alumnoActividad.Actividad.Creditos;
+                await _alumnoRepository.UpdateAsync(alumno);
             }
 
-            // Actualiza los campos necesarios
-            alumnoActividad.EstadoAlumnoActividad = alumnoActividadDto.EstadoAlumnoActividad;
-
-            // Puedes agregar más campos si es necesario
-            await _alumnoActividadRepository.UpdateAsync(alumnoId, actividadId, alumnoActividad);
+            await _alumnoActividadRepository.UpdateAsync(alumnoId, actividadId, estadoAlumnoActividad);
         }
 
         // elimina la actividad de un alumno

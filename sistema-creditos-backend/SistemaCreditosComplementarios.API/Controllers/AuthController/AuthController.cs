@@ -7,58 +7,40 @@ using SistemaCreditosComplementarios.Core.Interfaces.IServices.IAuthService;
 
 namespace SistemaCreditosComplementarios.API.Controllers.AuthController
 {
-    /// <summary>
-    /// Controlador para autenticación y registro de usuarios.
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
 
-        /// <summary>
-        /// Constructor del controlador de autenticación.
-        /// </summary>
-        /// <param name="authService">Servicio de autenticación.</param>
         public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
 
-        /// <summary>
-        /// Registra un nuevo usuario en el sistema.
-        /// </summary>
-        /// <param name="registerDto">Datos del nuevo usuario.</param>
-        /// <returns>Mensaje de éxito o error de validación.</returns>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             if (registerDto == null)
             {
-                return BadRequest("Datos de registro inválidos.");
+                return BadRequest("Invalid registration data.");
             }
-
             var result = await _authService.RegisterAsync(registerDto);
-
             if (result != null)
             {
-                return Ok(new { message = "Registro exitoso" });
+                return Ok(new { message = "Registration successful" });
             }
+            
+            return BadRequest("Registration failed. Please check your data and try again.");
 
-            return BadRequest("El registro falló. Verifica los datos e intenta nuevamente.");
         }
 
-        /// <summary>
-        /// Inicia sesión en el sistema.
-        /// </summary>
-        /// <param name="loginDto">Credenciales del usuario.</param>
-        /// <returns>Token de autenticación o mensaje de error.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             if (loginDto == null)
             {
-                return BadRequest("Datos de inicio de sesión inválidos.");
+                return BadRequest("Invalid login data.");
             }
 
             try
@@ -68,7 +50,8 @@ namespace SistemaCreditosComplementarios.API.Controllers.AuthController
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error al iniciar sesión: {ex.Message}");
+                return BadRequest($"Login failed: {ex.Message}");
+
             }
         }
     }
