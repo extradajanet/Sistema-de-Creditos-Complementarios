@@ -5,20 +5,29 @@ using SistemaCreditosComplementarios.Core.Interfaces.IServices.ICarreraService;
 
 namespace SistemaCreditosComplementarios.API.Controllers.ControllerCarreras
 {
+    /// <summary>
+    /// Controlador para gestionar carreras.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class CarreraController : ControllerBase
     {
         private readonly ICarreraService _carreraService;
 
+        /// <summary>
+        /// Constructor del controlador de carreras.
+        /// </summary>
+        /// <param name="carreraService">Servicio de carreras.</param>
         public CarreraController(ICarreraService carreraService)
         {
             _carreraService = carreraService;
         }
 
-        // GET: api/carreras
+        /// <summary>
+        /// Obtiene todas las carreras disponibles.
+        /// </summary>
+        /// <returns>Lista de carreras.</returns>
         [HttpGet("carreras")]
-     
         public async Task<IEnumerable<CarreraDto>> GetAllCarreras()
         {
             try
@@ -31,7 +40,12 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerCarreras
                 throw new Exception($"Error al obtener las carreras: {ex.Message}");
             }
         }
-        // GET: api/carreras
+
+        /// <summary>
+        /// Obtiene las carreras asociadas a un coordinador específico.
+        /// </summary>
+        /// <param name="coordinadorId">ID del coordinador.</param>
+        /// <returns>Lista de carreras relacionadas con el coordinador.</returns>
         [HttpGet("coordinador/{coordinadorId}")]
         public async Task<ActionResult<IEnumerable<CarreraDto>>> GetCarrerasByCoordinadorId(int coordinadorId)
         {
@@ -49,8 +63,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ControllerCarreras
             }
         }
 
-
-
+        //// Método alternativo (comentado) que devuelve IActionResult en lugar de IEnumerable directamente
         //public async Task<IActionResult> GetAllCarreras()
         //{
         //    try
