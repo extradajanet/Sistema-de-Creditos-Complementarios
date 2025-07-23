@@ -1,6 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import MiHistorial from "./pages/alumno/MiHistorial";
@@ -12,7 +10,6 @@ import ActividadesExtraescolares from "./pages/alumno/ActividadesExtraescolares"
 import VerCursos from "./pages/coordinador/VerCursos";
 import VerAlumnos from "./pages/coordinador/VerAlumnos";
 import Avisos from "./pages/Avisos";
-import MiHistorialDepartamento from "./pages/departamento/MiHistorialDepartamento";
 
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -20,16 +17,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-
     <BrowserRouter>
-    
-    <ToastContainer 
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar
-            pauseOnHover
-          />
-
       <Routes>
         {/* Redirect root to login */}
         <Route path="/" element={<Navigate to="/login" replace />} />

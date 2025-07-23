@@ -5,29 +5,22 @@ using SistemaCreditosComplementarios.Core.Interfaces.IServices.IActividadService
 
 namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
 {
-    /// <summary>
-    /// Controlador para gestionar actividades complementarias.
-    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class ActividadesController : ControllerBase
     {
+        //inyección de dependencias del servicio de actividades
         private readonly IActividadService _actividadService;
 
-        /// <summary>
-        /// Constructor del controlador de actividades.
-        /// </summary>
-        /// <param name="actividadService">Servicio de actividades.</param>
+        //constructor que recibe el servicio de actividades
         public ActividadesController(IActividadService actividadService)
         {
             _actividadService = actividadService;
         }
 
-        /// <summary>
-        /// Obtiene todas las actividades registradas.
-        /// </summary>
-        /// <returns>Una lista de actividades.</returns>
+        // GET: api/actividades
         [HttpGet]
+        
         public async Task<ActionResult<IEnumerable<ActividadDto>>> GetAll()
         {
             try
@@ -41,19 +34,16 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
             }
         }
 
-        /// <summary>
-        /// Obtiene una actividad por su ID.
-        /// </summary>
-        /// <param name="id">ID de la actividad.</param>
-        /// <returns>La actividad correspondiente o un error si no se encuentra.</returns>
+        // GET: api/actividades/{id}
         [HttpGet("{id}")]
+       
         public async Task<ActionResult<ActividadDto>> GetById(int id)
         {
             try
             {
                 var actividad = await _actividadService.GetByIdAsync(id);
-                if (actividad == null)
-                    return NotFound($"Actividad con ID {id} no encontrada.");
+
+                if (actividad == null) return NotFound($"Actividad con ID {id} no encontrada.");
 
                 return Ok(actividad);
             }
@@ -63,11 +53,7 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
             }
         }
 
-        /// <summary>
-        /// Obtiene actividades asociadas a un coordinador específico.
-        /// </summary>
-        /// <param name="coordinadorId">ID del coordinador.</param>
-        /// <returns>Lista de actividades del coordinador.</returns>
+        // GET: api/actividad/coordinador/5
         [HttpGet("coordinador/{coordinadorId}")]
         public async Task<IActionResult> GetByCoordinador(int coordinadorId)
         {
@@ -75,47 +61,31 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
             return Ok(actividades);
         }
 
-        /// <summary>
-        /// Crea una nueva actividad.
-        /// </summary>
-        /// <param name="actividadCreateDto">Datos de la actividad a crear.</param>
-        /// <returns>La actividad creada.</returns>
+        // POST: api/actividades
         [HttpPost]
+        
         public async Task<ActionResult<ActividadDto>> Create([FromBody] ActividadCreateDto actividadCreateDto)
         {
             try
             {
-                if (actividadCreateDto == null)
-                    return BadRequest("Datos de actividad no válidos.");
-
+                if (actividadCreateDto == null) return BadRequest("Datos de actividad no válidos.");
                 var nuevaActividad = await _actividadService.AddAsync(actividadCreateDto);
                 return CreatedAtAction(nameof(GetById), new { id = nuevaActividad.Id }, nuevaActividad);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    error = "Error interno del servidor",
-                    message = ex.Message,
-                    inner = ex.InnerException?.Message
-                });
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
 
-        /// <summary>
-        /// Actualiza una actividad existente.
-        /// </summary>
-        /// <param name="id">ID de la actividad a actualizar.</param>
-        /// <param name="actividadUpdateDto">Nuevos datos de la actividad.</param>
-        /// <returns>La actividad actualizada.</returns>
+        // PUT: api/actividades/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult<ActividadDto>> Update(int id, [FromBody] ActividadUpdateDto actividadUpdateDto)
+        
+        public async Task<ActionResult<ActividadDto>> Update(int id, [FromBody] ActividadCreateDto actividadUpdateDto)
         {
             try
             {
-                if (actividadUpdateDto == null)
-                    return BadRequest("Datos de actividad no válidos.");
-
+                if (actividadUpdateDto == null) return BadRequest("Datos de actividad no válidos.");
                 var actividadActualizada = await _actividadService.UpdateAsync(id, actividadUpdateDto);
                 return Ok(actividadActualizada);
             }
@@ -125,12 +95,9 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
             }
         }
 
-        /// <summary>
-        /// Elimina una actividad por su ID.
-        /// </summary>
-        /// <param name="id">ID de la actividad a eliminar.</param>
-        /// <returns>Respuesta sin contenido si la eliminación fue exitosa.</returns>
+        // DELETE: api/actividades/{id}
         [HttpDelete("{id}")]
+      
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -142,6 +109,8 @@ namespace SistemaCreditosComplementarios.API.Controllers.ActividadesController
             {
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
+
+
         }
     }
 }

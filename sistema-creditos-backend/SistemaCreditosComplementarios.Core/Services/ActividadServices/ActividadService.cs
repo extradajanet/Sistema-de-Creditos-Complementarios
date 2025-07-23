@@ -54,8 +54,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = a.ImagenNombre,
                 DepartamentoId = a.DepartamentoId,
                 DepartamentoNombre = a.Departamento?.Nombre,
-                CarreraNombres = a.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>(),
-                Genero = a.Genero
+                CarreraNombres = a.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
             });
         }
 
@@ -84,8 +83,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = actividad.ImagenNombre,
                 DepartamentoId = actividad.DepartamentoId,
                 DepartamentoNombre = actividad.Departamento?.Nombre,
-                CarreraNombres = actividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>(),
-                Genero = actividad.Genero
+                CarreraNombres = actividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
 
             };
         }
@@ -144,9 +142,7 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 EstadoActividad = actividadCreateDto.EstadoActividad,
                 ImagenNombre = actividadCreateDto.ImagenNombre,
                 DepartamentoId = actividadCreateDto.DepartamentoId,
-                Genero = actividadCreateDto.Genero,
                 ActividadesCarreras = []
-                
             };
 
             // Asignar las carreras asociadas a la actividad
@@ -181,45 +177,38 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = actividadCreada.ImagenNombre,
                 DepartamentoId = actividadCreada.DepartamentoId,
                 DepartamentoNombre = actividadCreada.Departamento?.Nombre,
-                CarreraNombres = actividadCreada.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>(),
-                Genero = actividadCreada.Genero
+                CarreraNombres = actividadCreada.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
             };
         }
 
         // actualiza actividad
-        public async Task<ActividadDto> UpdateAsync(int id, ActividadUpdateDto dto)
+        public async Task<ActividadDto> UpdateAsync(int id, ActividadCreateDto actividadUpdateDto)
         {
-            var actividad = await _actividadRepository.GetByIdAsync(id)
-                            ?? throw new Exception("Actividad no encontrada.");
+            var actividad = await _actividadRepository.GetByIdAsync(id) ?? throw new Exception("Actividad no encontrada.");
+            // Actualizar los campos de la actividad
+            actividad.Nombre = actividadUpdateDto.Nombre;
+            actividad.Descripcion = actividadUpdateDto.Descripcion;
+            actividad.FechaInicio = actividadUpdateDto.FechaInicio;
+            actividad.FechaFin = actividadUpdateDto.FechaFin;
+            actividad.Creditos = actividadUpdateDto.Creditos;
+            actividad.Capacidad = actividadUpdateDto.Capacidad;
+            actividad.Dias = actividadUpdateDto.Dias;
+            actividad.HoraInicio = actividadUpdateDto.HoraInicio;
+            actividad.HoraFin = actividadUpdateDto.HoraFin;
+            actividad.TipoActividad = actividadUpdateDto.TipoActividad;
+            actividad.EstadoActividad = actividadUpdateDto.EstadoActividad;
+            actividad.ImagenNombre = actividadUpdateDto.ImagenNombre;
+            actividad.DepartamentoId = actividadUpdateDto.DepartamentoId;
+            actividad.ActividadesCarreras.Clear(); // Limpiar las carreras asociadas antes de agregar nuevas
 
-            if (dto.Descripcion != null)
-                actividad.Descripcion = dto.Descripcion;
-
-            if (dto.FechaInicio.HasValue)
-                actividad.FechaInicio = dto.FechaInicio.Value;
-
-            if (dto.FechaFin.HasValue)
-                actividad.FechaFin = dto.FechaFin.Value;
-
-            if (dto.Creditos.HasValue)
-                actividad.Creditos = dto.Creditos.Value;
-
-            if (dto.Capacidad.HasValue)
-                actividad.Capacidad = dto.Capacidad.Value;
-
-            if (dto.CarreraIds != null && dto.CarreraIds.Any())
+            foreach (var carreraId in actividadUpdateDto.CarreraIds)
             {
-                actividad.ActividadesCarreras.Clear();
-                foreach (var carreraId in dto.CarreraIds)
+                var carrera = await _carreraRepository.GetByIdAsync(carreraId) ?? throw new Exception($"Carrera con ID {carreraId} no encontrada.");
+                actividad.ActividadesCarreras.Add(new ActividadCarrera
                 {
-                    var carrera = await _carreraRepository.GetByIdAsync(carreraId)
-                                  ?? throw new Exception($"Carrera con ID {carreraId} no encontrada.");
-                    actividad.ActividadesCarreras.Add(new ActividadCarrera
-                    {
-                        IdCarrera = carrera.Id,
-                        Carrera = carrera
-                    });
-                }
+                    IdCarrera = carrera.Id,
+                    Carrera = carrera 
+                });
             }
 
             var updatedActividad = await _actividadRepository.UpdateAsync(id, actividad);
@@ -266,9 +255,8 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
                 ImagenNombre = updatedActividad.ImagenNombre,
                 DepartamentoId = updatedActividad.DepartamentoId,
                 DepartamentoNombre = updatedActividad.Departamento?.Nombre,
-                CarreraNombres = updatedActividad.ActividadesCarreras?
-                    .Select(ac => ac.Carrera?.Nombre).ToList() ?? new(),
-                Genero = updatedActividad.Genero
+                CarreraNombres = updatedActividad.ActividadesCarreras?.Select(ac => ac.Carrera?.Nombre).ToList() ?? new List<string>()
+
             };
         }
 

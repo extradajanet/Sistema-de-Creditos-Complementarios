@@ -31,9 +31,7 @@ using SistemaCreditosComplementarios.Core.Settings;
 using SistemaCreditosComplementarios.Infraestructure.Data;
 using SistemaCreditosComplementarios.Infraestructure.Repositories;
 using System;
-using System.Reflection;
 using System.Text;
-using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,12 +40,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "SistemaCreditosComplementarios.API.xml"));
-});
-
-
+builder.Services.AddSwaggerGen();
 
 // configurar base de datos
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -90,7 +83,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
 })
-    .AddJwtBearer(options =>
+    .AddJwtBearer(options => 
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
