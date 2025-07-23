@@ -152,15 +152,23 @@ export default function ActividadesList() {
   
 
   // Filtrar actividades según búsqueda y tipo seleccionado
-  const actividadesFiltradas = actividades.filter(
-    (actividad) =>
-      actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-      (tipoSeleccionado === "" ||
-        tipoActividad[actividad.tipoActividad] === tipoSeleccionado) &&
-      (generoSeleccionado === "" ||
-        actividad.genero === generoSeleccionado) &&
-      (actividad.estadoActividad === 1 || actividad.estadoActividad === 2)
+const actividadesFiltradas = actividades.filter((actividad) => {
+  const hoy = new Date();
+  const fechaInicio = new Date(actividad.fechaInicio);
+
+  return (
+    actividad.estadoActividad === 1 && // solo activas
+    fechaInicio >= hoy && // solo si aún no comienza
+    actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
+    (tipoSeleccionado === "" ||
+      tipoActividad[actividad.tipoActividad] === tipoSeleccionado) &&
+    (generoSeleccionado === "" ||
+      actividad.genero === generoSeleccionado)
   );
+});
+
+
+  
 
 
   return (
@@ -286,7 +294,7 @@ export default function ActividadesList() {
             </p>
           ) : actividadesFiltradas.length === 0 ? (
             <p className="text-center col-span-full mt-10 text-black-600">
-              No hay cursos disponibles
+              No hay actividades extraescolares disponibles
             </p>
           ) : (
             actividadesFiltradas.map((actividad) => (

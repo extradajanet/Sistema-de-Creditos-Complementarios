@@ -620,10 +620,9 @@ const disableCarrerasEdit = [1, 2].includes(actividadSeleccionada?.tipoActividad
 
                           {/* Carrera(s) */}
                           <div className="col-span-2">
-                            <label className="font-semibold">Carrera(s):</label>
                             <div className="relative mt-1 w-full">
                               <p className="text-sm font-medium mb-1">
-                                Carreras seleccionadas:{" "}
+                                Carrera(s) seleccionadas:{" "}
                                 {carreraIdsEdit.length > 0
                                   ? carreraIdsEdit
                                       .map((id) => todasLasCarreras.find((c) => c.id === id)?.nombre)

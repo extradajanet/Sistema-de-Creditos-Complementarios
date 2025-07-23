@@ -34,6 +34,8 @@ export default function ActividadesList() {
   const [imagenSeleccionada, setImagenSeleccionada] = useState("imagen1.png");
   const [diaSeleccionado, setDiaSeleccionado] = useState("");
   const [generoSeleccionado, setGeneroSeleccionado] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const carreras = [
     { id: 1, nombre: "Ingeniería en Sistemas Computacionales" },
