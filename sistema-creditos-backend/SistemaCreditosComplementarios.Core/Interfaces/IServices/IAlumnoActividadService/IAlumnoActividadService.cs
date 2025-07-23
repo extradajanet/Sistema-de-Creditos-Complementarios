@@ -15,11 +15,11 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IServices.IAlumnoActivi
         Task<AlumnoActividadDto> GetByIdAsync(int alumnoId, int actividadId);
 
         Task<IEnumerable<AlumnoInscritoDto>> GetAlumnosInscritosPorActividadAsync(int actividadId);
-        Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado = null);
+        Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado = null, EstadoActividad? estadoAct= null);
         
         Task<AlumnoActividadDto> AddAsync(AlumnoActividadCreateDto alumnoActividadCreateDto);
 
-        Task UpdateAsync(int alumnoId, int actividadId, AlumnoActividadUpdate alumnoActividadDto);
+        Task UpdateAsync(int alumnoId, int actividadId, EstadoAlumnoActividad estadoAlumnoActividad);
 
         Task DeleteAsync(int alumnoId, int actividadId);
     }

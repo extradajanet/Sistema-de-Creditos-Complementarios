@@ -68,9 +68,9 @@ namespace SistemaCreditosComplementarios.API.Controllers.AlumnoActividadControll
         /// <param name="estado">Estado opcional de la actividad (por ejemplo: Aprobada, Rechazada, Pendiente).</param>
         /// <returns>Lista de actividades asociadas al alumno.</returns>
         [HttpGet("cursos-alumno/{alumnoId:int}")]
-        public async Task<IActionResult> GetCursosPorAlumno(int alumnoId, EstadoAlumnoActividad? estado = null)
+        public async Task<IActionResult> GetCursosPorAlumno(int alumnoId, EstadoAlumnoActividad? estado = null, EstadoActividad? estadoAct =null)
         {
-            var result = await _alumnoActividadService.GetCursosPorAlumnoAsync(alumnoId, estado);
+            var result = await _alumnoActividadService.GetCursosPorAlumnoAsync(alumnoId, estado, estadoAct);
             return Ok(result);
         }
 
@@ -96,11 +96,11 @@ namespace SistemaCreditosComplementarios.API.Controllers.AlumnoActividadControll
         /// <param name="dto">Datos actualizados de la inscripción.</param>
         /// <returns>Respuesta sin contenido si la actualización fue exitosa.</returns>
         [HttpPut("{alumnoId:int}/{actividadId:int}")]
-        public async Task<IActionResult> Update(int alumnoId, int actividadId, [FromBody] AlumnoActividadUpdate dto)
+        public async Task<IActionResult> Update(int alumnoId, int actividadId, [FromBody] EstadoAlumnoActividad estadoAlumnoActividad)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            await _alumnoActividadService.UpdateAsync(alumnoId, actividadId, dto);
+            await _alumnoActividadService.UpdateAsync(alumnoId, actividadId, estadoAlumnoActividad);
             return NoContent();
         }
 

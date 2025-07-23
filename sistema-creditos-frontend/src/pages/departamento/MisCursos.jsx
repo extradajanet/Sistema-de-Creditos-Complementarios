@@ -112,12 +112,7 @@ const acreditarAlumno = (alumnoId, actividadId) => {
   fetch(`https://localhost:7238/api/AlumnoActividad/${alumnoId}/${actividadId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      alumnoId,
-      actividadId,
-      estadoAlumnoActividad: 4,
-      fechaInscripcion: new Date().toISOString(),
-    }),
+    body: JSON.stringify( 4),
   })
     .then((res) => {
       if (!res.ok) throw new Error("Error al acreditar alumno");
@@ -135,12 +130,7 @@ const noAcreditarAlumno = (alumnoId, actividadId) => {
   fetch(`https://localhost:7238/api/AlumnoActividad/${alumnoId}/${actividadId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      alumnoId,
-      actividadId,
-      estadoAlumnoActividad: 5,
-      fechaInscripcion: new Date().toISOString(),
-    }),
+    body: JSON.stringify(5),
   })
     .then((res) => {
       if (!res.ok) throw new Error("Error al no acreditar alumno");
@@ -174,12 +164,9 @@ const acreditarTodos = () => {
     fetch(`https://localhost:7238/api/AlumnoActividad/${alumno.alumnoId}/${actividadSeleccionada.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        alumnoId: alumno.alumnoId,
-        actividadId: actividadSeleccionada.id,
-        estadoAlumnoActividad: 4,
-        fechaInscripcion: new Date().toISOString(),
-      }),
+      body: JSON.stringify(
+         4
+      ),
     })
   );
 
