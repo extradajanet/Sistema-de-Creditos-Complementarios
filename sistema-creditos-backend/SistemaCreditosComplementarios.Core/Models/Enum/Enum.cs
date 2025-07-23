@@ -40,4 +40,10 @@ namespace SistemaCreditosComplementarios.Core.Models.Enum
         Tutorias = 3, // Actividades tutorías
         MOOC = 4, // Cursos en línea (MOOC)
     }
+
+    public enum Genero
+    {
+        Masculino = 1,
+        Femenino = 2,
+    }
 }

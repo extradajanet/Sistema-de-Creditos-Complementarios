@@ -56,7 +56,8 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 Semestre = aa.Alumno.Semestre,
                 EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
                 CreditosObtenidos = aa.Actividad.Creditos,
-                FechaInscripcion = aa.FechaInscripcion
+                FechaInscripcion = aa.FechaInscripcion,
+                Genero = aa.Genero
             });
         }
 
@@ -82,7 +83,8 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 FechaInicio = aa.Actividad.FechaInicio,
                 FechaFin = aa.Actividad.FechaFin,
                 EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
-                ImagenNombre = aa.Actividad.ImagenNombre
+                ImagenNombre = aa.Actividad.ImagenNombre,
+                Genero = aa.Actividad.Genero
             });
         }
 

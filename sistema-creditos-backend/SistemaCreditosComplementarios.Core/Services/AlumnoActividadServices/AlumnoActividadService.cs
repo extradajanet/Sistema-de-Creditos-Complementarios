@@ -40,7 +40,8 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 ActividadNombre = aa.Actividad.Nombre,
                 EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
                 FechaRegistro = aa.FechaInscripcion,
-                CreditosObtenidos = aa.Actividad.Creditos
+                CreditosObtenidos = aa.Actividad.Creditos,
+                Genero = aa.Actividad.Genero
             });
         }
 
@@ -60,7 +61,8 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 ActividadNombre = alumnoActividad.Actividad.Nombre,
                 EstadoAlumnoActividad = alumnoActividad.EstadoAlumnoActividad,
                 FechaRegistro = alumnoActividad.FechaInscripcion,
-                CreditosObtenidos = alumnoActividad.Actividad.Creditos
+                CreditosObtenidos = alumnoActividad.Actividad.Creditos,
+                Genero = alumnoActividad.Actividad.Genero
             };
         }
 
@@ -131,7 +133,8 @@ namespace SistemaCreditosComplementarios.Core.Services.AlumnoActividadServices
                 ActividadNombre = actividad.Nombre,
                 EstadoAlumnoActividad = alumnoActividad.EstadoAlumnoActividad,
                 FechaRegistro = alumnoActividad.FechaInscripcion,
-                CreditosObtenidos = actividad.Creditos
+                CreditosObtenidos = actividad.Creditos,
+                Genero = actividad.Genero
             };
         }
 

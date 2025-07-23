@@ -86,6 +86,7 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
             actividad.EstadoActividad = actividadUpdate.EstadoActividad;
             actividad.ImagenNombre = actividadUpdate.ImagenNombre;
             actividad.DepartamentoId = actividadUpdate.DepartamentoId;
+            actividad.Genero = actividadUpdate.Genero;
 
             _context.Actividades.Update(actividad);
             await _context.SaveChangesAsync();

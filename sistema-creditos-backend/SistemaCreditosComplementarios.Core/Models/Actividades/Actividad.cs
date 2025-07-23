@@ -35,6 +35,7 @@ namespace SistemaCreditosComplementarios.Core.Models.ActividadModel
 
         public ICollection<AlumnoActividad> AlumnosActividades { get; set; }
         public ICollection<ActividadCarrera> ActividadesCarreras { get; set; } 
+        public Genero Genero { get; set; }
 
     }
 }

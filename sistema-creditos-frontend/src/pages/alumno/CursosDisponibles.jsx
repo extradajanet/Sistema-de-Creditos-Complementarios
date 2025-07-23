@@ -20,13 +20,11 @@ const imagenes = {
 
 
 const tipoActividad = {
-  1: "Deportivo",
-  2: "Cultural",
   3: "Tutorias",
   4: "Mooc",
 };
 
-const tipos = ["", "Deportivo", "Cultural", "Tutorias", "Mooc"];
+const tipos = ["", "Tutorias", "Mooc"];
 
 const dias = {
   1: "Lunes",
@@ -90,9 +88,34 @@ export default function ActividadesList() {
   }
 };
 
-useEffect(() => {
-  loadActividades();
-}, []);
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/Actividades", { headers: { Accept: "application/json" } })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error: " + res.status);
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) {
+          // filtrar las actividades tutorias o mooc..
+          const actividadesFiltradas = data.filter(
+            (actividad) => actividad.tipoActividad === 3 || actividad.tipoActividad === 4
+          );
+          setActividades(actividadesFiltradas);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          console.error("Fetch error:", err);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   //Obtain the total of students in the course
   useEffect(() => {
@@ -125,12 +148,27 @@ useEffect(() => {
     };
   }, [selectedActividad]);
 
-  const actividadesFiltradas = actividades.filter(
-    (actividad) =>
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0); // poner la hora en 00:00:00 para comparar solo la fecha
+
+  const actividadesFiltradas = actividades.filter((actividad) => {
+    const fechaInicio = new Date(actividad.fechaInicio);
+    const fechaFin = new Date(actividad.fechaFin);
+
+    // Limpiar horas para comparar solo fechas
+    fechaInicio.setHours(0, 0, 0, 0);
+    fechaFin.setHours(0, 0, 0, 0);
+
+    return (
       actividad.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
       (tipoSeleccionado === "" ||
-        tipoActividad[actividad.tipoActividad] === tipoSeleccionado)
-  );
+        tipoActividad[actividad.tipoActividad] === tipoSeleccionado) &&
+      (actividad.estadoActividad === 1 || actividad.estadoActividad === 2) &&
+      fechaInicio > hoy && // empieza después de hoy
+      fechaFin > hoy // no ha terminado ya
+    );
+  });
+
 
   return (
     <div className="flex flex-col gap-6 w-full h-screen">
@@ -256,7 +294,7 @@ useEffect(() => {
               show={showModal}
               onClose={() => setShowModal(false)}
               title={selectedActividad.nombre}
-              className="w-[700px] h-[350px] max-w-full border-4 bg-[#001F54] text-white"
+              className="w-[700px] max-w-full max-h-screen overflow-y-auto border-4 bg-[#001F54] text-white"
               closeButtonClassName="text-white"
             >
               <div className="text-center mb-4 text-[#BFBFBF] font-semibold">
@@ -285,16 +323,15 @@ useEffect(() => {
                     </p>
                     <p>
                       Carrera(s):
-                      <br />
-                      {selectedActividad.carreraNombres
-
-                        .map((carrera, index) => (
-                          <span key={index}>
-                            {carrera.trim()}
-                            <br />
-                          </span>
-                        ))}
                     </p>
+                    {/* Contenedor con scroll para las carreras */}
+                  <div className="max-h-[80px] overflow-y-auto pr-2 custom-scrollbar">
+                  {selectedActividad.carreraNombres.map((carrera, index) => (
+                    <span key={index} className="block">
+                      {carrera.trim()}
+                    </span>
+                  ))}
+                </div>
                   </div>
                   <div>
                     <p>
