@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import MiHistorial from "./pages/MiHistorial";
+import MiHistorial from "./pages/alumno/MiHistorial";
 import Perfil from "./pages/Perfil";
 import CursosDisponibles from "./pages/alumno/CursosDisponibles";
 import MisCursos from "./pages/departamento/MisCursos";

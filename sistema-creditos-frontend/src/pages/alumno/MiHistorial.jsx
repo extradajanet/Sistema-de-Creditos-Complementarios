@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CircleAlert, Search, SlidersHorizontal, ChevronDown, Check } from "lucide-react";
-import predeterminado from "../images/PredeterminadoCursos.png";
+import predeterminado from "../../images/PredeterminadoCursos.png";
 import { Listbox } from "@headlessui/react";
 
 const estados = {
@@ -141,8 +141,8 @@ export default function ActividadesList() {
       </div>
 
       {/* Lista de actividades */}
-      <div className="flex-1 overflow-x-auto p-8">
-       <div className="gap-9 flex flex-wrap justify-center">
+    <div className="flex-1 overflow-y-auto pr-2 mb-8">
+       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-9">
         {loading ? (
           <p className="text-center col-span-full mt-10 text-black-600">
             Cargando actividades...
@@ -196,7 +196,7 @@ export default function ActividadesList() {
             </div>
           ))
         )}
-      </div> 
+      </div>
       </div>
       
     </div>

@@ -243,7 +243,7 @@ export default function ActividadesList() {
 
       {/* Lista de actividades */}
       <div className="flex-1 overflow-y-auto pr-2 mb-8">
-        <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] ">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 ">
           {loading ? (
             <p className="text-center col-span-full mt-10 text-black-600">
               Cargando actividades...
