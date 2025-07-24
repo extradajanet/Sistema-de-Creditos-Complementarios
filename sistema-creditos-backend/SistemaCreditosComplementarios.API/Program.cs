@@ -37,6 +37,11 @@ using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenLocalhost(5000);
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -133,6 +138,7 @@ catch (Exception ex)
     // Manejo de excepciones al inicializar los datos de identidad
     Console.WriteLine($"Error al inicializar los datos de identidad: {ex.Message}");
 }
+
 
 if (app.Environment.IsDevelopment())
 {
