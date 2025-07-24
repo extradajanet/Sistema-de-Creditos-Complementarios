@@ -13,11 +13,11 @@ namespace SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoActi
     {
         Task<IEnumerable<AlumnoActividad>> GetAllAsync(); // obtiene todas las actividades de los alumnos
         Task<AlumnoActividad> GetByIdAsync(int alumnoId, int actividadId); // se obtiene la actividad la actvidad de un alumno por su id y el id de la actividad
-        Task<IEnumerable<AlumnoActividad>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado, EstadoActividad? estadoAct); // alumno ve sus cursos
-        Task<IEnumerable<AlumnoActividad>> GetAlumnosInscritosPorActividadAsync(int actividadId); // departamento ve lista de alumnos en un curso
+        Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado); // alumno ve sus cursos
+        Task<IEnumerable<AlumnoInscritoDto>> GetAlumnosInscritosPorActividadAsync(int actividadId); // departamento ve lista de alumnos en un curso
 
         Task AddAsync(AlumnoActividad alumnoActividad); // agrega una actividad a un alumno
-        Task UpdateAsync(int alumnoId, int actividadId, EstadoAlumnoActividad estadoAlumnoActividad);
+        Task UpdateAsync(int alumnoId, int actividadId, AlumnoActividad alumnoActividad);
         Task DeleteAsync(int alumnoId, int actividadId);
 
         Task<bool> AlumnoExisteAsync(int alumnoId);

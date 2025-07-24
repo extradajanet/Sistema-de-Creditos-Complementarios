@@ -39,32 +39,54 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
                 .FirstOrDefaultAsync(aa => aa.IdAlumno == alumnoId && aa.IdActividad == actividadId);
         }
 
-        public async Task<IEnumerable<AlumnoActividad>> GetAlumnosInscritosPorActividadAsync(int actividadId)
-{
-    return await _context.AlumnosActividades
-        .Include(aa => aa.Alumno)
-            .ThenInclude(al => al.Carrera)
-        .Include(aa => aa.Actividad)
-        .Where(aa => aa.IdActividad == actividadId)
-        .ToListAsync();
-}
+        public async Task<IEnumerable<AlumnoInscritoDto>> GetAlumnosInscritosPorActividadAsync(int actividadId)
+        {
+            var inscripciones = await _context.AlumnosActividades
+                .Include(aa => aa.Alumno)
+                    .ThenInclude(al => al.Carrera)
+                .Include(aa => aa.Actividad)
+                .Where(aa => aa.IdActividad == actividadId)
+                .ToListAsync();
 
+            return inscripciones.Select(aa => new AlumnoInscritoDto
+            {
+                AlumnoId = aa.IdAlumno,
+                NombreCompleto = aa.Alumno.Nombre + " " + aa.Alumno.Apellido,
+                CarreraNombre = aa.Alumno.Carrera.Nombre,
+                Semestre = aa.Alumno.Semestre,
+                EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
+                CreditosObtenidos = aa.Actividad.Creditos,
+                FechaInscripcion = aa.FechaInscripcion,
+                Genero = aa.Genero
+            });
+        }
 
-        public async Task<IEnumerable<AlumnoActividad>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado = null, EstadoActividad? estadoAct = null)
+        public async Task<IEnumerable<CursoAlumnoDto>> GetCursosPorAlumnoAsync(int alumnoId, EstadoAlumnoActividad? estado = null)
         {
             var query = _context.AlumnosActividades
                 .Include(aa => aa.Actividad)
                 .Where(aa => aa.IdAlumno == alumnoId);
 
-            if (estado.HasValue && estadoAct.HasValue)
+            if (estado.HasValue)
             {
                 query = query.Where(aa => aa.EstadoAlumnoActividad == estado.Value);
-                query = query.Where(aa => aa.Actividad.EstadoActividad == estadoAct.Value);
             }
 
-            return await query.ToListAsync();
-        }
+            var cursos = await query.ToListAsync();
 
+            return cursos.Select(aa => new CursoAlumnoDto
+            {
+                ActividadId = aa.IdActividad,
+                Nombre = aa.Actividad.Nombre,
+                Descripcion = aa.Actividad.Descripcion,
+                Creditos = aa.Actividad.Creditos,
+                FechaInicio = aa.Actividad.FechaInicio,
+                FechaFin = aa.Actividad.FechaFin,
+                EstadoAlumnoActividad = aa.EstadoAlumnoActividad,
+                ImagenNombre = aa.Actividad.ImagenNombre,
+                Genero = aa.Actividad.Genero
+            });
+        }
 
         public async Task<bool> AlumnoExisteAsync(int alumnoId)
         {
@@ -83,12 +105,13 @@ namespace SistemaCreditosComplementarios.Infraestructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(int alumnoId, int actividadId, EstadoAlumnoActividad estadoAlumnoActividad)
+        public async Task UpdateAsync(int alumnoId, int actividadId, AlumnoActividad alumnoActividad)
         {
             var existing = await GetByIdAsync(alumnoId, actividadId);
             if (existing == null) throw new KeyNotFoundException("Inscripción no encontrada.");
 
-            existing.EstadoAlumnoActividad = estadoAlumnoActividad;
+            existing.EstadoAlumnoActividad = alumnoActividad.EstadoAlumnoActividad;
+            existing.FechaInscripcion = alumnoActividad.FechaInscripcion;
 
             _context.AlumnosActividades.Update(existing);
             await _context.SaveChangesAsync();

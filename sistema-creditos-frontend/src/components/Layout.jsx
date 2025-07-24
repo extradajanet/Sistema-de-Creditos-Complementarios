@@ -2,14 +2,29 @@
 import { Link, Outlet } from "react-router-dom";
 import { Home, GraduationCap, User, LogOut } from "lucide-react";
 import logo from "../images/logo2.png";
+import { useEffect, useState } from "react";
 
 export default function Layout() {
+  const [historialPath, setHistorialPath] = useState("/historial");
+  const [rol, setRol] = useState("");
+
+  useEffect(() => {
+    const storedRol = localStorage.getItem("rol");
+    setRol(storedRol);
+
+    if (storedRol === "Departamento") {
+      setHistorialPath("/historialdepartamento");
+    } else if (storedRol === "Coordinador") {
+      setHistorialPath("/historial-coordinador");
+    } else {
+      setHistorialPath("/historial"); // Alumno por default
+    }
+  }, []);
+
   return (
-    <div className="flex h-screen w-screen overflow-hidden">
+    <div className="flex h-screen h-full overflow-hidden">
       {/* Sidebar */}
-      <aside
-        className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300  flex flex-col items-center py-5 m-4 rounded-2xl"
-      >
+      <aside className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300  flex flex-col items-center py-5 m-4 rounded-2xl">
         {/* Logo */}
         <div className="bg-white p-4 rounded-full mb-20">
           <img
@@ -23,15 +38,18 @@ export default function Layout() {
         <nav className="flex flex-col w-full px-2 gap-4 flex-grow">
           <div className="flex flex-col gap-4 items-center">
             <SidebarLink
-              to="/home"
+              to="/"
               icon={<Home strokeWidth={0.5} className="w-6 h-6" />}
               label="Inicio"
             />
-            <SidebarLink
-              to="/historial"
-              icon={<GraduationCap strokeWidth={0.5} className="w-6 h-6" />}
-              label="Mi historial"
-            />
+            {(rol === "Departamento" || rol === "Alumno") && (
+              <SidebarLink
+                to={historialPath}
+                icon={<GraduationCap strokeWidth={0.5} className="w-6 h-6" />}
+                label="Mi historial"
+              />
+            )}
+
             <SidebarLink
               to="/perfil"
               icon={<User strokeWidth={0.5} className="w-6 h-6" />}
@@ -45,7 +63,8 @@ export default function Layout() {
                 localStorage.clear();
                 window.location.href = "/login";
               }}
-              className="flex items-center w-full px-4 py-2 text-left cursor-pointer rounded hover:bg-[#1282A2]">
+              className="flex items-center w-full px-4 py-2 text-left cursor-pointer"
+            >
               <LogOut strokeWidth={0.5} className="w-6 h-6 mr-2" />
               <span>Cerrar</span>
             </button>

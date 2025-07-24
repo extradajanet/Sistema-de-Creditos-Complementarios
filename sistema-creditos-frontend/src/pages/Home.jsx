@@ -139,7 +139,7 @@ export default function Home() {
   const tarjetas = cardsByRole[userRole] || cardsByRole["Alumno"];
 
   return (
-    <div className="flex flex-col h-screen gap-6 w-full">
+    <div className="flex flex-col gap-6 w-full">
       {/* Bienvenida */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
         {userRole === 'Alumno' && (
@@ -154,7 +154,7 @@ export default function Home() {
 
         {userRole === 'Departamento' && (
           <>
-            <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido, Departamento de {infoDepartamento.nombre || ""}!</h1>
+            <h1 className="custom-welcome  ml-4 font-bold text-[#0A1128]">¡Bienvenido, departamento de {infoDepartamento.nombre || ""}!</h1>
           </>
         )}
 
@@ -166,12 +166,11 @@ export default function Home() {
       </div>
 
       {/* Tarjetas dinámicas por rol */}
-      <div className="flex-1 overflow-y-auto p-8">
-        <div className="p-8 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-8">
+      <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
         {tarjetas.map((card, index) => (
           <div
             key={index}
-            className="bg-[#001F54] text-white rounded-xl flex flex-col items-center justify-center p-6 hover:scale-105 transition w-full"
+            className="bg-[#001F54] text-white rounded-xl flex flex-col items-center justify-center p-6 hover:scale-105 transition w-80"
           >
             <Link
               to={card.link}
@@ -184,7 +183,6 @@ export default function Home() {
             </Link>
           </div>
         ))}
-      </div>
       </div>
     </div>
   );
