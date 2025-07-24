@@ -33,6 +33,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/historial" element={<MiHistorial />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/cursosdisponibles" element={<CursosDisponibles />} />
