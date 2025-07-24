@@ -59,6 +59,8 @@ namespace SistemaCreditosComplementarios.Core.Dtos.Actividad
         public DateTime? FechaFin { get; set; }
         public decimal? Creditos { get; set; }
         public int? Capacidad { get; set; }
+        public EstadoActividad? EstadoActividad { get; set; }
+
         public List<int>? CarreraIds { get; set; }
     }
 

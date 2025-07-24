@@ -228,23 +228,10 @@ export default function EditProfile() {
               <h3 className="font-bold text-[30px] text-[#001F54]">
                 Número de control
               </h3>
-              {editMode ? (
-                <input
-                  value={editedInfo.numeroControl || ""}
-                  onChange={(e) =>
-                    setEditedInfo({
-                      ...editedInfo,
-                      numeroControl: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-[#001F54] rounded-lg"
-                  placeholder="Número de control"
-                />
-              ) : (
                 <h3 className="font-bold text-[30px] text-[#3F3F3F]">
                   {info.numeroControl}
                 </h3>
-              )}
+              
 
               <h3 className="font-bold text-[30px] text-[#001F54]">Carrera</h3>
               {editMode ? (
@@ -305,7 +292,7 @@ export default function EditProfile() {
           <h3 className="font-bold text-[30px] text-[#001F54]">Contraseña</h3>
           {editMode ? (
             <>
-              <div className="flex justify-between w-full">
+              <div className="grid grid-cols sm: col-2 md: col-1 xl: col-1 justify-between w-full ">
                 <input
                   value={editedInfo.currentPassword || ""}
                   onChange={(e) =>
@@ -314,7 +301,7 @@ export default function EditProfile() {
                       currentPassword: e.target.value,
                     })
                   }
-                  className="w-[250px] px-4 py-2 border border-[#001F54] rounded-lg"
+                  className="w-[250px] px-4 py-2 mb-2 border border-[#001F54] rounded-lg"
                   type="password"
                   placeholder="Contraseña actual"
                 />
@@ -336,18 +323,8 @@ export default function EditProfile() {
             <h3 className="font-bold text-[30px] text-[#3F3F3F]">*****</h3>
           )}
         </div>
-      </div>
-
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
-
-      {editMode ? (
-        <div className="flex gap-4 mt-4">
+        {editMode ? (
+        <div className="flex gap-4 mt-6 p-4">
           <button
             onClick={handleSave}
             className="bg-[#001F54] text-white px-6 py-4 rounded-lg text-lg font-bold cursor-pointer"
@@ -364,6 +341,15 @@ export default function EditProfile() {
         </div>
       ) : (
         <div />
+      )}
+      </div>
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

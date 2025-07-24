@@ -206,6 +206,8 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
 
             if (dto.Capacidad.HasValue)
                 actividad.Capacidad = dto.Capacidad.Value;
+            if (dto.EstadoActividad.HasValue)
+                actividad.EstadoActividad = dto.EstadoActividad.Value;
 
             if (dto.CarreraIds != null && dto.CarreraIds.Any())
             {
