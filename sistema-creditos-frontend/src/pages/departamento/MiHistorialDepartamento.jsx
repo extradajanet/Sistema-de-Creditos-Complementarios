@@ -94,9 +94,6 @@ export default function ActividadesList() {
   const [capacidadEdit, setCapacidadEdit] = useState(0);
   const [fechaInicioEdit, setFechaInicioEdit] = useState("");
   const [fechaFinEdit, setFechaFinEdit] = useState("");
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
-  const [tipoExtraescolarSeleccionado, setTipoExtraescolarSeleccionado] = useState("");
-  const [generoFiltro, setGeneroFiltro] = useState("");
   //const actividadId = localStorage.getItem("actividadId");
 
   const todasLasCarreras = [
@@ -225,8 +222,6 @@ export default function ActividadesList() {
       (tipoSeleccionado === "" ||
         actividad.tipoActividad === obtenerTipoIdPorNombre(tipoSeleccionado))
   );
-};
-
 
   const AlumnosBusqueda = alumnos.filter((alumno) =>
     alumno.nombreCompleto?.toLowerCase().includes(busquedaAlumno.toLowerCase())
@@ -263,19 +258,19 @@ export default function ActividadesList() {
           </button>
 
           {mostrarFiltro && (
-            <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl shadow-lg z-10 p-2 w-48 space-y-3">
-              {/* Filtro Categoría */}
-              <Listbox value={categoriaSeleccionada} onChange={setCategoriaSeleccionada}>
+            <div className="absolute right-0 mt-2 bg-white border border-blue-950 rounded-xl shadow-lg z-10 p-2 w-48">
+              {/* Aquí reemplazamos el select por Listbox */}
+              <Listbox value={tipoSeleccionado} onChange={setTipoSeleccionado}>
                 <div className="relative">
                   <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none">
                     <span>{tipoSeleccionado || "Todos los tipos"}</span>
                     <ChevronDown className="w-5 h-5 text-gray-500" />
                   </Listbox.Button>
                   <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg z-10 max-h-48 overflow-auto">
-                    {categorias.map((cat, index) => (
+                    {tipos.map((tipo, index) => (
                       <Listbox.Option
                         key={index}
-                        value={cat}
+                        value={tipo}
                         className={({ active }) =>
                           `cursor-pointer select-none px-4 py-2 text-sm ${
                             active
@@ -297,75 +292,8 @@ export default function ActividadesList() {
                   </Listbox.Options>
                 </div>
               </Listbox>
-
-              {/* Si la categoría es Extraescolar, muestra estos filtros adicionales */}
-              {categoriaSeleccionada === "Extraescolar" && (
-                <>
-                  <Listbox
-                    value={tipoExtraescolarSeleccionado}
-                    onChange={setTipoExtraescolarSeleccionado}
-                  >
-                    <div className="relative">
-                      <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none border rounded">
-                        <span>{tipoExtraescolarSeleccionado || "Todos los tipos"}</span>
-                        <ChevronDown className="w-5 h-5 text-gray-500" />
-                      </Listbox.Button>
-                      <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg z-10 max-h-48 overflow-auto">
-                        {tiposExtraescolar.map((tipo, index) => (
-                          <Listbox.Option
-                            key={index}
-                            value={tipo}
-                            className={({ active }) =>
-                              `cursor-pointer select-none px-4 py-2 text-sm ${
-                                active ? "bg-blue-100 text-blue-900" : "text-gray-700"
-                              }`
-                            }
-                          >
-                            {({ selected }) => (
-                              <div className="flex justify-between items-center">
-                                <span>{tipo || "Todos los tipos"}</span>
-                                {selected && <Check className="w-4 h-4 text-blue-950" />}
-                              </div>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </div>
-                  </Listbox>
-
-                  <Listbox value={generoFiltro} onChange={setGeneroFiltro}>
-                    <div className="relative">
-                      <Listbox.Button className="w-full flex justify-between items-center bg-white py-2 px-3 text-sm text-gray-800 focus:outline-none border rounded">
-                        <span>{generoOpciones[generoFiltro]}</span>
-                        <ChevronDown className="w-5 h-5 text-gray-500" />
-                      </Listbox.Button>
-                      <Listbox.Options className="absolute mt-1 w-full rounded-lg bg-white border border-blue-950 shadow-lg z-10 max-h-48 overflow-auto">
-                        {Object.entries(generoOpciones).map(([key, label]) => (
-                          <Listbox.Option
-                            key={key}
-                            value={key}
-                            className={({ active }) =>
-                              `cursor-pointer select-none px-4 py-2 text-sm ${
-                                active ? "bg-blue-100 text-blue-900" : "text-gray-700"
-                              }`
-                            }
-                          >
-                            {({ selected }) => (
-                              <div className="flex justify-between items-center">
-                                <span>{label}</span>
-                                {selected && <Check className="w-4 h-4 text-blue-950" />}
-                              </div>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </div>
-                  </Listbox>
-                </>
-              )}
             </div>
           )}
-
         </div>
       </div>
 
@@ -492,4 +420,4 @@ export default function ActividadesList() {
       </div>
     </div>
   );
-
+}
