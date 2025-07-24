@@ -108,7 +108,7 @@ export default function VerCursos() {
     }))
 
     return (
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-6 w-full h-screen">
             {/* Título */}
             <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
                 <h1 className="text-3xl font-bold  text-gray-900 custom-heading">
@@ -131,7 +131,7 @@ export default function VerCursos() {
 
                 <div className="relative">
                     <button
-                        className="ml-4 bg-white border-2 border-blue-950 rounded-2xl px-2 py-2 text-base font-semibold hover:bg-blue-800 transition"
+                        className="ml-4 bg-white border-2 border-blue-950 rounded-2xl px-2 py-2 text-base font-semibold hover:bg-[#001F54] transition"
                         onClick={() => setMostrarFiltro(!mostrarFiltro)}
                     >
                         <SlidersHorizontal strokeWidth={1} />
@@ -171,25 +171,25 @@ export default function VerCursos() {
                 </div>
             </div>
             {/* Lista de actividades */}
-            <div className="flex flex-col gap-4">
+            <div className="flex-1 overflow-y-auto pr-2 mb-8">
                 {loading ? (
                     <p className="text-center mt-10 text-black-600">Cargando actividades...</p>
                 ) : cursos.length === 0 ? (
                     <p className="text-center mt-10 text-black-600">No hay cursos disponibles</p>
                 ) : (
-                    <div className="flex justify-center overflow-y-auto max-h-[520px] px-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 w-full max-w-6xl">
+                    <div className="flex justify-center overflow-y-auto flex-1 px-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg: grid-cols-2 gap-x-6 gap-y-4 w-full max-w-6xl">
                             {actividadesFiltradas.map((curso) => (
                                 <div
                                     key={curso.id}
-                                    className="bg-blue-950 rounded-2xl shadow-md border-6 border-blue-950 h-28 flex items-center px-4 w-full"
+                                    className="bg-blue-950 rounded-2xl shadow-md border-6 border-blue-950 p-4 w-full flex flex-col sm:flex-row items-center gap-4"
                                 >
                                     <img
                                         src={obtenerImagen(curso.imagenNombre)}
                                         alt={curso.nombre}
                                         className="rounded-md object-cover h-20 w-20 mr-4"
                                     />
-                                    <div className="flex-1 flex flex-col justify-center items-left text-white">
+                                    <div className="flex-1 flex flex-col justify-center sm:items-start items-center text-white text-center sm:text-left">
                                         <h3 className="text-xl font-semibold mb-1">{curso.nombre}</h3>
                                         <p className="text-xs mb-1 text-[#9A9A9A]">
                                             <strong>Fecha de inicio: </strong>

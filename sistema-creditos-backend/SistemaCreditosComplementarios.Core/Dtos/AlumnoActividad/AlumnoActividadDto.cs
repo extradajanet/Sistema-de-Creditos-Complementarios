@@ -60,6 +60,7 @@ namespace SistemaCreditosComplementarios.Core.Dtos.AlumnoActividad
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
         public EstadoAlumnoActividad EstadoAlumnoActividad { get; set; }
+        public EstadoActividad EstadoActividad { get; set; }
         public Genero Genero { get; set; }
     }
 

@@ -4,7 +4,7 @@ import Modal from "../../components/Modal";
 import { Listbox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify'
+import { toast } from "react-toastify";
 
 import imagen1 from "../../images/imagen1.png";
 import imagen2 from "../../images/imagen2.png";
@@ -51,7 +51,7 @@ export default function ActividadesList() {
     { id: 11, nombre: "Ingeniería Electromecánica" },
     { id: 12, nombre: "Ingeniería en Gestión Empresarial" },
     { id: 13, nombre: "Ingeniería en Desarrollo de Aplicaciones" },
-    { id: 14, nombre: "Todas las carreras" }
+    { id: 14, nombre: "Todas las carreras" },
   ];
 
   const imagenesPredeterminadas = [
@@ -69,29 +69,41 @@ export default function ActividadesList() {
     "img3E.jpg": img3E,
     "img4E.jpg": img4E,
     "img5E.jpg": img5E,
-  }
-  
+  };
 
   function obtenerTipoActividad(nombre) {
     switch (nombre) {
-      case "Deportiva": return 1;
-      case "Cultural": return 2;
-      case "Tutorias": return 3;
-      case "MOOC": return 4;
-      default: return 0;
+      case "Deportiva":
+        return 1;
+      case "Cultural":
+        return 2;
+      case "Tutorias":
+        return 3;
+      case "MOOC":
+        return 4;
+      default:
+        return 0;
     }
   }
 
   function obtenerNumeroDia(dia) {
     switch (dia) {
-      case "Lunes": return 1;
-      case "Martes": return 2;
-      case "Miércoles": return 3;
-      case "Jueves": return 4;
-      case "Viernes": return 5;
-      case "Sábado": return 6;
-      case "Domingo": return 7;
-      default: return 0;
+      case "Lunes":
+        return 1;
+      case "Martes":
+        return 2;
+      case "Miércoles":
+        return 3;
+      case "Jueves":
+        return 4;
+      case "Viernes":
+        return 5;
+      case "Sábado":
+        return 6;
+      case "Domingo":
+        return 7;
+      default:
+        return 0;
     }
   }
 
@@ -123,12 +135,12 @@ export default function ActividadesList() {
     }
   }, [tipoSeleccionado]);
 
-
-
   const handleSubmit = async () => {
     //validar que el nombre y la descripción no esté vacías.
     if (!nombre.trim()) {
-      toast.error("Por favor completa el nombre y la descripción de la actividad.");
+      toast.error(
+        "Por favor completa el nombre y la descripción de la actividad."
+      );
       return;
     }
 
@@ -136,7 +148,7 @@ export default function ActividadesList() {
       toast.error("Por favor selecciona las fechas de inicio y fin.");
       return;
     }
-    
+
     function parseDateToNumber(fecha) {
       // fecha = "YYYY-MM-DD"
       const [year, month, day] = fecha.split("-").map(Number);
@@ -147,10 +159,11 @@ export default function ActividadesList() {
     const finNum = parseDateToNumber(fechaFin);
 
     if (finNum < inicioNum) {
-      toast.error("La fecha de fin no puede ser anterior a la fecha de inicio.");
+      toast.error(
+        "La fecha de fin no puede ser anterior a la fecha de inicio."
+      );
       return;
     }
-
 
     if (!horaInicio || !horaFin) {
       toast.error("Por favor selecciona las horas de inicio y fin.");
@@ -158,12 +171,12 @@ export default function ActividadesList() {
     }
 
     // validar que la hora de inicio sea antes de la hora de fin
-    const hi = new Date(`1970-01-01T${horaInicio}:00Z`)
-    const hf = new Date(`1970-01-01T${horaFin}:00Z`)
+    const hi = new Date(`1970-01-01T${horaInicio}:00Z`);
+    const hf = new Date(`1970-01-01T${horaFin}:00Z`);
 
     if (hf <= hi) {
-      toast.error("La hora de fin debe ser posterior a la hora de inicio.")
-      return
+      toast.error("La hora de fin debe ser posterior a la hora de inicio.");
+      return;
     }
 
     if (tipoSeleccionado === "Extraescolar" && !generoSeleccionado) {
@@ -173,7 +186,9 @@ export default function ActividadesList() {
 
     //que la capacidad no sea mayor a 30
     if (capacidad < 10 || capacidad > 30) {
-      toast.error("La capacidad debe tener un mínimo de 10 estudiantes y un máximo de 30.");
+      toast.error(
+        "La capacidad debe tener un mínimo de 10 estudiantes y un máximo de 30."
+      );
       return;
     }
 
@@ -219,11 +234,11 @@ export default function ActividadesList() {
       } else {
         const error = await response.text();
         console.error("Error al crear actividad:", error);
-        toast.error("Error al crear actividad")
+        toast.error("Error al crear actividad");
       }
     } catch (err) {
       console.error("Excepción al hacer POST:", err);
-      toast.error("Error de red o servidor")
+      toast.error("Error de red o servidor");
     }
   };
 
@@ -231,13 +246,18 @@ export default function ActividadesList() {
   const imagenesAMostrar =
     // Muestra las extraescolares SOLO si elegiste Extraescolar o Cultural dentro de Extraescolar
     tipoSeleccionado === "Extraescolar" || subTipoExtraescolar === "Cultural"
-      ? Object.entries(imagenesExtraescolar).map(([nombre, src]) => ({ nombre, src }))
+      ? Object.entries(imagenesExtraescolar).map(([nombre, src]) => ({
+          nombre,
+          src,
+        }))
       : imagenesPredeterminadas;
   return (
     <>
       <div className="flex flex-col gap-6 w-full">
         <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
-          <h1 className="text-3xl font-bold text-gray-900 custom-heading">Crear Actividad</h1>
+          <h1 className="text-3xl font-bold text-gray-900 custom-heading">
+            Crear Actividad
+          </h1>
         </div>
 
         <div className="flex justify-center">
@@ -246,7 +266,11 @@ export default function ActividadesList() {
               <p>Selecciona una imagen</p>
               <div className="bg-gray-200 rounded-xl p-6 border border-blue-950 h-108 w-115 flex flex-col items-center">
                 <img
-                  src={imagenesAMostrar.find((img) => img.nombre === imagenSeleccionada)?.src}
+                  src={
+                    imagenesAMostrar.find(
+                      (img) => img.nombre === imagenSeleccionada
+                    )?.src
+                  }
                   alt="Imagen seleccionada"
                   className="w-auto h-auto object-cover mb-6 border-4 border-blue-700 rounded-lg shadow-md"
                 />
@@ -313,7 +337,13 @@ export default function ActividadesList() {
                               {carreraIds.length === 0
                                 ? "Selecciona carrera(s)"
                                 : carreraIds
-                                    .map((id) => `- ${carreras.find((c) => c.id === id)?.nombre}`)
+                                    .map(
+                                      (id) =>
+                                        `- ${
+                                          carreras.find((c) => c.id === id)
+                                            ?.nombre
+                                        }`
+                                    )
                                     .filter(Boolean)
                                     .join("\n")}
                             </div>
@@ -328,14 +358,18 @@ export default function ActividadesList() {
                                   value={carrera.id}
                                   className={({ active }) =>
                                     `cursor-pointer select-none px-4 py-2 text-sm ${
-                                      active ? "bg-blue-100 text-blue-900" : "text-gray-700"
+                                      active
+                                        ? "bg-blue-100 text-blue-900"
+                                        : "text-gray-700"
                                     }`
                                   }
                                 >
                                   {({ selected }) => (
                                     <div className="flex justify-between items-center">
                                       <span>{carrera.nombre}</span>
-                                      {selected && <Check className="w-4 h-4 text-blue-600" />}
+                                      {selected && (
+                                        <Check className="w-4 h-4 text-blue-600" />
+                                      )}
                                     </div>
                                   )}
                                 </Listbox.Option>
@@ -352,7 +386,13 @@ export default function ActividadesList() {
                     <div className="row">
                       <p>Día:</p>
                       <div className="flex flex-col gap-1.5 text-sm text-gray-700 mt-1">
-                        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((dia) => (
+                        {[
+                          "Lunes",
+                          "Martes",
+                          "Miércoles",
+                          "Jueves",
+                          "Viernes",
+                        ].map((dia) => (
                           <label key={dia} className="flex items-center gap-1">
                             <input
                               type="radio"
@@ -406,7 +446,7 @@ export default function ActividadesList() {
                         />
                       </div>
 
-                     <div className="mt-2 relative">
+                      <div className="mt-2 relative">
                         <label>Tipo de Actividad</label>
                         <div className="flex flex-row gap-2">
                           {["Extraescolar", "Tutorias", "MOOC"].map((tipo) => (
@@ -438,7 +478,9 @@ export default function ActividadesList() {
                                       ? "bg-blue-950 text-white"
                                       : "bg-white text-blue-950 hover:bg-blue-100"
                                   }`}
-                                  onClick={() => setSubTipoExtraescolar(subtipo)}
+                                  onClick={() =>
+                                    setSubTipoExtraescolar(subtipo)
+                                  }
                                 >
                                   {subtipo}
                                 </button>
@@ -449,15 +491,23 @@ export default function ActividadesList() {
                             <div className="absolute top-[6.5rem] left-0">
                               <label>Género:</label>
                               <div className="flex gap-4 text-gray-700 mt-1">
-                                {[{ id: 1, nombre: "Masculino" }, { id: 2, nombre: "Femenino" }].map((g) => (
-                                  <label key={g.id} className="flex items-center gap-1">
+                                {[
+                                  { id: 1, nombre: "Masculino" },
+                                  { id: 2, nombre: "Femenino" },
+                                ].map((g) => (
+                                  <label
+                                    key={g.id}
+                                    className="flex items-center gap-1"
+                                  >
                                     <input
                                       type="radio"
                                       name="genero"
                                       value={g.id}
                                       className="accent-blue-950"
                                       checked={generoSeleccionado === g.id}
-                                      onChange={() => setGeneroSeleccionado(g.id)}
+                                      onChange={() =>
+                                        setGeneroSeleccionado(g.id)
+                                      }
                                     />
                                     {g.nombre}
                                   </label>
@@ -467,7 +517,6 @@ export default function ActividadesList() {
                           </>
                         )}
                       </div>
-
                     </div>
 
                     <div className="row">
@@ -496,13 +545,13 @@ export default function ActividadesList() {
                         onChange={(e) => setCapacidad(Number(e.target.value))}
                         min={0}
                       />
-                  <button
-                    onClick={handleSubmit}
-                    className="bg-blue-950 text-white px-6 py-2 rounded ms-6 mt-25 hover:bg-blue-800 transition"
-                    type="button"
-                  >
-                    Crear actividad
-                  </button>
+                      <button
+                        onClick={handleSubmit}
+                        className="bg-blue-950 text-white px-6 py-2 rounded ms-6 mt-25 hover:bg-blue-800 transition"
+                        type="button"
+                      >
+                        Crear actividad
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -511,40 +560,37 @@ export default function ActividadesList() {
           </div>
         </div>
 
-        
-
         <Modal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        title="¡La actividad ha sido creada con éxito!"
-        className="bg-blue-950 text-white w-150 p-4"
-        closeButtonClassName="text-white hover:text-gray-900"
-      >
-        <div className="mb-4 text-center whitespace-pre-line">
-          <h1 className="text-2xl">¿Deseas crear otra actividad?</h1>
-        </div>
-        <div className="flex justify-center gap-6">
-          <button
-            onClick={() => {
-              limpiarFormulario();
-              setShowModal(false);
-            }}
-                    className="bottom-4 cursor-pointer right-4 p-2 bg-[#D9D9D9] w-[50px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]"
-          >
-            Sí
-          </button>
-          <button
-            onClick={() => {
-              setShowModal(false);
-              navigate("/");
-            }}
-            className="bottom-4 cursor-pointer right-4 p-2 bg-[#D9D9D9] w-[50px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]"
-          >
-            No
-          </button>
-
-        </div>
-      </Modal>
+          show={showModal}
+          onClose={() => setShowModal(false)}
+          title="¡La actividad ha sido creada con éxito!"
+          className="bg-blue-950 text-white w-150 p-4"
+          closeButtonClassName="text-white hover:text-gray-900"
+        >
+          <div className="mb-4 text-center whitespace-pre-line">
+            <h1 className="text-2xl">¿Deseas crear otra actividad?</h1>
+          </div>
+          <div className="flex justify-center gap-6">
+            <button
+              onClick={() => {
+                limpiarFormulario();
+                setShowModal(false);
+              }}
+              className="bottom-4 cursor-pointer right-4 p-2 bg-[#D9D9D9] w-[50px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]"
+            >
+              Sí
+            </button>
+            <button
+              onClick={() => {
+                setShowModal(false);
+                navigate("/home");
+              }}
+              className="bottom-4 cursor-pointer right-4 p-2 bg-[#D9D9D9] w-[50px] rounded-md text-center custom-mdtext font-bold text-[#0A1128]"
+            >
+              No
+            </button>
+          </div>
+        </Modal>
       </div>
     </>
   );

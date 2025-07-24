@@ -171,7 +171,7 @@ export default function ActividadesList() {
 
 
   return (
-    <div className="flex flex-col gap-6 w-full h-screen">
+    <div className="flex flex-col gap-6 w-full h-full">
       {/* Título */}
       <div className="flex justify-between items-center bg-gray-200 rounded-xl p-6">
         <h1 className="text-3xl font-bold  text-gray-900 custom-heading">
@@ -198,7 +198,7 @@ export default function ActividadesList() {
         {/* Botón filtro */}
         <div className="relative">
           <button
-            className="ml-4 bg-white border-2 border-blue-950 rounded-2xl px-2 py-2 text-base font-semibold hover:bg-blue-800 transition"
+            className="ml-4 bg-white border-2 border-blue-950 rounded-2xl px-2 py-2 text-base font-semibold hover:bg-[#001F54] transition"
             onClick={() => setMostrarFiltro(!mostrarFiltro)}
           >
             <SlidersHorizontal strokeWidth={1} />
@@ -243,7 +243,7 @@ export default function ActividadesList() {
 
       {/* Lista de actividades */}
       <div className="flex-1 overflow-y-auto pr-2 mb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-9 ">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 ">
           {loading ? (
             <p className="text-center col-span-full mt-10 text-black-600">
               Cargando actividades...

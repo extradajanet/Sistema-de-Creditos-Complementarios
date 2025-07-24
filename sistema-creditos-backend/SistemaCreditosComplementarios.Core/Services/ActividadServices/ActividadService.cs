@@ -12,6 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SistemaCreditosComplementarios.Core.Interfaces.IRepository.ICoordinadorRepository;
+using SistemaCreditosComplementarios.Core.Interfaces.IRepository.IAlumnoRepository;
+using SistemaCreditosComplementarios.Core.Models.Enum;
 
 namespace SistemaCreditosComplementarios.Core.Services.ActividadService
 {
@@ -20,12 +22,15 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
     {
         private readonly IActividadRepository _actividadRepository;
         private readonly ICarreraRepository _carreraRepository;
-        
-        public ActividadService(IActividadRepository actividadRepository, ICarreraRepository carreraRepository)
+        private readonly IAlumnoActividadRepository _alumnoActividadRepository;
+        private readonly IAlumnoRepository _alumnoRepository;
+
+        public ActividadService(IActividadRepository actividadRepository, ICarreraRepository carreraRepository, IAlumnoActividadRepository alumnoActividadRepository, IAlumnoRepository alumno)
         {
             _actividadRepository = actividadRepository;
             _carreraRepository = carreraRepository;
- 
+            _alumnoActividadRepository = alumnoActividadRepository;
+            _alumnoRepository = alumno;
         }
 
         // obtiene todas las actividades
@@ -201,6 +206,8 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
 
             if (dto.Capacidad.HasValue)
                 actividad.Capacidad = dto.Capacidad.Value;
+            if (dto.EstadoActividad.HasValue)
+                actividad.EstadoActividad = dto.EstadoActividad.Value;
 
             if (dto.CarreraIds != null && dto.CarreraIds.Any())
             {
@@ -218,6 +225,31 @@ namespace SistemaCreditosComplementarios.Core.Services.ActividadService
             }
 
             var updatedActividad = await _actividadRepository.UpdateAsync(id, actividad);
+
+            // Mapea estado actividad → estado alumnoActividad
+            EstadoAlumnoActividad MapearEstado(EstadoActividad estadoActividad) => estadoActividad switch
+            {
+                EstadoActividad.Activo => EstadoAlumnoActividad.Inscrito,
+                EstadoActividad.EnProgreso => EstadoAlumnoActividad.EnCurso,
+                EstadoActividad.Finalizado => EstadoAlumnoActividad.Completado,
+                _ => EstadoAlumnoActividad.Inscrito
+            };
+
+            var nuevoEstadoAlumno = MapearEstado(actividad.EstadoActividad);
+
+            // Actualiza estado de todos los alumnos inscritos
+            var alumnosActividad = await _alumnoActividadRepository.GetAlumnosInscritosPorActividadAsync(actividad.Id);
+            foreach (var alumnoActividad in alumnosActividad)
+            {
+                var estadoAnterior = alumnoActividad.EstadoAlumnoActividad;
+
+                if (estadoAnterior != nuevoEstadoAlumno)
+                {
+                    // Log o auditoría, si aplica
+                    await _alumnoActividadRepository.UpdateAsync(alumnoActividad.IdAlumno, actividad.Id, nuevoEstadoAlumno);
+                }
+            }
+
 
             return new ActividadDto
             {

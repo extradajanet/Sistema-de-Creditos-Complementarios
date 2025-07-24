@@ -22,7 +22,7 @@ export default function Layout() {
   }, []);
 
   return (
-    <div className="flex h-screen h-full overflow-hidden">
+    <div className="flex h-screen w-screen overflow-hidden">
       {/* Sidebar */}
       <aside className="bg-[#001F54] text-white w-20 md:w-56 transition-all duration-300  flex flex-col items-center py-5 m-4 rounded-2xl">
         {/* Logo */}
@@ -38,7 +38,7 @@ export default function Layout() {
         <nav className="flex flex-col w-full px-2 gap-4 flex-grow">
           <div className="flex flex-col gap-4 items-center">
             <SidebarLink
-              to="/"
+              to="/home"
               icon={<Home strokeWidth={0.5} className="w-6 h-6" />}
               label="Inicio"
             />
@@ -63,8 +63,7 @@ export default function Layout() {
                 localStorage.clear();
                 window.location.href = "/login";
               }}
-              className="flex items-center w-full px-4 py-2 text-left cursor-pointer"
-            >
+              className="flex items-center w-full px-4 py-2 text-left cursor-pointer rounded hover:bg-[#1282A2]">
               <LogOut strokeWidth={0.5} className="w-6 h-6 mr-2" />
               <span>Cerrar</span>
             </button>

@@ -121,7 +121,7 @@ export default function VerAlumnos() {
                 {/* Botón filtro */}
                 <div className="relative">
                     <button
-                        className="ml-4 bg-white border-2 border-blue-950 rounded-2xl px-2 py-2 text-base font-semibold hover:bg-blue-800 transition"
+                        className="ml-4 bg-white border-2 border-blue-950 rounded-2xl px-2 py-2 text-base font-semibold hover:bg-[#001F54] transition"
                         onClick={() => setMostrarFiltro(!mostrarFiltro)}
                     >
                         <SlidersHorizontal strokeWidth={1} />
