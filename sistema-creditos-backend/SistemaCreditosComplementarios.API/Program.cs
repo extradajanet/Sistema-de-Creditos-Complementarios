@@ -128,7 +128,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
                                 Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
 });
 
-builder.Services.Configure<HttpsRedirectionOptions>(options => { options.HttpsPort = 0; });
+builder.Services.Configure<HttpsRedirectionOptions>(options => { options.HttpsPort = null; });
 
 var app = builder.Build();
 
@@ -165,6 +165,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/", () => "API funcionando correctamente");
 
 app.Run();
 
