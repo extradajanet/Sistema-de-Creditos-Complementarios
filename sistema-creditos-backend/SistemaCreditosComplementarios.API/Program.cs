@@ -121,6 +121,11 @@ builder.Services.AddCors(options =>
 });
 
 // ...
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
+                                Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+});
 
 var app = builder.Build();
 
@@ -139,6 +144,8 @@ catch (Exception ex)
     Console.WriteLine($"Error al inicializar los datos de identidad: {ex.Message}");
 }
 
+
+app.UseForwardedHeaders();
 
 if (app.Environment.IsDevelopment())
 {
