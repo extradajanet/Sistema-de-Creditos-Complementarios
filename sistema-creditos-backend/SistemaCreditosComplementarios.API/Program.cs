@@ -34,6 +34,7 @@ using System;
 using System.Reflection;
 using System.Text;
 using System.IO;
+using Microsoft.AspNetCore.HttpsPolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -126,6 +127,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
                                 Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
 });
+
+builder.Services.Configure<HttpsRedirectionOptions>(options => { options.HttpsPort = 0; });
 
 var app = builder.Build();
 
