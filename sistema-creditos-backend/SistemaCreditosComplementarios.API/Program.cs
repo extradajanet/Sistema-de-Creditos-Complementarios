@@ -40,7 +40,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenLocalhost(5000);
+    options.ListenAnyIP(5000);
 });
 
 // Add services to the container.
